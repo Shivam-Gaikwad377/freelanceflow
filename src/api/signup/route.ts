@@ -1,11 +1,11 @@
 import ApiResponse from '@/types/ApiResponse';
 import { sendVerificationEmail } from '@/helpers/sendVerificationemail';
 import bcrypt from 'bcryptjs';
-import dbConfig from '@/lib/dbConfig';
+import {connectToDatabase} from '@/lib/dbConfig';
 import User from '@/models/user.model';
 
 export async function POST(request: Request) {
-    await dbConfig();
+    await connectToDatabase();
     try {
         const { name, email, password } = await request.json();
         
