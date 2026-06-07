@@ -5,7 +5,10 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
-    avatarUrl: string;
+    avatar: {
+        avatarUrl: string;
+        avatarFileId?: string;
+    };
     bussinessName: string;
     currency: string;
     refreshToken: string;
@@ -33,9 +36,15 @@ const userSchema = new Schema<IUser>({
         required: true,
         minlength: [8, 'Password must be at least 8 characters long'],
     },
-    avatarUrl: {
-        type: String,
-        default: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+    avatar: {
+        avatarUrl: {
+            type: String,
+            default: "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
+        },
+        avatarFileId: {
+            type: String,
+        }
+
     },
     bussinessName: {
         type: String,
