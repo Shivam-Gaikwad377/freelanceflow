@@ -55,9 +55,7 @@ const userSchema = new Schema<IUser>({
         type: String,
         required: true,
     },
-    refreshToken: {
-        type: String,
-    },
+    
     isVerified: {
         type: Boolean,
         default: false,
