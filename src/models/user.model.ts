@@ -65,7 +65,7 @@ const userSchema = new Schema<IUser>({
     },
     ExpiresAt: {
         type: Date,
-        default: () => new Date(Date.now() + 10 * 60 * 1000), // Expires in 24 hours
+        default: () => new Date(Date.now() + 10 * 60 * 1000), 
     },
 
 }, {timestamps: true});
