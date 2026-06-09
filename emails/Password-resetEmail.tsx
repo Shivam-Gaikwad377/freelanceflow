@@ -13,7 +13,7 @@ import {
   Text,
 } from "react-email";
 
-interface VerificationcodeProps {
+interface PasswordResetProps {
   verificationCode?: string;
 }
 
@@ -33,15 +33,15 @@ const anchor = {
   textDecoration: "underline",
 };
 
-export default function VerificationEmail({
+export default function PasswordResetEmail({
   verificationCode,
-}: VerificationcodeProps) {
+}: PasswordResetProps) {
   return (
     <Html>
       <Head />
       <Tailwind>
         <Body className="bg-white font-aws text-[#212121]">
-          <Preview>FreelanceFlow Email Verification</Preview>
+          <Preview>FreelanceFlow Password Reset</Preview>
           <Container className="p-5 mx-auto bg-[#eee]">
             <Section className="bg-white">
               <Section className="bg-primary flex py-5 items-center justify-center">
@@ -54,15 +54,15 @@ export default function VerificationEmail({
               </Section>
               <Section className="py-6.25 px-8.75">
                 <Heading className="text-[#333] text-[20px] font-bold mb-3.75">
-                  Verify your email address
+                  Reset your password
                 </Heading>
                 <Text className="text-[#333] text-[14px] leading-[24px] mt-6 mb-3.5 mx-0">
-                  Thanks for starting the new FreelanceFlow account creation
-                  process. We want to make sure it's really you. Please enter
-                  the following verification code when prompted. If you
-                  don&apos;t want to create an account, you can ignore this
+                  Thanks for requesting a password reset. Please enter the
+                  following verification code when prompted. If you
+                  don&apos;t want to reset your password, you can ignore this
                   message.
                 </Text>
+                
                 <Section className="flex items-center justify-center">
                   <Text className="text-[#333] m-0 font-bold text-center text-[14px]">
                     Verification code
@@ -88,7 +88,7 @@ export default function VerificationEmail({
               © 2026 FreelanceFlow · All rights reserved.
             </Text>
             <Text style={footer}>
-              You're receiving this because you created a FreelanceFlow account.
+              You're receiving this because you requested a password reset.
               If this wasn't you,{" "}
               <Link href="mailto:support@freelanceflow.app" style={anchor}>
                 contact support
@@ -102,6 +102,6 @@ export default function VerificationEmail({
   );
 }
 
-VerificationEmail.PreviewProps = {
+PasswordResetEmail.PreviewProps = {
   verificationCode: "596853",
-} satisfies VerificationcodeProps;
+} satisfies PasswordResetProps;
