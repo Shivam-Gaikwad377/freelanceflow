@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import  ApiResponse from "@/types/ApiResponse";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
@@ -15,14 +16,14 @@ export async function POST(request: Request) {
         success: false,
         message: "User not found",
       };
-      return new Response(JSON.stringify(response), { status: 404 });
+      return NextResponse.json(response, { status: 404 });
     }
     if (user.isVerified) {
       const response: ApiResponse = {
         success: false,
         message: "Email already verified",
       };
-      return new Response(JSON.stringify(response), { status: 400 });
+      return NextResponse.json(response, { status: 400 });
     }
     const isCodeValid = user.verificationToken === verificationToken;
     const isCodeNotExpired = user.ExpiresAt
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
         success: false,
         message: "Invalid or expired verification code",
       };
-      return new Response(JSON.stringify(response), { status: 400 });
+      return NextResponse.json(response, { status: 400 });
     }
     user.isVerified = true;
     user.verificationToken = undefined;
@@ -43,13 +44,13 @@ export async function POST(request: Request) {
       success: true,
       message: "Email verified successfully",
     };
-    return new Response(JSON.stringify(response), { status: 200 });
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     console.error("Error verifying email:", error);
     const response: ApiResponse = {
       success: false,
       message: "An error occurred while verifying email",
     };
-    return new Response(JSON.stringify(response), { status: 500 });
+    return NextResponse.json(response, { status: 500 });
   }
 }
