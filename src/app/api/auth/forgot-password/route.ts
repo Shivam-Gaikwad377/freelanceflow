@@ -20,10 +20,10 @@ export async function POST(request: Request) {
     const user = await User.findOne({ email });
     if (!user) {
       const response: ApiResponse = {
-        success: false,
-        message: "User not found",
+        success: true,
+        message: "If the user with this email exist, a password reset email will be sent",
       };
-      return NextResponse.json(response, { status: 404 });
+      return NextResponse.json(response, { status: 200 });
     }
     const verificationToken = Math.random()
       .toString(36)

@@ -3,8 +3,9 @@ import User from "@/models/user.model";
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import bcrypt from "bcryptjs";
+import { resetPasswordSchema } from "@/schemas/resetPassword.schema";
 
-export async function PUT(request: Request) {
+export async function POST(request: Request) {
   try {
     await connectToDatabase();
     const { email, verificationToken, newPassword } = await request.json();
@@ -18,6 +19,19 @@ export async function PUT(request: Request) {
       };
       return NextResponse.json(response, { status: 404 });
     }
+    const parseResult = resetPasswordSchema.safeParse({
+      email,
+      verificationToken,
+      newPassword,
+    });
+    if (!parseResult.success) {
+      const response: ApiResponse = {
+        success: false,
+        message: parseResult.error.issues.map((err) => err.message).join(", "),
+      };
+      return NextResponse.json(response, { status: 400 });
+    }
+
     const isCodeValid = user.verificationToken === verificationToken;
     const isCodeNotExpired = user.ExpiresAt
       ? user.ExpiresAt > new Date()
