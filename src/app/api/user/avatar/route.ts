@@ -52,15 +52,13 @@ export async function PATCH(req: NextRequest) {
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
   });
 
-  const result = await upload({
-    file,
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+  const result = await imagekitClient.upload({
+    file: buffer,
     fileName: file.name,
     folder: "/avatars",
     useUniqueFileName: true,
-    token,
-    expire,
-    signature,
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
   });
 
   // 3. Save URL to MongoDB

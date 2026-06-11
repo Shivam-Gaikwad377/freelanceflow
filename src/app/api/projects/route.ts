@@ -18,8 +18,7 @@ export async function POST(request: Request) {
       };
       return NextResponse.json(response, { status: 401 });
     }
-
-    const { title, description, client, budget, deadline, status } =
+    const { title, description,client, budget, deadline, status } =
       await request.json();
 
     const parseResult = projectSchema.safeParse({
@@ -41,7 +40,7 @@ export async function POST(request: Request) {
 
     const newProject = new Project({
       ...parseResult.data,
-      owner: ownerID,
+      Owner: ownerID,
     });
 
     await newProject.save();
@@ -85,12 +84,12 @@ export async function GET(request: Request) {
     );
 
     const [projects, total] = await Promise.all([
-      Project.find({ owner: ownerID })
+      Project.find({ Owner: ownerID })
         .sort({ createdAt: -1 })
         .skip(offset)
         .limit(limit)
         .lean(),
-      Project.countDocuments({ owner: ownerID }),
+      Project.countDocuments({ Owner: ownerID }),
     ]);
 
     return NextResponse.json<ApiResponse>(

@@ -6,9 +6,14 @@ import { projectSchema } from "@/schemas/project.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { isValidObjectId } from "mongoose";
+import { updateProjectSchema } from "@/schemas/updateProject.schema";
+
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteContext
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -18,8 +23,9 @@ export async function GET(
         { status: 401 }
       );
     }
+    const id = (await params).id;
 
-    if (!isValidObjectId(params.id)) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Invalid project ID" },
         { status: 400 }
@@ -29,8 +35,8 @@ export async function GET(
     await connectToDatabase();
 
     const project = await Project.findOne({
-      _id: params.id,
-      owner: session.user._id,
+      _id: id,
+      Owner: session.user._id,
     }).lean();
 
     if (!project) {
@@ -58,7 +64,7 @@ export async function GET(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteContext
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -68,7 +74,8 @@ export async function DELETE(
         { status: 401 }
       );
     }
-    if (!isValidObjectId(params.id)) {
+    const id = (await params).id;
+    if (!isValidObjectId(id)) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Invalid project ID" },
         { status: 400 }
@@ -76,8 +83,8 @@ export async function DELETE(
     }
     await connectToDatabase();
     const deleted = await Project.findOneAndDelete({
-      _id: params.id,
-      owner: session.user._id,
+      _id: id,
+      Owner: session.user._id,
     });
     if (!deleted) {
       return NextResponse.json<ApiResponse>(
@@ -103,7 +110,7 @@ export async function DELETE(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteContext
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -113,7 +120,8 @@ export async function PUT(
         { status: 401 }
       );
     }
-    if (!isValidObjectId(params.id)) {
+    const id = (await params).id;
+    if (!isValidObjectId(id)) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Invalid project ID" },
         { status: 400 }
@@ -121,7 +129,7 @@ export async function PUT(
     }
     await connectToDatabase();
     const body = await request.json();
-    const parseResult = projectSchema.safeParse(body);
+    const parseResult = updateProjectSchema.safeParse(body);
     if (!parseResult.success) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Invalid project data" },
@@ -129,7 +137,7 @@ export async function PUT(
       );
     }
     const updated = await Project.findOneAndUpdate(
-      { _id: params.id, owner: session.user._id },
+      { _id: id, Owner: session.user._id },
       { $set: parseResult.data },
       { new: true }
     );
