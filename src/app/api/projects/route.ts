@@ -11,6 +11,13 @@ export async function POST(request: Request) {
     await connectToDatabase();
     const session = await getServerSession(authOptions);
     const ownerID = session?.user?._id;
+    if (!ownerID || !session) {
+      const response: ApiResponse = {
+        success: false,
+        message: "Unauthorized",
+      };
+      return NextResponse.json(response, { status: 401 });
+    }
 
     const { title, description, client, budget, deadline, status } =
       await request.json();
@@ -33,12 +40,7 @@ export async function POST(request: Request) {
     }
 
     const newProject = new Project({
-      title,
-      description,
-      client,
-      budget,
-      deadline,
-      status,
+      ...parseResult.data,
       owner: ownerID,
     });
 

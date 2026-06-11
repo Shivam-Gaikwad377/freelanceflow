@@ -16,7 +16,7 @@ export interface IProject extends mongoose.Document {
 const projectSchema = new mongoose.Schema<IProject>({
     clientID: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Client",
         required: true,
     },
     client:{
