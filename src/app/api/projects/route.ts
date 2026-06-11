@@ -59,3 +59,53 @@ export async function POST(request: Request) {
     return NextResponse.json(response, { status: 500 });
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    const ownerID = session?.user?._id;
+
+    if (!session || !ownerID) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    await connectToDatabase();
+
+    const { searchParams } = new URL(request.url);
+    const offset = Math.max(
+      0,
+      parseInt(searchParams.get("offset") ?? "0", 10) || 0
+    );
+    const limit = Math.min(
+      50,
+      parseInt(searchParams.get("limit") ?? "10", 10) || 10
+    );
+
+    const [projects, total] = await Promise.all([
+      Project.find({ owner: ownerID })
+        .sort({ createdAt: -1 })
+        .skip(offset)
+        .limit(limit)
+        .lean(),
+      Project.countDocuments({ owner: ownerID }),
+    ]);
+
+    return NextResponse.json<ApiResponse>(
+      {
+        success: true,
+        message: "Projects retrieved successfully",
+        data: { projects, total, offset, limit },
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return NextResponse.json<ApiResponse>(
+      { success: false, message: "An error occurred while fetching projects" },
+      { status: 500 }
+    );
+  }
+}
