@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 export interface IInvoice extends mongoose.Document {
+    owner: mongoose.Types.ObjectId;
     projectId: mongoose.Types.ObjectId;
     amount: number;
     dueDate: Date;
@@ -17,6 +18,11 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
     projectId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Project",
+        required: true,
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
     amount: {
