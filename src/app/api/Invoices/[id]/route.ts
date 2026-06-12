@@ -1,20 +1,16 @@
-import { connectToDatabase } from "@/lib/dbConfig";
-import ApiResponse from "@/types/ApiResponse";
 import { NextResponse } from "next/server";
-import Project from "@/models/project.model";
-import { projectSchema } from "@/schemas/project.schema";
+import Invoice from "@/models/invoice.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { isValidObjectId } from "mongoose";
-import { updateProjectSchema } from "@/schemas/updateProject.schema";
+import { connectToDatabase } from "@/lib/dbConfig";
+import ApiResponse from "@/types/ApiResponse";
+import { updateInvoiceSchema } from "@/schemas/updateInvoice.schema";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
-export async function GET(
-  request: Request,
-  { params }: RouteContext
-) {
+export async function GET(request: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?._id) {
@@ -27,45 +23,42 @@ export async function GET(
 
     if (!isValidObjectId(id)) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Invalid project ID" },
+        { success: false, message: "Invalid client ID" },
         { status: 400 }
       );
     }
 
     await connectToDatabase();
 
-    const project = await Project.findOne({
+    const invoice = await Invoice.findOne({
       _id: id,
-      Owner: session.user._id,
+      owner: session.user._id,
     }).lean();
 
-    if (!project) {
+    if (!invoice) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Project not found" },
+        { success: false, message: "Invoice not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json<ApiResponse>(
-      { success: true, message: "Project fetched successfully", data: project },
+      { success: true, message: "Invoice fetched successfully", data: invoice },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error fetching project:", error);
+    console.error("Error fetching invoice:", error);
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: "An error occurred while fetching the project",
+        message: "An error occurred while fetching the invoice",
       },
       { status: 500 }
     );
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: RouteContext
-) {
+export async function PUT(request: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?._id) {
@@ -75,39 +68,58 @@ export async function DELETE(
       );
     }
     const id = (await params).id;
+
     if (!isValidObjectId(id)) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Invalid project ID" },
+        { success: false, message: "Invalid invoice ID" },
         { status: 400 }
       );
     }
-    await connectToDatabase();
-    const deleted = await Project.findOneAndDelete({
-      _id: id,
-      Owner: session.user._id,
-    });
-    if (!deleted) {
+
+    const requestBody = await request.json();
+    const validation = updateInvoiceSchema.safeParse(requestBody);
+    if (!validation.success) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Project not found or not owned by user" },
+        {
+          success: false,
+          message: "Invalid request data",
+          data: validation.error.issues,
+        },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+    const updatedInvoice = await Invoice.findOneAndUpdate(
+      { _id: id, owner: session.user._id },
+      { $set: validation.data },
+      { new: true }
+    ).lean();
+    if (!updatedInvoice) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Invoice not found or not owned by user" },
         { status: 404 }
       );
     }
     return NextResponse.json<ApiResponse>(
-      { success: true, message: "Project deleted successfully" },
+      {
+        success: true,
+        message: "Invoice updated successfully",
+        data: updatedInvoice,
+      },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting project:", error);
+    console.error("Error updating invoice:", error);
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: "An error occurred while deleting the project",
+        message: "An error occurred while updating the invoice",
       },
       { status: 500 }
     );
   }
 }
-
 
 export async function PATCH(request: Request, { params }: RouteContext) {
   try {
@@ -129,7 +141,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
     await connectToDatabase();
     const requestBody = await request.json();
-    const validation = updateProjectSchema.safeParse(requestBody);
+    const validation = updateInvoiceSchema.safeParse(requestBody);
     if (!validation.success) {
       return NextResponse.json<ApiResponse>(
         {
@@ -140,38 +152,37 @@ export async function PATCH(request: Request, { params }: RouteContext) {
         { status: 400 }
       );
     }
-    const updatedProject = await Project.findOneAndUpdate(
-      { _id: id, Owner: session.user._id },
+    const updatedInvoice = await Invoice.findOneAndUpdate(
+      { _id: id, owner: session.user._id },
       { $set: validation.data },
       { new: true }
     ).lean();
-    if (!updatedProject) {
+    if (!updatedInvoice) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Project not found or not owned by user" },
+        { success: false, message: "Invoice not found or not owned by user" },
         { status: 404 }
       );
     }
     return NextResponse.json<ApiResponse>(
       {
         success: true,
-        message: "Project updated successfully",
-        data: updatedProject,
+        message: "Invoice updated successfully",
+        data: updatedInvoice,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error updating project:", error);
+    console.error("Error updating invoice:", error);
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: "An error occurred while updating the project",
+        message: "An error occurred while updating the invoice",
       },
       { status: 500 }
     );
   }
 }
-
-export async function PUT(
+export async function DELETE(
   request: Request,
   { params }: RouteContext
 ) {
@@ -186,42 +197,35 @@ export async function PUT(
     const id = (await params).id;
     if (!isValidObjectId(id)) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Invalid project ID" },
+        { success: false, message: "Invalid invoice ID" },
         { status: 400 }
       );
     }
     await connectToDatabase();
-    const body = await request.json();
-    const parseResult = updateProjectSchema.safeParse(body);
-    if (!parseResult.success) {
+    const deleted = await Invoice.findOneAndDelete({
+      _id: id,
+      owner: session.user._id,
+    });
+    if (!deleted) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Invalid project data" },
-        { status: 400 }
-      );
-    }
-    const updated = await Project.findOneAndUpdate(
-      { _id: id, Owner: session.user._id },
-      { $set: parseResult.data },
-      { new: true }
-    );
-    if (!updated) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Project not found or not owned by user" },
+        { success: false, message: "Invoice not found or not owned by user" },
         { status: 404 }
       );
     }
     return NextResponse.json<ApiResponse>(
-      { success: true, message: "Project updated successfully", data: updated },
+      { success: true, message: "Invoice deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error updating project:", error);
+    console.error("Error deleting invoice:", error);
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: "An error occurred while updating the project",
+        message: "An error occurred while deleting the invoice",
       },
       { status: 500 }
     );
   }
 }
+
+
