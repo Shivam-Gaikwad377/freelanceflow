@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    //Credentials required for login
     CredentialsProvider({
       id: "credentials",
       name: "Credentials",
@@ -21,20 +22,25 @@ export const authOptions: NextAuthOptions = {
           placeholder: "Enter your password",
         },
       },
+      //login function to validate user credentials
       async authorize(credentials: any): Promise<any> {
+        //connect to database and find user by email
         await connectToDatabase();
         try {
           const user = await User.findOne({ email: credentials.email });
           if (!user) {
             throw new Error("No user found with this email.");
           }
+          //check if user is verified
           if (!user.isVerified) {
             throw new Error("Please verify your email before logging in.");
           }
+          //compare provided password with hashed password in database
           const isPasswordValid = await bcrypt.compare(
             credentials.password,
             user.password
           );
+          //if password is valid, return user object, otherwise throw error
           if (isPasswordValid) {
             return user;
           } else {
@@ -46,6 +52,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  //callbacks to include user ID and verification status in JWT token and session
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -64,9 +71,11 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  //custom sign-in page
   pages: {
     signIn: "/login",
   },
+  //use JWT strategy for session management
   session: {
     strategy: "jwt",
   },

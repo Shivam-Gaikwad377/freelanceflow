@@ -7,8 +7,10 @@ import { resetPasswordSchema } from "@/schemas/resetPassword.schema";
 
 export async function POST(request: Request) {
   try {
+    //connect to database and validate request body
     await connectToDatabase();
     const { email, verificationToken, newPassword } = await request.json();
+    //find user by email
     const user = await User.findOne({
       email,
     });
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    //check if code is valid and not expired
 
     const isCodeValid = user.verificationToken === verificationToken;
     const isCodeNotExpired = user.ExpiresAt
@@ -51,12 +54,13 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    ///hash new password and update user document
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedNewPassword;
     user.verificationToken = undefined;
     user.ExpiresAt = undefined;
     await user.save();
-
+    //return success response
     return NextResponse.json(
       {
         success: true,

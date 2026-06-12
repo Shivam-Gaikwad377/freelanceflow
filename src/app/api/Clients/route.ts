@@ -86,13 +86,26 @@ export async function GET(request: Request) {
       parseInt(searchParams.get("limit") ?? "10", 10) || 10
     );
 
+    const sort = searchParams.get("sort") === "asc" ? 1 : -1;
+    const sortBy = searchParams.get("sortBy") || "createdAt";
+    const search = searchParams.get("search") || "";
+    
+    const filter: any = { userId: ownerID };
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { company: { $regex: search, $options: "i" } },
+      ];
+    }
+
     const [Clients, total] = await Promise.all([
-      Client.find({ userId: ownerID })
-        .sort({ createdAt: -1 })
+      Client.find(filter)
+        .sort({ [sortBy]: sort })
         .skip(offset)
         .limit(limit)
         .lean(),
-      Client.countDocuments({ userId: ownerID }),
+      Client.countDocuments(filter),
     ]);
 
     return NextResponse.json<ApiResponse>(

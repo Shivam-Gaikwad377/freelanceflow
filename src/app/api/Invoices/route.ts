@@ -5,7 +5,8 @@ import Invoice from "@/models/invoice.model";
 import { createInvoiceSchema } from "@/schemas/createInvoice.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-
+import Client from "@/models/client.model";
+import Project from "@/models/project.model";
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -25,6 +26,7 @@ export async function POST(request: Request) {
       await request.json();
     const parseResult = createInvoiceSchema.safeParse({
       projectId,
+  
       dueDate,
       status,
       lineItems,
@@ -41,10 +43,13 @@ export async function POST(request: Request) {
       (sum, item) => sum + item.quantity * item.price,
       0
     );
+    const count = await Invoice.countDocuments({ owner: ownerID });
+    const invoiceNumber = count + 1;
     const newInvoice = new Invoice({
       ...parseResult.data,
       owner: ownerID,
       amount,
+      invoiceNumber,
     });
     await newInvoice.save();
 
@@ -87,14 +92,42 @@ export async function GET(request: Request) {
       50,
       parseInt(searchParams.get("limit") ?? "10", 10) || 10
     );
+    const sort = searchParams.get("sort") === "asc" ? 1 : -1;
+    const sortBy = searchParams.get("sortBy") || "createdAt";
+    const search = searchParams.get("search") || "";
+    const status = searchParams.get("status") || "";
+    const searchBy = searchParams.get("searchBy") || "invoiceNumber";
+    const filter: any = { userId: ownerID };
+    if(status) filter.status = status;
+    if (search) {
+      if (searchBy === "invoiceNumber") {
+        filter.invoiceNumber = { $regex: search, $options: "i" };
+
+      }
+     else if (searchBy === "client") {
+          const matchingClients: any[] = await Client.find({ userId : ownerID, name: { $regex: search, $options: "i" } }).select("_id");
+          if (matchingClients.length > 0) {
+            filter.clientId = { $in: matchingClients.map(c => c._id) };
+
+          }
+        }
+      else if (searchBy === "project") {
+          const matchingProjects: any[] = await Project.find({ userId : ownerID, name: { $regex: search, $options: "i" } }).select("_id");
+          if (matchingProjects.length > 0) {
+            filter.projectId = { $in: matchingProjects.map(p => p._id) };
+
+          }
+    }
+  }
+   
 
     const [invoices, total] = await Promise.all([
-      Invoice.find({ owner: ownerID })
-        .sort({ createdAt: -1 })
+      Invoice.find(filter)
+        .sort({ [sortBy]: sort })
         .skip(offset)
         .limit(limit)
         .lean(),
-      Invoice.countDocuments({ owner: ownerID }),
+      Invoice.countDocuments(filter),
     ]);
 
     return NextResponse.json<ApiResponse>(

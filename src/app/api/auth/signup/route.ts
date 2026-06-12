@@ -4,17 +4,28 @@ import bcrypt from "bcryptjs";
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import { NextResponse } from "next/server";
+import { signupSchema } from "@/schemas/signup.schemas"; 
 
 export async function POST(request: Request) {
   try {
+    //Connect to database and validate request body
     await connectToDatabase();
     const { name, email, password, bussinessName, currency } =
       await request.json();
-    if (!name || !email || !password || !bussinessName || !currency) {
+    const parseResult = signupSchema.safeParse({
+      name,
+      email,
+      password,
+      bussinessName,
+      currency
+    });
+    if (!parseResult.success) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          message: "All fields are required.",
+          message: parseResult.error.issues
+            .map((err ) => err.message)
+            .join(", "),
         },
         { status: 400 }
       );
@@ -35,19 +46,24 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    //generate OTP and expiration time 
 
     const existingUserUnverifiedByEmail = await User.findOne({ email });
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
-    const hashedPassword = await bcrypt.hash(password, 10);
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000);
-
+    
+    //hash password and either update existing unverified user or create a new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
     if (existingUserUnverifiedByEmail) {
       existingUserUnverifiedByEmail.name = name; // ✅ add this
       existingUserUnverifiedByEmail.password = hashedPassword;
       existingUserUnverifiedByEmail.verificationToken = verificationToken;
       existingUserUnverifiedByEmail.ExpiresAt = expirationTime;
+      existingUserUnverifiedByEmail.bussinessName = bussinessName;
+      existingUserUnverifiedByEmail.currency = currency;
       await existingUserUnverifiedByEmail.save();
     } else {
       // Create a brand new user

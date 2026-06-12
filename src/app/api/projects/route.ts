@@ -6,6 +6,7 @@ import Project from "@/models/project.model";
 import { projectSchema } from "@/schemas/project.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
+import Client from "@/models/client.model";
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
@@ -93,13 +94,29 @@ export async function GET(request: Request) {
       parseInt(searchParams.get("limit") ?? "10", 10) || 10
     );
 
+    const search = searchParams.get("search") || "";
+    const searchBy = searchParams.get("searchBy") || "title";
+    const filter: any = { Owner: ownerID };
+    if (search) {
+      if (searchBy === "title") {
+        filter.title = { $regex: search, $options: "i" };
+      } else if (searchBy === "client") {
+        const matchingClients = await Client.find({
+          name: { $regex: search, $options: "i" },
+          userId: ownerID,
+        }).select("_id");
+
+        filter.clientId = { $in: matchingClients.map((c) => c._id) };
+      }
+    }
+
     const [projects, total] = await Promise.all([
-      Project.find({ Owner: ownerID })
+      Project.find(filter)
         .sort({ createdAt: -1 })
         .skip(offset)
         .limit(limit)
         .lean(),
-      Project.countDocuments({ Owner: ownerID }),
+      Project.countDocuments(filter),
     ]);
 
     return NextResponse.json<ApiResponse>(
