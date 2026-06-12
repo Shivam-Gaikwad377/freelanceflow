@@ -32,7 +32,7 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     const client = await Client.findOne({
       _id: id,
-      Owner: session.user._id,
+      userId: session.user._id,
     }).lean();
 
     if (!client) {
@@ -182,10 +182,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     );
   }
 }
-export async function DELETE(
-  request: Request,
-  { params }: RouteContext
-) {
+export async function DELETE(request: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?._id) {
@@ -227,5 +224,3 @@ export async function DELETE(
     );
   }
 }
-
-

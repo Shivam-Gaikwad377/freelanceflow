@@ -4,7 +4,6 @@ import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import bcrypt from "bcryptjs";
 
-
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -45,27 +44,25 @@ export const authOptions: NextAuthOptions = {
           throw error;
         }
       },
-      
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if(user){
+      if (user) {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.email = user.email;
-        
       }
       return token;
     },
     async session({ session, token }) {
-      if(token){
+      if (token) {
         session.user._id = token._id;
         session.user.isVerified = token.isVerified;
         session.user.email = token.email;
       }
       return session;
-    }
+    },
   },
   pages: {
     signIn: "/login",

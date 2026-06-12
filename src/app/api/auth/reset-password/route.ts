@@ -13,11 +13,13 @@ export async function POST(request: Request) {
       email,
     });
     if (!user) {
-      const response: ApiResponse = {
-        success: false,
-        message: "User not found",
-      };
-      return NextResponse.json(response, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: "User not found",
+        },
+        { status: 404 }
+      );
     }
     const parseResult = resetPasswordSchema.safeParse({
       email,
@@ -25,11 +27,15 @@ export async function POST(request: Request) {
       newPassword,
     });
     if (!parseResult.success) {
-      const response: ApiResponse = {
-        success: false,
-        message: parseResult.error.issues.map((err) => err.message).join(", "),
-      };
-      return NextResponse.json(response, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: parseResult.error.issues
+            .map((err) => err.message)
+            .join(", "),
+        },
+        { status: 400 }
+      );
     }
 
     const isCodeValid = user.verificationToken === verificationToken;
@@ -37,28 +43,35 @@ export async function POST(request: Request) {
       ? user.ExpiresAt > new Date()
       : false;
     if (!isCodeValid || !isCodeNotExpired) {
-      const response: ApiResponse = {
-        success: false,
-        message: "Invalid or expired verification code",
-      };
-      return NextResponse.json(response, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid or expired verification code",
+        },
+        { status: 400 }
+      );
     }
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedNewPassword;
     user.verificationToken = undefined;
     user.ExpiresAt = undefined;
     await user.save();
-    const response: ApiResponse = {
-      success: true,
-      message: "Password reset successfully",
-    };
-    return NextResponse.json(response, { status: 200 });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Password reset successfully",
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error resetting password:", error);
-    const response: ApiResponse = {
-      success: false,
-      message: "An error occurred while resetting password",
-    };
-    return NextResponse.json(response, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "An error occurred while resetting password",
+      },
+      { status: 500 }
+    );
   }
 }

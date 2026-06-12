@@ -1,10 +1,13 @@
 import { getServerSession } from "next-auth";
-import {authOptions} from "../../auth/[...nextauth]/options";
+import { authOptions } from "../../auth/[...nextauth]/options";
 import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import { updateUserSchema } from "@/schemas/updateUser.schema";
 import ApiResponse from "@/types/ApiResponse";
+import CLient from "@/models/client.model";
+import Project from "@/models/project.model";
+import Invoices from "@/models/invoice.model";
 
 export async function PUT(request: Request) {
   try {
@@ -33,19 +36,19 @@ export async function PUT(request: Request) {
     ).select("-password");
 
     if (!updated) {
-        return NextResponse.json<ApiResponse>(
-          { success: false, message: "User not found" },
-          { status: 404 }
-        );
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "User not found" },
+        { status: 404 }
+      );
     }
-    
+
     return NextResponse.json<ApiResponse>(
       { success: true, message: "Profile updated successfully", data: updated },
       { status: 200 }
     );
   } catch (error) {
     console.error("Error updating profile:", error);
-    
+
     return NextResponse.json<ApiResponse>(
       { success: false, message: "An error occurred while updating profile" },
       { status: 500 }
@@ -63,12 +66,14 @@ export async function GET(request: Request) {
         { status: 401 }
       );
     }
-    const user = await User.findById({ _id: session.user._id }).select("-password -verificationToken -ExpiresAt" );
+    const user = await User.findById({ _id: session.user._id }).select(
+      "-password -verificationToken -ExpiresAt"
+    );
     if (!user) {
-        return NextResponse.json<ApiResponse>(
-          { success: false, message: "User not found" },
-          { status: 404 }
-        );
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "User not found" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json<ApiResponse>(
@@ -77,7 +82,7 @@ export async function GET(request: Request) {
     );
   } catch (error) {
     console.error("Error fetching profile:", error);
-    
+
     return NextResponse.json<ApiResponse>(
       { success: false, message: "An error occurred while fetching profile" },
       { status: 500 }
@@ -96,13 +101,11 @@ export async function DELETE(request: Request) {
       );
     }
 
-    //TODO: Also delete all projects associated with this user
-    // await Project.deleteMany({ owner: session.user._id });
-    // await CLient.deleteMany({ owner: session.user._id });
-    // await Invoices.deleteMany({ owner: session.user._id });
+    await Project.deleteMany({ owner: session.user._id });
+    await CLient.deleteMany({ owner: session.user._id });
+    await Invoices.deleteMany({ owner: session.user._id });
     const deleted = await User.findOneAndDelete({ _id: session.user._id });
     if (!deleted) {
-        
       return NextResponse.json<ApiResponse>(
         { success: false, message: "User not found" },
         { status: 404 }
@@ -115,7 +118,7 @@ export async function DELETE(request: Request) {
     );
   } catch (error) {
     console.error("Error deleting profile:", error);
-    
+
     return NextResponse.json<ApiResponse>(
       { success: false, message: "An error occurred while deleting profile" },
       { status: 500 }

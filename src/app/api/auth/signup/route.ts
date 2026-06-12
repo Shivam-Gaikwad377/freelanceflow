@@ -3,17 +3,21 @@ import { sendVerificationEmail } from "@/helpers/sendVerificationemail";
 import bcrypt from "bcryptjs";
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
-    const { name, email, password, bussinessName, currency } = await request.json();
+    const { name, email, password, bussinessName, currency } =
+      await request.json();
     if (!name || !email || !password || !bussinessName || !currency) {
-      const response: ApiResponse = {
-        success: false,
-        message: "All fields are required.",
-      };
-      return Response.json(response, { status: 400 });
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: "All fields are required.",
+        },
+        { status: 400 }
+      );
     }
 
     // 1. Check if a verified user already exists
@@ -22,12 +26,14 @@ export async function POST(request: Request) {
       isVerified: true,
     });
     if (existingUserVerifiedByEmail) {
-      const response: ApiResponse = {
-        success: false,
-        message:
-          "Email is already in use. Please use a different email or log in.",
-      };
-      return Response.json(response, { status: 400 });
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message:
+            "Email is already in use. Please use a different email or log in.",
+        },
+        { status: 400 }
+      );
     }
 
     const existingUserUnverifiedByEmail = await User.findOne({ email });
@@ -65,25 +71,32 @@ export async function POST(request: Request) {
       verificationToken
     );
     if (!emailResponse.success) {
-      const response: ApiResponse = {
-        success: false,
-        message: emailResponse.message,
-      };
-      return Response.json(response, { status: 500 });
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: emailResponse.message,
+        },
+        { status: 500 }
+      );
     }
 
-    const response: ApiResponse = {
-      success: true,
-      message:
-        "User registered successfully. Please check your email for the verification code.",
-    };
-    return Response.json(response, { status: 201 });
+    return NextResponse.json<ApiResponse>(
+      {
+        success: true,
+        message:
+          "User registered successfully. Please check your email for the verification code.",
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.log("Error during signup:", error);
-    const response: ApiResponse = {
-      success: false,
-      message: "An error occurred during signup. Please try again later.",
-    };
-    return Response.json(response, { status: 500 });
+
+    return NextResponse.json<ApiResponse>(
+      {
+        success: false,
+        message: "An error occurred during signup. Please try again later.",
+      },
+      { status: 500 }
+    );
   }
 }

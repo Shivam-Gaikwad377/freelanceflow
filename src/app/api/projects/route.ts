@@ -12,13 +12,15 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
     const ownerID = session?.user?._id;
     if (!ownerID || !session) {
-      const response: ApiResponse = {
-        success: false,
-        message: "Unauthorized",
-      };
-      return NextResponse.json(response, { status: 401 });
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
     }
-    const { title, description,client, budget, deadline, status } =
+    const { title, description, client, budget, deadline, status } =
       await request.json();
 
     const parseResult = projectSchema.safeParse({
@@ -31,11 +33,13 @@ export async function POST(request: Request) {
     });
 
     if (!parseResult.success) {
-      const response: ApiResponse = {
-        success: false,
-        message: "Invalid project data",
-      };
-      return NextResponse.json(response, { status: 400 });
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: "Invalid project data",
+        },
+        { status: 400 }
+      );
     }
 
     const newProject = new Project({
@@ -44,18 +48,24 @@ export async function POST(request: Request) {
     });
 
     await newProject.save();
-    const response: ApiResponse = {
-      success: true,
-      message: "Project created successfully",
-    };
-    return NextResponse.json(response, { status: 201 });
+
+    return NextResponse.json<ApiResponse>(
+      {
+        success: true,
+        message: "Project created successfully",
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating project:", error);
-    const response: ApiResponse = {
-      success: false,
-      message: "An error occurred while creating the project",
-    };
-    return NextResponse.json(response, { status: 500 });
+
+    return NextResponse.json<ApiResponse>(
+      {
+        success: false,
+        message: "An error occurred while creating the project",
+      },
+      { status: 500 }
+    );
   }
 }
 

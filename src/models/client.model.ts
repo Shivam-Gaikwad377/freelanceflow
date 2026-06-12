@@ -39,4 +39,8 @@ const clientSchema = new mongoose.Schema<IClient>({
         required: true,
     },
 });
-export default mongoose.model<IClient>("Client", clientSchema);
+const ClientModel = 
+  (mongoose.models.Client as mongoose.Model<IClient>) ||
+  mongoose.model<IClient>("Client", clientSchema);
+
+export default ClientModel;

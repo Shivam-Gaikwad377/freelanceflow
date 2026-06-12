@@ -18,12 +18,10 @@ export async function PATCH(req: NextRequest) {
   // 1. Authenticate user
   const jwttoken = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   if (!jwttoken) {
-    const response: ApiResponse = {
-      success: false,
-      message: "Unauthorized",
-      statusCode: 401,
-    };
-    return NextResponse.json(response, { status: response.statusCode });
+    return NextResponse.json<ApiResponse>(
+      { success: false, message: "Unauthorized" },
+      { status: 401 }
+    );
   }
   const userId = jwttoken?._id;
 
@@ -31,12 +29,10 @@ export async function PATCH(req: NextRequest) {
   const formData = await req.formData();
   const file = formData.get("avatar") as File;
   if (!file) {
-    const response: ApiResponse = {
-      success: false,
-      message: "No file",
-      statusCode: 400,
-    };
-    return NextResponse.json(response, { status: response.statusCode });
+    return NextResponse.json<ApiResponse>(
+      { success: false, message: "No file" },
+      { status: 400 }
+    );
   }
 
   // 3. Delete old avatar from ImageKit if exists
@@ -74,18 +70,22 @@ export async function PATCH(req: NextRequest) {
     { new: true }
   );
   if (!user) {
-    const response: ApiResponse = {
-      success: false,
-      message: "User not found",
-      statusCode: 404,
-    };
-    return NextResponse.json(response, { status: response.statusCode });
+    return NextResponse.json<ApiResponse>(
+      { success: false, message: "User not found" },
+      {
+        status: 404,
+      }
+    );
   }
-  const response: ApiResponse = {
-    success: true,
-    message: "Avatar updated successfully",
-    data: { avatar: user.avatar },
-    statusCode: 200,
-  };
-  return NextResponse.json(response, { status: response.statusCode });
+
+  return NextResponse.json<ApiResponse>(
+    {
+      success: true,
+      message: "Avatar updated successfully",
+      data: { avatar: user.avatar },
+    },
+    {
+      status: 200,
+    }
+  );
 }

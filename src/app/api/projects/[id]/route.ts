@@ -11,10 +11,7 @@ import { updateProjectSchema } from "@/schemas/updateProject.schema";
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
-export async function GET(
-  request: Request,
-  { params }: RouteContext
-) {
+export async function GET(request: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?._id) {
@@ -62,10 +59,7 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: RouteContext
-) {
+export async function DELETE(request: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?._id) {
@@ -107,7 +101,6 @@ export async function DELETE(
     );
   }
 }
-
 
 export async function PATCH(request: Request, { params }: RouteContext) {
   try {
@@ -171,10 +164,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: RouteContext
-) {
+export async function PUT(request: Request, { params }: RouteContext) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?._id) {

@@ -11,11 +11,13 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
     const ownerID = session?.user?._id;
     if (!ownerID || !session) {
-      const response: ApiResponse = {
-        success: false,
-        message: "Unauthorized",
-      };
-      return NextResponse.json(response, { status: 401 });
+      return NextResponse.json<ApiResponse>(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
     }
     await connectToDatabase();
 
