@@ -10,14 +10,12 @@ export async function POST(request: Request) {
   try {
     //Connect to database and validate request body
     await connectToDatabase();
-    const { name, email, password, bussinessName, currency } =
+    const { name, email, password } =
       await request.json();
     const parseResult = signupSchema.safeParse({
       name,
       email,
-      password,
-      bussinessName,
-      currency
+      password
     });
     if (!parseResult.success) {
       return NextResponse.json<ApiResponse>(
@@ -62,16 +60,12 @@ export async function POST(request: Request) {
       existingUserUnverifiedByEmail.password = hashedPassword;
       existingUserUnverifiedByEmail.verificationToken = verificationToken;
       existingUserUnverifiedByEmail.ExpiresAt = expirationTime;
-      existingUserUnverifiedByEmail.bussinessName = bussinessName;
-      existingUserUnverifiedByEmail.currency = currency;
       await existingUserUnverifiedByEmail.save();
     } else {
       // Create a brand new user
       const newUser = new User({
         name,
         email,
-        bussinessName,
-        currency,
         password: hashedPassword,
         verificationToken,
         ExpiresAt: expirationTime,
