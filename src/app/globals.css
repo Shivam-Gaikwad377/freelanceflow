@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @theme {
     /* border-radius  */
     --radius-DEFAULT: 0.25rem;
@@ -191,3 +192,11 @@
         transition: none !important;
     }
 }
+.mesh-gradient {
+            background-color: #4648d4;
+            background-image: radial-gradient(at 0% 0%, hsla(242, 75%, 65%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(239, 83%, 80%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(242, 75%, 65%, 1) 0, transparent 50%);
+        }
+
+/* ---break---  */
