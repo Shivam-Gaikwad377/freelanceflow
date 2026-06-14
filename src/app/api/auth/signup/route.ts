@@ -68,6 +68,7 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         verificationToken,
+        bussinessName: name.split(" ")[0] + "'s Business", // Default business name based on user's name
         ExpiresAt: expirationTime,
         isVerified: false, // Remains false until they verify
       });
