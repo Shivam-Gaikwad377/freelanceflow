@@ -18,6 +18,7 @@ const page = () => {
       password: "",
     },
   });
+  const [existingEmail, setExistingEmail] = useState(false);
   const {
     register,
     handleSubmit,
@@ -29,8 +30,15 @@ const page = () => {
   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
     try {
       const response = await axios.post("/api/auth/signup", data);
+      if(response.status === 200) {
+        router.replace(`/verify?email=${data.email}`);
+
+      }
+      if(response.status === 400) {
+        setExistingEmail(true);
+      }
       console.log(response.data);
-      router.replace(`/verify?email=${data.email}`);
+      
     } catch (err: any) {
       form.setError("root", {
         type: "server",
@@ -123,6 +131,11 @@ const page = () => {
                     },
                   })}
                 />
+                {existingEmail && (
+                  <p className="font-body-sm text-error mt-xs">
+                    An account with this email already exists.
+                  </p>
+                )}
                 {errors.email && (
                   <p className="font-body-sm text-error mt-xs">
                     {typeof errors.email.message === "string"

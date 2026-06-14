@@ -1,6 +1,9 @@
+"use client"
 import React from "react";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+    const router = useRouter();
     return (
         <div>
             <header className="relative pt-xxl pb-xxl px-gutter md:px-lg text-center overflow-hidden flex flex-col justify-center items-center">
@@ -15,10 +18,10 @@ const Hero = () => {
                         invoices without the clutter.
                     </p>
                     <div className="pt-md flex flex-col sm:flex-row items-center justify-center gap-md entrance delay-300">
-                        <button className="bg-primary font-jakarta text-on-primary font-label-md text-label-lg py-4 px-8 rounded-full hover:opacity-90 hover:scale-105 transition-all active:scale-95 duration-200 ambient-shadow w-full cursor-pointer sm:w-auto">
+                        <button onClick={() => router.push("/register")} className="bg-primary font-jakarta text-on-primary font-label-md text-label-lg py-4 px-8 rounded-full hover:opacity-90 hover:scale-105 transition-all active:scale-95 duration-200 ambient-shadow w-full cursor-pointer sm:w-auto">
                             Get Started
                         </button>
-                        <button className="bg-surface-container font-jakarta cursor-pointer text-on-surface font-label-lg text-label-lg py-4 px-8 rounded-full hover:bg-surface-variant hover:scale-105 transition-all duration-200 active:scale-95 w-full sm:w-auto border border-outline-variant">
+                        <button onClick={() => router.push("/login")} className="bg-surface-container font-jakarta cursor-pointer text-on-surface font-label-lg text-label-lg py-4 px-8 rounded-full hover:bg-surface-variant hover:scale-105 transition-all duration-200 active:scale-95 w-full sm:w-auto border border-outline-variant">
                             Log in
                         </button>
                     </div>

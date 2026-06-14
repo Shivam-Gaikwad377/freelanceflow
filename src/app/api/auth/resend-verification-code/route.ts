@@ -29,10 +29,7 @@ export async function POST(request: Request) {
       );
     }
     //generate OTP and expiration time
-    const verificationToken = Math.random()
-      .toString(36)
-      .substring(2, 8)
-      .toUpperCase();
+    const verificationToken = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000);
     user.verificationToken = verificationToken;
     user.ExpiresAt = expirationTime;

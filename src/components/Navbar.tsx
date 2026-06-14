@@ -34,10 +34,10 @@ const Navbar = () => {
                         </a>
                     </div>
                     <div className="flex items-center gap-md">
-                        <button onClick={() => router.push("/login")} className="hidden md:block font-body-md text-body-md text-primary hover:opacity-90 transition-opacity active:scale-95 duration-200 py-2 px-4 rounded-full">
+                        <button onClick={() => router.push("/login")} className="hidden md:block font-body-md cursor-pointer text-body-md text-primary hover:opacity-90 transition-opacity active:scale-95 duration-200 py-2 px-4 rounded-full">
                             Login
                         </button>
-                        <button onClick={() => router.push("/register")} className="bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded-full hover:opacity-90 transition-opacity active:scale-95 duration-200 soft-shadow">
+                        <button onClick={() => router.push("/register")} className="bg-primary cursor-pointer text-on-primary font-label-md text-label-md py-3 px-6 rounded-full hover:opacity-90 transition-opacity active:scale-95 duration-200 soft-shadow">
                             Get Started
                         </button>
                     </div>

@@ -8,8 +8,8 @@ export async function POST(request: Request) {
     await connectToDatabase();
     const { email, verificationToken } = await request.json();
 
-    const decodedEmail = decodeURIComponent(email);
-    const user = await User.findOne({ email: decodedEmail });
+   
+    const user = await User.findOne({ email });
 
     if (!user) {
       return NextResponse.json<ApiResponse>(
