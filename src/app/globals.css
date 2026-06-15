@@ -200,4 +200,41 @@
                 radial-gradient(at 100% 0%, hsla(242, 75%, 65%, 1) 0, transparent 50%);
         }
 
-/* ---break---  */
+/* All toasts base */
+[data-sonner-toast] {
+  font-family: var(--font-body) !important;
+  border-radius: var(--radius) !important;
+}
+
+/* Success */
+[data-sonner-toast][data-type="success"] {
+  background-color: #dcfce7 !important;
+  color: #15803d !important;
+  border-color: #86efac !important;
+}
+
+/* Error */
+[data-sonner-toast][data-type="error"] {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border-color: #fca5a5 !important;
+}
+
+/* Warning */
+[data-sonner-toast][data-type="warning"] {
+  background-color: #fef9c3 !important;
+  color: #a16207 !important;
+  border-color: #fde047 !important;
+}
+
+/* Info */
+[data-sonner-toast][data-type="info"] {
+  background-color: #dbeafe !important;
+  color: #1d4ed8 !important;
+  border-color: #93c5fd !important;
+}
+
+/* Icon color inherits from toast text */
+[data-sonner-toast] [data-icon] svg {
+  color: inherit !important;
+}

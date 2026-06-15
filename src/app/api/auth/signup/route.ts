@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs";
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import { NextResponse } from "next/server";
-import { signupSchema } from "@/schemas/signup.schemas"; 
-
+import { signupSchema } from "@/schemas/signup.schemas";
 export async function POST(request: Request) {
   try {
     //Connect to database and validate request body
@@ -41,7 +40,7 @@ export async function POST(request: Request) {
           message:
             "Email is already in use. Please use a different email or log in.",
         },
-        { status: 400 }
+        { status: 401 }
       );
     }
     //generate OTP and expiration time 

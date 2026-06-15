@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 const page = () => {
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -30,20 +31,32 @@ const page = () => {
   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
     try {
       const response = await axios.post("/api/auth/signup", data);
-      if(response.status === 200) {
-        router.replace(`/verify?email=${data.email}`);
 
+      // Only 2xx reaches here
+      if (response.status === 201) {
+        toast.success(
+          "Signup successful! Please check your email for the OTP.",
+          {
+            position: "top-right",
+          }
+        );
+        router.replace(`/verify?email=${data.email}`);
       }
-      if(response.status === 400) {
-        setExistingEmail(true);
-      }
-      console.log(response.data);
-      
     } catch (err: any) {
-      form.setError("root", {
-        type: "server",
-        message: err.response?.data?.message || "An unexpected error occurred",
-      });
+      const status = err.response?.status;
+      const message = err.response?.data?.message;
+
+      if (status === 401) {
+        setExistingEmail(true); // ← now actually called
+        toast.error(message || "Email already in use.", {
+          position: "top-right",
+        });
+      } else {
+        form.setError("root", {
+          type: "server",
+          message: message || "An unexpected error occurred",
+        });
+      }
     }
   };
 
@@ -51,7 +64,7 @@ const page = () => {
     <div className="bg-surface-container-lowest font-body-md text-on-background antialiased min-h-screen flex selection:bg-primary selection:text-on-primary">
       <div className="flex w-full min-h-screen">
         {/* <!-- Left Section: Form --> */}
-        <main className="w-full lg:w-1/2 flex flex-col justify-center px-lg sm:px-xl lg:px-xxl py-xl relative">
+        <main className="w-full lg:w-1/2 flex flex-col justify-center px-lg sm:px-xl gap-10  lg:px-xxl py-xl relative">
           {/* <!-- Brand Anchor (Mobile/Tablet visible, Desktop optional but good for context) --> */}
           <div className="absolute top-lg left-lg sm:top-xl sm:left-xl">
             <a
@@ -67,7 +80,7 @@ const page = () => {
               FreelanceFlow
             </a>
           </div>
-          <div className="w-full  mx-auto mt-xxl lg:mt-0">
+          <div className="w-full  mx-auto mt-xxl">
             <div className="mb-xl w-auto p-sm">
               <h1 className="font-display text-headline-lg text-on-surface text-center mb-sm">
                 Create your account
@@ -103,11 +116,12 @@ const page = () => {
                   })}
                 />
                 {errors.name && (
-                  <p className="font-body-sm text-error mt-xs">
+                  <p className="text-red-500 text-sm mt-1">
                     {typeof errors.name.message === "string"
                       ? errors.name.message
                       : "Invalid name"}
                   </p>
+
                 )}
               </div>
               {/* <!-- Email --> */}
@@ -131,16 +145,12 @@ const page = () => {
                     },
                   })}
                 />
-                {existingEmail && (
-                  <p className="font-body-sm text-error mt-xs">
-                    An account with this email already exists.
-                  </p>
-                )}
+                
                 {errors.email && (
-                  <p className="font-body-sm text-error mt-xs">
+                  <p className="text-red-500 text-sm mt-1">
                     {typeof errors.email.message === "string"
                       ? errors.email.message
-                      : "Invalid email"}
+                      : "Invalid email address"}
                   </p>
                 )}
               </div>
@@ -166,7 +176,7 @@ const page = () => {
                   })}
                 />
                 {errors.password && (
-                  <p className="font-body-sm text-error mt-xs">
+                <p className="text-red-500 text-sm mt-1">
                     {typeof errors.password.message === "string"
                       ? errors.password.message
                       : "Invalid password"}

@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signInSchema } from "@/schemas/signin.schema";
 import axios from "axios";
+import { toast } from "sonner";
 
 export default function SignIn() {
   const router = useRouter();
@@ -37,9 +38,11 @@ export default function SignIn() {
         password: data.password,
       });
       console.log(result);
-      if (result?.error) {
+      if (result?.error) {  
+        toast.error(result.error, {position: "top-right"});
         setError(result.error);
-      } else if (result?.url) {
+      } else if (result?.ok) {
+        toast.success("Login successful! Redirecting to dashboard...", {position: "top-right"});
         router.replace("/dashboard");
       }
     } catch (error) {
