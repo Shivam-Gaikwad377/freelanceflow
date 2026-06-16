@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-const TopNavbar = ({source}:{source: string}) => {
+const TopNavbar = ({ source}: { source: string }) => {
   return (
     <header className="w-full h-16 bg-surface/80  backdrop-blur-md flex justify-between items-center px-lg sticky top-0 z-10">
       <div className="md:hidden flex items-center">

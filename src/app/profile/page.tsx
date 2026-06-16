@@ -51,7 +51,7 @@ const page = () => {
       toast.success("Password changed successfully!");
     }
     catch (error: any) {
-      toast.error("Error changing password: " + error.response?.data?.message, {position: "top-right"});
+      toast.error("Error changing password: " + error.response?.data?.message, );
     }
   };
   return (
@@ -269,17 +269,15 @@ const page = () => {
                           onChange={(e)=> setConfirmNewPassword(e.target.value)}
                         />
                       </div>
-                      {
-                        newPassword && confirmNewPassword && newPassword !== confirmNewPassword && (
-                          <p className="text-sm text-red-500 mt-1 col-span-full">
-                            New password and confirmation do not match.
-                          </p>
-                        )
-                      }
+                      {confirmNewPassword && newPassword !== confirmNewPassword && (
+                        <p className="text-red-500 text-sm mt-1">
+                          New password and confirmation do not match.
+                        </p>
+                      )}
                     </div>
                     <div className="flex justify-start">
                       <button
-                        className="px-md py-sm bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors"
+                        className="px-md py-sm cursor-pointer active:scale-98 bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors"
                         type="button"
                         onClick={() => handleChangePassword(currentPassword, newPassword)}
                       >
