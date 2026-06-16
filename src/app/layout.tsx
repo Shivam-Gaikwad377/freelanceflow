@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans, Geist } from 'next/font/google'
 import './globals.css'
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner"
+import Providers from './providers';
 
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -44,7 +45,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"></link>
       </head>
       <body className="min-h-full flex flex-col">
-        {children}
+        <Providers>{children}</Providers>
         <Toaster />
       </body>
     </html>

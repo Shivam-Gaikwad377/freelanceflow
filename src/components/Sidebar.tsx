@@ -1,9 +1,11 @@
-"use client"
+"use client";
 import React from "react";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 const Sidebar = () => {
-  const [activeItem, setActiveItem] = useState("dashboard");
+  const activeItem : any = usePathname().split("/")[1] ;
+  
   return (
     <>
       <nav className="hidden md:flex flex-col p-md w-64 h-screen bg-surface-container-lowest border-r border-outline-variant fixed left-0 top-0 z-20">
@@ -24,68 +26,84 @@ const Sidebar = () => {
           + New Project
         </button>
         <div className="flex-1 space-y-sm">
-          <Link href="/dashboard"
-              className="flex items-center space-x-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
-              
+          <Link
+            href="/dashboard"
+            className={
+              activeItem === "dashboard"
+                ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
+                : "flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
+            }
+            
+          >
+            <span className="material-symbols-outlined" data-icon="dashboard">
+              dashboard
+            </span>
+            <span>Dashboard</span>
+          </Link>
+          <Link
+            href="/projects"
+            
+            className={
+              activeItem === "projects"
+                ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
+                : "flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
+            }
+          >
+            <span className="material-symbols-outlined" data-icon="work">
+              work
+            </span>
+            <span>Projects</span>
+          </Link>
+          <Link
+            href="/invoices"
+            
+            className={
+              activeItem === "invoices"
+                ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
+                : "flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
+            }
+          >
+            <span
+              className="material-symbols-outlined"
+              data-icon="receipt_long"
             >
-              <span className="material-symbols-outlined" data-icon="dashboard">
-                dashboard
-              </span>
-              <span>Dashboard</span>
-            
+              receipt_long
+            </span>
+            <span>Invoices</span>
           </Link>
-          <Link href="/projects"
+          <Link
+            href="/clients"
             
-              className="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
-              >
-            
-              <span className="material-symbols-outlined" data-icon="work">
-                work
-              </span>
-              <span>Projects</span>
-            
+            className={
+              activeItem === "clients"
+                ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
+                : "flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
+            }
+          >
+            <span className="material-symbols-outlined" data-icon="group">
+              group
+            </span>
+            <span>Clients</span>
           </Link>
-          <Link href="/invoices"
+          <Link
+            href="/profile"
             
-              className="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
-              >
-            
-              <span
-                className="material-symbols-outlined"
-                data-icon="receipt_long"
-              >
-                receipt_long
-              </span>
-              <span>Invoices</span>
-            
-          </Link>
-          <Link href="/clients"
-            
-              className="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
-             >
-            
-              <span className="material-symbols-outlined" data-icon="group">
-                group
-              </span>
-              <span>Clients</span>
-            
-          </Link>
-          <Link href="/settings"
-            
-              className="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
-              >
-            
-              <span className="material-symbols-outlined" data-icon="settings">
-                settings
-              </span>
-              <span>Settings</span>
-           
+            className={
+              activeItem === "profile"
+                ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
+                : "flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
+            }
+          >
+            <span className="material-symbols-outlined" data-icon="settings">
+              settings
+            </span>
+            <span>Profile</span>
           </Link>
         </div>
         <div className="pt-4 border-t border-outline-variant space-y-sm">
-          <Link href="/support"
+          <Link
+            href="/support"
             className="flex items-center space-x-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
-            
           >
             <span
               className="material-symbols-outlined"
@@ -94,7 +112,7 @@ const Sidebar = () => {
               contact_support
             </span>
             <span>Support</span>
-            </Link>
+          </Link>
           <Link
             className="flex items-center space-x-3 px-4 py-3 text-error hover:bg-error-container rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
             href="/logout"
