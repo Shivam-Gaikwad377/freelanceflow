@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     return NextResponse.json<ApiResponse>(
       {
         success: true,
-        message: "Password reset email sent successfully",
+        message: "Password reset email sent successfully. Please check your email for the OTP.",
       },
       { status: 200 }
     );
