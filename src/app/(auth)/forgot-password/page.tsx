@@ -4,7 +4,7 @@ import React from "react";
 import {useRef, useState} from "react";
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
-
+import ApiResponse from "@/types/ApiResponse";
 const page = () => {
     
     const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ const page = () => {
             return;
         }
         try {
-            const response = await axios.post("/api/auth/forgot-password", {email});
+            const response: ApiResponse = await axios.post("/api/auth/forgot-password", {email});
             if (response.data.success) {
                 toast.success("Password reset email sent successfully. Please check your email for the OTP.");
                 router.replace("/reset-password?email=" + email);
@@ -41,7 +41,7 @@ const page = () => {
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5cLUWEf_p8Gvu43B9igYz_nNUVekCCOffUwGQTPRoPH5Dv-LyuZP1lV7BxAY8euVUlOgn4TfdWe5k3sWh1W2hm8fcuRC1gDae0tFFrddkytYuucosY2ZSo3qJYZBnY3UuHH9H3N7LBryRFwLhwmQsmEtYyNyxht3ARorldYHsmRYjfsev0gT3ksHXTeP8rmn9_418j3z64-QprUK7TE-jHrf_X6Eo_27DgqeDSWzTazURLWHqM9m_U5i32sHArWwNdA3blQ_BK_4m"
           />
         </div>
-        <div className="w-full max-w-[440px] bg-background text-on-background glass-card rounded-lg shadow-xl overflow-hidden transition-all duration-500 ease-in-out transform scale-100">
+        <div className="w-full max-w-110 bg-background text-on-background glass-card rounded-lg shadow-xl overflow-hidden transition-all duration-500 ease-in-out transform scale-100">
           <div className="px-xl py-xxl flex flex-col gap-lg">
             {/* <!-- Brand Identity --> */}
             <div className="flex flex-col items-center gap-sm">

@@ -4,6 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import { toast } from "sonner";
+import ApiResponse from "@/types/ApiResponse";
 
 import { useSearchParams } from "next/navigation";
 
@@ -46,18 +48,18 @@ const email = searchParams.get("email") || ""
     event.preventDefault();
     const enteredOtp = otp.join("");
     try {
-      const response = await axios.post("/api/auth/verify-email", {
+      const response: ApiResponse = await axios.post("/api/auth/verify-email", {
         email,
         verificationToken: enteredOtp,
       });
-      router.push("/dashboard");
+      router.replace("/login");
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid verification code. Please try again.");
     }
   };
   const handlePaste = (e: React.ClipboardEvent) => {
-    const pasted = e.clipboardData.getData("text").slice(0, 6);
-    if (!/^\d+$/.test(pasted)) return;
+    const pasted = e.clipboardData?.getData("text")?.slice(0, 6);
+    if (!pasted || !/^\d+$/.test(pasted)) return;
 
     const newOtp = [...otp];
     pasted.split("").forEach((char, i) => (newOtp[i] = char));
@@ -138,7 +140,7 @@ const email = searchParams.get("email") || ""
                 {error}
               </p>
             )}
-            <p className="font-body-md text-body-md text-on-surface-variant text-center mb-xl max-w-[340px]">
+            <p className="font-body-md text-body-md text-on-surface-variant text-center mb-xl max-w-85">
               We've sent a 6-digit code to your email address. Please enter it
               below to continue.
             </p>

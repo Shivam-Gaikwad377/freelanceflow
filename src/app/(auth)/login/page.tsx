@@ -10,6 +10,8 @@ import * as z from "zod";
 import { signInSchema } from "@/schemas/signin.schema";
 import axios from "axios";
 import { toast } from "sonner";
+import ApiResponse from "@/types/ApiResponse";
+import Link from "next/link";
 
 export default function SignIn() {
   const router = useRouter();
@@ -32,7 +34,7 @@ export default function SignIn() {
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     try {
-      const result = await signIn("credentials", {
+      const result  = await signIn("credentials", {
         redirect: false,
         identifier: data.identifier,
         password: data.password,

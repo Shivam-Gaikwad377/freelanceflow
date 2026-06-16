@@ -10,6 +10,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import ApiResponse from "@/types/ApiResponse";
 const page = () => {
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -30,10 +31,10 @@ const page = () => {
 
   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
     try {
-      const response = await axios.post("/api/auth/signup", data);
+      const response: ApiResponse = await axios.post("/api/auth/signup", data);
 
       // Only 2xx reaches here
-      if (response.status === 201) {
+      if (response.success) {
         toast.success(
           "Signup successful! Please check your email for the OTP.",
           {
@@ -186,7 +187,7 @@ const page = () => {
               {/* <!-- Primary Action --> */}
               <button
                 disabled={isSubmitting}
-                className="w-full d bg-primary cursor-pointer hover:bg-surface-tint active:scale-95 text-on-primary font-label-md rounded-lg py-[12px] px-lg transition-all shadow-[0_4px_14px_0_rgba(70,72,212,0.39)] hover:shadow-[0_6px_20px_rgba(70,72,212,0.23)] hover:-translate-y-[1px]"
+                className="w-full d bg-primary cursor-pointer hover:bg-surface-tint active:scale-95 text-on-primary font-label-md rounded-lg py-3 px-lg transition-all shadow-[0_4px_14px_0_rgba(70,72,212,0.39)] hover:shadow-[0_6px_20px_rgba(70,72,212,0.23)] hover:-translate-y-px"
                 type="submit"
               >
                 Create Account
@@ -201,7 +202,7 @@ const page = () => {
             </div>
             <div className="mt-lg grid grid-cols-2 gap-md">
               <button
-                className="flex items-center justify-center gap-sm w-auto border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md rounded-lg py-[10px] px-md transition-colors shadow-sm"
+                className="flex items-center justify-center gap-sm w-auto border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md rounded-lg py-2.5 px-md transition-colors shadow-sm"
                 type="button"
               >
                 <svg
@@ -230,7 +231,7 @@ const page = () => {
                 Google
               </button>
               <button
-                className="flex items-center justify-center gap-sm w-auto border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md rounded-lg py-[10px] px-md transition-colors shadow-sm"
+                className="flex items-center justify-center gap-sm w-auto border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md rounded-lg py-2.5 px-md transition-colors shadow-sm"
                 type="button"
               >
                 <svg
