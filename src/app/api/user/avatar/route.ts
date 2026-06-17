@@ -1,91 +1,127 @@
 // app/api/user/avatar/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { upload } from "@imagekit/next";
-import { getUploadAuthParams } from "@imagekit/next/server";
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import { getToken } from "next-auth/jwt";
-import imagekit from "imagekit";
+import ImageKit from "imagekit"; // Fixed casing casing conventions
 import ApiResponse from "@/types/ApiResponse";
+import formData from "form-data"; // Import form-data for handling multipart/form-data requests
 
-const imagekitClient = new imagekit({
+// Initialize ImageKit Client
+const imagekitClient = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT!,
 });
 
 export async function PATCH(req: NextRequest) {
-  // 1. Authenticate user
-  const jwttoken = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  if (!jwttoken) {
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
-    );
-  }
-  const userId = jwttoken?._id;
-
-  //2. get the file from the request
-  const formData = await req.formData();
-  const file = formData.get("avatar") as File;
-  if (!file) {
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: "No file" },
-      { status: 400 }
-    );
-  }
-
-  // 3. Delete old avatar from ImageKit if exists
-  await connectToDatabase();
-  const existingUser = await User.findById(userId);
-  if (existingUser?.avatar?.avatarFileId) {
-    await imagekitClient.deleteFile(existingUser.avatar.avatarFileId);
-  }
-
-  // 3. Upload to ImageKit
-  const { token, expire, signature } = getUploadAuthParams({
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
-  });
-
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  const result = await imagekitClient.upload({
-    file: buffer,
-    fileName: file.name,
-    folder: "/avatars",
-    useUniqueFileName: true,
-  });
-
-  // 3. Save URL to MongoDB
-
-  const user = await User.findByIdAndUpdate(
-    userId,
-    {
-      avatar: {
-        avatarUrl: result.url,
-        avatarFileId: result.fileId, // store this to delete old avatar later
-      },
-    },
-    { new: true }
-  );
-  if (!user) {
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: "User not found" },
-      {
-        status: 404,
-      }
-    );
-  }
-
-  return NextResponse.json<ApiResponse>(
-    {
-      success: true,
-      message: "Avatar updated successfully",
-      data: { avatar: user.avatar },
-    },
-    {
-      status: 200,
+  try {
+    // 1. Authenticate user
+    const jwttoken = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    if (!jwttoken) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
     }
-  );
+    const userId = jwttoken?._id;
+
+    // 2. Get the file from the request
+    const formData = await req.formData();
+    const file = formData.get("avatar");
+    if (!file) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "No file provided" },
+        { status: 400 }
+      );
+    }
+
+    await connectToDatabase();
+
+    // 3. Delete old avatar from ImageKit if it exists
+    const existingUser = await User.findById(userId);
+    if (!existingUser) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    if (existingUser?.avatar?.avatarFileId) {
+      try {
+        await imagekitClient.deleteFile(existingUser.avatar.avatarFileId);
+      } catch (deleteError) {
+        // Log the error but don't halt execution if the file is already gone
+        console.error(
+          "Failed to delete old avatar from ImageKit:",
+          deleteError
+        );
+      }
+    }
+
+    let buffer: Buffer;
+
+    // CHECK: Is it a real file/blob instance?
+    if (file instanceof Blob) {
+      const bytes = await file.arrayBuffer();
+      buffer = Buffer.from(bytes);
+    } else {
+      // If it's a string or base64 data, convert it directly from text
+      const stringData = String(file);
+
+      // If the frontend accidentally stringified a base64 Data URL (e.g., data:image/png;base64,...)
+      if (stringData.startsWith("data:")) {
+        const base64Data = stringData.split(",")[1];
+        buffer = Buffer.from(base64Data, "base64");
+      } else {
+        // Standard string fallback
+        buffer = Buffer.from(stringData);
+      }
+    }
+
+    // 5. Upload to ImageKit
+    const result = await imagekitClient.upload({
+      file: buffer,
+      fileName: (file as any).name || "avatar",
+      folder: "/avatars",
+      useUniqueFileName: true,
+    });
+
+    // 6. Save URL to MongoDB
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        avatar: {
+          avatarUrl: result.url,
+          avatarFileId: result.fileId,
+        },
+      },
+      { new: true }
+    );
+    console.log("ImageKit Raw Result:", result);
+    console.log("URL received:", result.url);
+    console.log("File ID received:", result.fileId);
+    console.log("--- DEBUG END ---");
+
+    return NextResponse.json<ApiResponse>(
+      {
+        success: true,
+        message: "Avatar updated successfully",
+        data: { avatar: updatedUser!.avatar },
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("Error updating avatar:", error);
+    return NextResponse.json<ApiResponse>(
+      {
+        success: false,
+        message: error.message || "An error occurred while updating the avatar",
+      },
+      { status: 500 }
+    );
+  }
 }

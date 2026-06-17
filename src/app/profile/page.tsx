@@ -1,11 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Sidebar from "@/components/Sidebar";
 import TopNavbar from "@/components/TopNavbar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
+import formData from "form-data";
 
 const page = () => {
   const session = useSession();
@@ -21,6 +22,35 @@ const page = () => {
     { code: "AUD", symbol: "A$" },
     { code: "CHF", symbol: "CHF" },
   ];
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const handleEditPictureClick = () => {
+    if (imageInputRef.current) {
+      imageInputRef.current.click();
+    }
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 1. Grab the file directly from the event target
+    const targetFile = e.target.files?.[0];
+    if (!targetFile) return;
+
+    // Update local state for tracking if needed
+    setImageFile(targetFile);
+    try {
+      const uploadData = new FormData();
+      uploadData.append("avatar", imageFile as File);
+
+      const res = await axios.patch("/api/user/avatar", uploadData);
+      toast.success("Avatar updated successfully!");
+      // Refresh profile data to show new avatar
+    } catch (error) {
+      toast.error("Error updating avatar.");
+    } finally {
+      console.log("Updated profile data:", profile.avatar.avatarUrl);
+    }
+  };
 
   const [editing, setEditing] = useState(false);
   useEffect(() => {
@@ -38,20 +68,22 @@ const page = () => {
     } catch (error: any) {
       toast.error(("Error fetching profile" + error.message) as string);
     }
-  },[]);
+  }, []);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const handleChangePassword = async (currentPassword: string, newPassword: string) => {
+  const handleChangePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ) => {
     try {
       const response = await axios.put("/api/user/change-password", {
         currentPassword,
         newPassword,
       });
       toast.success("Password changed successfully!");
-    }
-    catch (error: any) {
-      toast.error("Error changing password: " + error.response?.data?.message, );
+    } catch (error: any) {
+      toast.error("Error changing password: " + error.response?.data?.message);
     }
   };
   return (
@@ -89,12 +121,22 @@ const page = () => {
                     {profile?.email || "Email not set"}
                   </p>
                   <div className="mt-md">
-                    <button className="px-md py-sm bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors flex items-center gap-xs">
+                    <button
+                      onClick={handleEditPictureClick}
+                      className="px-md py-sm bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors flex items-center gap-xs"
+                    >
                       <span className="material-symbols-outlined text-[18px]">
                         photo_camera
                       </span>
                       Edit Picture
                     </button>
+                    <input
+                      className="px-md py-sm hidden bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors  items-center gap-xs"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      ref={imageInputRef}
+                    />
                   </div>
                 </div>
               </div>
@@ -202,7 +244,7 @@ const page = () => {
                       <button
                         className="px-lg py-3 bg-transparent text-primary font-label-md text-label-md rounded hover:bg-surface-container-low transition-colors"
                         type="button"
-                        onClick={()=> setEditing(false)}
+                        onClick={() => setEditing(false)}
                       >
                         Cancel
                       </button>
@@ -218,7 +260,7 @@ const page = () => {
                       <button
                         className="px-lg py-3 bg-primary text-on-primary font-label-md text-label-md rounded shadow-level-2 hover:bg-surface-tint transition-colors"
                         type="button"
-                        onClick={()=> setEditing(true)}
+                        onClick={() => setEditing(true)}
                       >
                         Edit Profile
                       </button>
@@ -240,7 +282,7 @@ const page = () => {
                           type="password"
                           placeholder="••••••••"
                           value={currentPassword}
-                          onChange={(e)=> setCurrentPassword(e.target.value)}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
                         />
                       </div>
                     </div>
@@ -254,7 +296,7 @@ const page = () => {
                           type="password"
                           placeholder="••••••••"
                           value={newPassword}
-                          onChange={(e)=> setNewPassword(e.target.value)}
+                          onChange={(e) => setNewPassword(e.target.value)}
                         />
                       </div>
                       <div>
@@ -266,20 +308,25 @@ const page = () => {
                           type="password"
                           placeholder="••••••••"
                           value={confirmNewPassword}
-                          onChange={(e)=> setConfirmNewPassword(e.target.value)}
+                          onChange={(e) =>
+                            setConfirmNewPassword(e.target.value)
+                          }
                         />
                       </div>
-                      {confirmNewPassword && newPassword !== confirmNewPassword && (
-                        <p className="text-red-500 text-sm mt-1">
-                          New password and confirmation do not match.
-                        </p>
-                      )}
+                      {confirmNewPassword &&
+                        newPassword !== confirmNewPassword && (
+                          <p className="text-red-500 text-sm mt-1">
+                            New password and confirmation do not match.
+                          </p>
+                        )}
                     </div>
                     <div className="flex justify-start">
                       <button
                         className="px-md py-sm cursor-pointer active:scale-98 bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors"
                         type="button"
-                        onClick={() => handleChangePassword(currentPassword, newPassword)}
+                        onClick={() =>
+                          handleChangePassword(currentPassword, newPassword)
+                        }
                       >
                         Update Password
                       </button>
