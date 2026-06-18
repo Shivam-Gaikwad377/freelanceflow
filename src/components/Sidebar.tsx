@@ -3,9 +3,13 @@ import React from "react";
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Router } from "lucide-react";
 const Sidebar = () => {
   const activeItem : any = usePathname().split("/")[1] ;
-  
+  const router = useRouter();
+
   return (
     <>
       <nav className="hidden md:flex flex-col p-md w-64 h-screen bg-surface-container-lowest border-r border-outline-variant fixed left-0 top-0 z-20">
@@ -116,6 +120,11 @@ const Sidebar = () => {
           <Link
             className="flex items-center space-x-3 px-4 py-3 text-error hover:bg-error-container rounded-lg font-label-md transition-transform duration-200 hover:scale-[1.02]"
             href="/logout"
+            onClick={(e) => {
+              e.preventDefault();
+              signOut();
+              router.replace("/login");
+            }}
           >
             <span className="material-symbols-outlined" data-icon="logout">
               logout

@@ -25,7 +25,7 @@ const page = () => {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  
+
   const handleEditPictureClick = () => {
     if (imageInputRef.current) {
       imageInputRef.current.click();
@@ -92,21 +92,30 @@ const page = () => {
   const [name, setName] = useState(profile?.name || "");
   const [email, setEmail] = useState(profile?.email || "");
   const [businessName, setBusinessName] = useState(profile?.businessName || "");
-  const [currency, setCurrency] = useState(profile?.currency || "");  
-  const[emailEdited, setEmailEdited] = useState(false);
-  const handleProfileUpdate = async (name: string, email: string, businessName: string, currency: string) => {
+  const [currency, setCurrency] = useState(profile?.currency || "");
+  const [emailEdited, setEmailEdited] = useState(false);
+  const handleProfileUpdate = async (
+    name: string,
+    email: string,
+    businessName: string,
+    currency: string
+  ) => {
     try {
       const response = await axios.patch("/api/user/Profile", {
         name,
         businessName,
-        currency
+        currency,
       });
-      const responseEmail = await axios.put("/api/user/email/email-change", {
-        newEmail: email,
-      });
-      if(responseEmail.data.success){
-        toast.success("Email change request sent. Please verify your new email.");
-        
+      if (email !== profile?.email) {
+        const responseEmail = await axios.put("/api/user/email/email-change", {
+          newEmail: email,
+        });
+
+        if (responseEmail.data.success) {
+          toast.success(
+            "Email change request sent. Please verify your new email."
+          );
+        }
       }
       const updatedProfile = await axios.get("/api/user/Profile");
       setProfile(updatedProfile.data.data);
@@ -117,7 +126,6 @@ const page = () => {
     }
   };
   const handleEmailVerification = async (newEmail: string) => {
-    
     router.push("/verify-email?newEmail=" + encodeURIComponent(newEmail));
   };
   return (
@@ -191,9 +199,7 @@ const page = () => {
                         <input
                           className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface"
                           type="text"
-                          
                           onChange={(e) => setName(e.target.value)}
-                          
                         />
                       ) : (
                         <p className="font-body-md text-body-md text-on-surface">
@@ -209,10 +215,8 @@ const page = () => {
                         <input
                           className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface"
                           type="email"
-                          
                           onChange={(e) => {
-                            setEmail(e.target.value)
-                            
+                            setEmail(e.target.value);
                           }}
                         />
                       ) : (
@@ -220,9 +224,11 @@ const page = () => {
                           {profile?.email || "No email address set"}
                         </p>
                       )}
-                      {!profile.isVerified && (
-                        <button className="mt-2 px-md py-sm bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors"
-                        onClick={() => handleEmailVerification(email)}>
+                      {!profile?.isVerified && (
+                        <button
+                          className="mt-2 px-md py-sm bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors"
+                          onClick={() => handleEmailVerification(email)}
+                        >
                           Verify Email
                         </button>
                       )}
@@ -243,12 +249,11 @@ const page = () => {
                         <input
                           className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface"
                           type="text"
-
                           onChange={(e) => setBusinessName(e.target.value)}
                         />
                       ) : (
                         <p className="font-body-md text-body-md text-on-surface">
-                          {profile?.businessName || "No business name set"}
+                          {profile?.bussinessName || "No business name set"}
                         </p>
                       )}
                     </div>
@@ -304,8 +309,13 @@ const page = () => {
                       <button
                         className="px-lg py-3 bg-primary text-on-primary font-label-md text-label-md rounded shadow-level-2 hover:bg-surface-tint transition-colors"
                         type="button"
-                        onClick={() => handleProfileUpdate(name, email, businessName, currency)
-                          
+                        onClick={() =>
+                          handleProfileUpdate(
+                            name,
+                            email,
+                            businessName,
+                            currency
+                          )
                         }
                       >
                         Save Changes

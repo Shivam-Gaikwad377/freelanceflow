@@ -67,6 +67,7 @@ export async function PUT(request: Request) {
       .substring(2, 8)
       .toUpperCase();
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000);
+    
     existingUser.verificationToken = verificationToken;
     existingUser.ExpiresAt = expirationTime;
     existingUser.pendingEmail = newEmail;
