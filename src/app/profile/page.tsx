@@ -25,7 +25,7 @@ const page = () => {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const emailChanged = useRef(false);
+  
   const handleEditPictureClick = () => {
     if (imageInputRef.current) {
       imageInputRef.current.click();
@@ -117,6 +117,7 @@ const page = () => {
     }
   };
   const handleEmailVerification = async (newEmail: string) => {
+    
     router.push("/verify-email?newEmail=" + encodeURIComponent(newEmail));
   };
   return (
@@ -210,8 +211,8 @@ const page = () => {
                           type="email"
                           
                           onChange={(e) => {
-                            setEmail(e.target.value);
-                            emailChanged.current = true;
+                            setEmail(e.target.value)
+                            
                           }}
                         />
                       ) : (
@@ -219,7 +220,7 @@ const page = () => {
                           {profile?.email || "No email address set"}
                         </p>
                       )}
-                      {emailChanged.current && (
+                      {!profile.isVerified && (
                         <button className="mt-2 px-md py-sm bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors"
                         onClick={() => handleEmailVerification(email)}>
                           Verify Email

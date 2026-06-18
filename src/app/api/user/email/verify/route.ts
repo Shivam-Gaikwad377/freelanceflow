@@ -59,6 +59,7 @@ export async function PUT(request: Request) {
     user.ExpiresAt = undefined;
     user.email = user.pendingEmail;
     user.pendingEmail = undefined;
+    user.isVerified = true;
     await user.save();
     return NextResponse.json<ApiResponse>(
       {

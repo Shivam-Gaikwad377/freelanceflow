@@ -70,6 +70,7 @@ export async function PUT(request: Request) {
     existingUser.verificationToken = verificationToken;
     existingUser.ExpiresAt = expirationTime;
     existingUser.pendingEmail = newEmail;
+    existingUser.isVerified = false;
     await existingUser.save();
     const emailResponse = await sendVerificationEmail(
       newEmail,
