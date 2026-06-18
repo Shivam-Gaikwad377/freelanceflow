@@ -25,6 +25,7 @@ const page = () => {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const emailChanged = useRef(false);
   const handleEditPictureClick = () => {
     if (imageInputRef.current) {
       imageInputRef.current.click();
@@ -87,6 +88,36 @@ const page = () => {
     } catch (error: any) {
       toast.error("Error changing password: " + error.response?.data?.message);
     }
+  };
+  const [name, setName] = useState(profile?.name || "");
+  const [email, setEmail] = useState(profile?.email || "");
+  const [businessName, setBusinessName] = useState(profile?.businessName || "");
+  const [currency, setCurrency] = useState(profile?.currency || "");  
+  const[emailEdited, setEmailEdited] = useState(false);
+  const handleProfileUpdate = async (name: string, email: string, businessName: string, currency: string) => {
+    try {
+      const response = await axios.patch("/api/user/Profile", {
+        name,
+        businessName,
+        currency
+      });
+      const responseEmail = await axios.put("/api/user/email/email-change", {
+        newEmail: email,
+      });
+      if(responseEmail.data.success){
+        toast.success("Email change request sent. Please verify your new email.");
+        
+      }
+      const updatedProfile = await axios.get("/api/user/Profile");
+      setProfile(updatedProfile.data.data);
+      toast.success("Profile updated successfully!");
+      setEditing(false);
+    } catch (error: any) {
+      toast.error("Error updating profile: " + error.response?.data?.message);
+    }
+  };
+  const handleEmailVerification = async (newEmail: string) => {
+    router.push("/verify-email?newEmail=" + encodeURIComponent(newEmail));
   };
   return (
     <div>
@@ -159,7 +190,9 @@ const page = () => {
                         <input
                           className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface"
                           type="text"
-                          value={profile?.name || ""}
+                          
+                          onChange={(e) => setName(e.target.value)}
+                          
                         />
                       ) : (
                         <p className="font-body-md text-body-md text-on-surface">
@@ -175,12 +208,22 @@ const page = () => {
                         <input
                           className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface"
                           type="email"
-                          value={profile?.email || ""}
+                          
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            emailChanged.current = true;
+                          }}
                         />
                       ) : (
                         <p className="font-body-md text-body-md text-on-surface">
                           {profile?.email || "No email address set"}
                         </p>
+                      )}
+                      {emailChanged.current && (
+                        <button className="mt-2 px-md py-sm bg-surface-container-high text-on-surface font-label-md text-label-md rounded border border-outline-variant hover:bg-surface-variant transition-colors"
+                        onClick={() => handleEmailVerification(email)}>
+                          Verify Email
+                        </button>
                       )}
                     </div>
                   </div>
@@ -199,7 +242,8 @@ const page = () => {
                         <input
                           className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface"
                           type="text"
-                          value={profile?.businessName || ""}
+
+                          onChange={(e) => setBusinessName(e.target.value)}
                         />
                       ) : (
                         <p className="font-body-md text-body-md text-on-surface">
@@ -213,7 +257,11 @@ const page = () => {
                       </p>
                       <div className="relative">
                         {editing ? (
-                          <select className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface appearance-none pr-10">
+                          <select
+                            className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface appearance-none pr-10"
+                            value={currency}
+                            onChange={(e) => setCurrency(e.target.value)}
+                          >
                             {currencys.map((currency) => (
                               <option
                                 key={currency.code}
@@ -255,6 +303,9 @@ const page = () => {
                       <button
                         className="px-lg py-3 bg-primary text-on-primary font-label-md text-label-md rounded shadow-level-2 hover:bg-surface-tint transition-colors"
                         type="button"
+                        onClick={() => handleProfileUpdate(name, email, businessName, currency)
+                          
+                        }
                       >
                         Save Changes
                       </button>

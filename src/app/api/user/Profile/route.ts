@@ -9,7 +9,7 @@ import CLient from "@/models/client.model";
 import Project from "@/models/project.model";
 import Invoices from "@/models/invoice.model";
 
-export async function PUT(request: Request) {
+export async function PATCH(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
