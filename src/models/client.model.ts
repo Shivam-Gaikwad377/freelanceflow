@@ -7,6 +7,7 @@ export interface IClient extends mongoose.Document {
     company: string;
     status: "active" | "inactive";
     userId: mongoose.Types.ObjectId;
+    description?: string;
 }
 
 const clientSchema = new mongoose.Schema<IClient>({
@@ -37,6 +38,9 @@ const clientSchema = new mongoose.Schema<IClient>({
         type: mongoose.Types.ObjectId,
         ref: "User",
         required: true,
+    },
+    description: {
+        type: String,
     },
 });
 const ClientModel = 

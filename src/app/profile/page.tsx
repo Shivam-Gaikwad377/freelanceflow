@@ -132,7 +132,7 @@ const page = () => {
     <div>
       <Sidebar />
       <div className="md:ml-64">
-        <TopNavbar source={profile?.avatar?.avatarUrl} />
+        <TopNavbar />
         <main className="flex-1 overflow-y-auto p-margin-mobile md:p-gutter lg:p-xl">
           <div className="max-w-3xl mx-auto space-y-lg">
             <div className="mb-lg">

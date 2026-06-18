@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     }
     await connectToDatabase();
 
-    const { name, email, company, phone, status } = await request.json();
+    const { name, email, company, phone, status, description } = await request.json();
 
     const parseResult = createClientSchema.safeParse({
       name,
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       company,
       phone,
       status,
+      description,
     });
 
     if (!parseResult.success) {

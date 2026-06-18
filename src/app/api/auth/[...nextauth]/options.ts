@@ -59,6 +59,7 @@ export const authOptions: NextAuthOptions = {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.email = user.email;
+        token.currency = user?.currency;
       }
       return token;
     },
@@ -67,6 +68,7 @@ export const authOptions: NextAuthOptions = {
         session.user._id = token._id;
         session.user.isVerified = token.isVerified;
         session.user.email = token.email;
+        session.user.currency = token.currency;
       }
       return session;
     },

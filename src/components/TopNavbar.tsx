@@ -1,9 +1,28 @@
 "use client";
-import React from "react";
+import React, { use } from "react";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import axios from "axios";
 
-const TopNavbar = ({ source}: { source: string }) => {
+const TopNavbar = () => {
+  const { data: session } = useSession();
+  const [profileImage, setProfileImage] = React.useState<string>(""); 
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      
+        try {
+          const response = await axios.get("/api/user/Profile");
+          setProfileImage(response.data?.data.avatar?.avatarUrl);
+        } catch (error) {
+          console.error("Error fetching profile image:", error);
+        
+        }
+    };
+    fetchProfileImage();
+      },[session])
+
   return (
-    <header className="w-full h-16 bg-surface/80  backdrop-blur-md flex justify-between items-center px-lg sticky top-0 z-10">
+    <header className="w-full h-16 bg-surface/80 border-b-[1.5px] border-b-outline-variant backdrop-blur-md flex justify-between items-center  sticky top-0 z-10">
       <div className="md:hidden flex items-center">
         <span className="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed-dim">
           FreelanceFlow
@@ -25,7 +44,7 @@ const TopNavbar = ({ source}: { source: string }) => {
           <img
             alt="User avatar"
             className="w-full h-full object-cover"
-            src={source}
+            src={profileImage}
           />
         </div>
       </div>

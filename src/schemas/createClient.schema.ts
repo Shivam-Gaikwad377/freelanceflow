@@ -6,4 +6,5 @@ export const createClientSchema = z.object({
     phone: z.string().min(1, "Phone number is required"),
     company: z.string().min(1, "Company name is required"),
     status: z.enum(["active", "inactive"]).default("active"),
+    description: z.string().optional(),
 });
