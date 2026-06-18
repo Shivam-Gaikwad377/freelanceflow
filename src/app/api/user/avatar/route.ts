@@ -30,9 +30,9 @@ export async function PATCH(req: NextRequest) {
     const userId = jwttoken?._id;
 
     // 2. Get the file from the request
-    const formData = await req.formData();
-    const file = formData.get("avatar");
-    if (!file) {
+    const uploadData = await req.formData();
+    const file = uploadData.get("avatar") ;
+    if ( typeof file === "string" || !file) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "No file provided" },
         { status: 400 }
@@ -62,25 +62,8 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
-    let buffer: Buffer;
-
-    // CHECK: Is it a real file/blob instance?
-    if (file instanceof Blob) {
-      const bytes = await file.arrayBuffer();
-      buffer = Buffer.from(bytes);
-    } else {
-      // If it's a string or base64 data, convert it directly from text
-      const stringData = String(file);
-
-      // If the frontend accidentally stringified a base64 Data URL (e.g., data:image/png;base64,...)
-      if (stringData.startsWith("data:")) {
-        const base64Data = stringData.split(",")[1];
-        buffer = Buffer.from(base64Data, "base64");
-      } else {
-        // Standard string fallback
-        buffer = Buffer.from(stringData);
-      }
-    }
+    const buffer = Buffer.from(await (file as any).arrayBuffer());
+    
 
     // 5. Upload to ImageKit
     const result = await imagekitClient.upload({
@@ -101,10 +84,7 @@ export async function PATCH(req: NextRequest) {
       },
       { new: true }
     );
-    console.log("ImageKit Raw Result:", result);
-    console.log("URL received:", result.url);
-    console.log("File ID received:", result.fileId);
-    console.log("--- DEBUG END ---");
+    
 
     return NextResponse.json<ApiResponse>(
       {

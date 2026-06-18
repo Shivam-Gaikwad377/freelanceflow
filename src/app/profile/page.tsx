@@ -40,9 +40,11 @@ const page = () => {
     setImageFile(targetFile);
     try {
       const uploadData = new FormData();
-      uploadData.append("avatar", imageFile as File);
+      uploadData.append("avatar", targetFile as File);
 
       const res = await axios.patch("/api/user/avatar", uploadData);
+      const updatedProfile = await axios.get("/api/user/Profile");
+      setProfile(updatedProfile.data.data);
       toast.success("Avatar updated successfully!");
       // Refresh profile data to show new avatar
     } catch (error) {
