@@ -21,7 +21,8 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-    const { title, description, client, budget, deadline, status } =
+    
+    const { title, description, client, clientID, budget, deadline, status } =
       await request.json();
 
     const parseResult = projectSchema.safeParse({
@@ -31,6 +32,7 @@ export async function POST(request: Request) {
       budget,
       deadline,
       status,
+      
     });
 
     if (!parseResult.success) {
@@ -46,6 +48,7 @@ export async function POST(request: Request) {
     const newProject = new Project({
       ...parseResult.data,
       Owner: ownerID,
+      clientID: clientID ,
     });
 
     await newProject.save();
@@ -96,17 +99,21 @@ export async function GET(request: Request) {
 
     const search = searchParams.get("search") || "";
     const searchBy = searchParams.get("searchBy") || "title";
+    
     const filter: any = { Owner: ownerID };
     if (search) {
       if (searchBy === "title") {
         filter.title = { $regex: search, $options: "i" };
-      } else if (searchBy === "client") {
+      } 
+      if (searchBy === "client") {
+         filter.clientID = search;
+        
         const matchingClients = await Client.find({
-          name: { $regex: search, $options: "i" },
+          _id: { $regex: search, $options: "i" },
           userId: ownerID,
         }).select("_id");
 
-        filter.clientId = { $in: matchingClients.map((c) => c._id) };
+        filter.clientID = { $in: matchingClients.map((c) => c._id) };
       }
     }
 

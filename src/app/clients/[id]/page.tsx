@@ -17,27 +17,61 @@ const page = () => {
       if (session) {
         try {
           const response = await axios.get(`/api/Clients/${id}`);
-          setClient(response.data.data.client);
+          setClient(response.data.data);
         } catch (error) {
           console.error("Error fetching client:", error);
         }
       }
-    }
+    };
     fetchClient();
   }, [id]);
+  const [projects, setProjects] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      if (session) {
+        try {
+          const response = await axios.get(
+            `/api/projects?searchBy=clientId&search=${id}&offset=0&limit=5`
+          );
+          setProjects(response.data.data.projects);
+          console.log(projects)
+        } catch (error) {
+          console.error("Error fetching projects:", error);
+        }
+      }
+    };
+    fetchProjects();
+  }, [id]);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  // useEffect(() => {
+  //   const fetchInvoices = async () => {
+  //     if (session) {
+  //       try {
+  //         const response = await axios.get(
+  //           `/api/Invoices?searchBy=client&search=${id}&offset=0&limit=5`
+  //         );
+  //         setInvoices(response.data.data.invoices);
+  //       } catch (error) {
+  //         console.error("Error fetching invoices:", error);
+  //       }
+  //     }
+  //   };
+  //   fetchInvoices();
+  // }, [id]);
+
   const totalBilled = 12450.0; // Placeholder for total billed amount, replace with actual data from API
   const outstandingBalance = 3200.0; // Placeholder for outstanding balance, replace with actual data from API
   const router = useRouter();
   return (
-    <body className="bg-background text-on-surface font-body-md antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+    <div className="bg-background text-on-surface font-body-md antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0 md:ml-64 relative">
         {/* TopAppBar (Shared Component) */}
-        <header className="fixed top-0 right-0 left-0 md:left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-10 flex justify-between items-center px-lg transition-all">
+        <div className="fixed top-0 right-0 left-0 md:left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-10 flex justify-between items-center px-lg transition-all">
           <TopNavbar />
-        </header>
+        </div>
         {/* <!-- Scrollable Content Canvas --> */}
-        <main className="flex-1 overflow-y-auto pt-24 pb-xxl px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
+        <div className="flex-1 overflow-y-auto pt-24 pb-xxl px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
           {/* <!-- Breadcrumbs --> */}
           <button className="flex items-center gap-1 px-2 py-1 -ml-2 mb-2 text-primary font-label-md text-label-md hover:bg-surface-container-high rounded-lg transition-colors group">
             <span className="material-symbols-outlined text-[20px]">
@@ -107,7 +141,7 @@ const page = () => {
                         className="font-label-md text-label-md hover:text-primary transition-colors"
                         href={`tel:${client?.phone || "+15551234567"}`}
                       >
-                       {client?.phone || "+1 (555) 123-4567"}
+                        {client?.phone || "+1 (555) 123-4567"}
                       </a>
                     </div>
                   </div>
@@ -172,90 +206,51 @@ const page = () => {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-surface-container-low border-b border-outline-variant">
-                      <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                      <th className="py-3 w-2/4 px-6 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                         Project Name
                       </th>
-                      <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                      <th className="py-3 w-0.66/4 px-6 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                         Status
                       </th>
-                      <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                      <th className="py-3 w-0.66/4 px-6 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                         Start Date
                       </th>
-                      <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-right">
+                      <th className="py-3 w-0.66/4 px-6 text-center font-label-sm  text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-right">
                         Value
                       </th>
                     </tr>
                   </thead>
                   <tbody className="font-body-sm text-body-sm text-on-surface">
-                    <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group cursor-pointer">
-                      <td className="py-4 px-6">
-                        <div className="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">
-                          Website Redesign 2024
-                        </div>
-                        <div className="text-on-surface-variant mt-0.5">
-                          Marketing Dept
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant text-primary font-label-sm text-label-sm border border-primary/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                          In Progress
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-on-surface-variant">
-                        Oct 12, 2023
-                      </td>
-                      <td className="py-4 px-6 text-right font-label-md text-label-md">
-                        {totalBilled.toLocaleString("en-US", {
-                          style: "currency",
-                          currency: session?.data?.user?.currency || "USD",
-                        })}
-                      </td>
-                    </tr>
-                    <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group cursor-pointer">
-                      <td className="py-4 px-6">
-                        <div className="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">
-                          Q3 Mobile App Audit
-                        </div>
-                        <div className="text-on-surface-variant mt-0.5">
-                          Product Team
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary font-label-sm text-label-sm border border-secondary/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                          Completed
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-on-surface-variant">
-                        Jul 01, 2023
-                      </td>
-                      <td className="py-4 px-6 text-right font-label-md text-label-md">
-                        $8,500
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-surface-container-highest/30 transition-colors group cursor-pointer">
-                      <td className="py-4 px-6">
-                        <div className="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">
-                          Design System Setup
-                        </div>
-                        <div className="text-on-surface-variant mt-0.5">
-                          Engineering
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary font-label-sm text-label-sm border border-secondary/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                          Completed
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-on-surface-variant">
-                        Mar 15, 2023
-                      </td>
-                      <td className="py-4 px-6 text-right font-label-md text-label-md">
-                        $22,000
-                      </td>
-                    </tr>
+                    {projects.map((project) => (
+                      <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group cursor-pointer">
+                        <td className="py-4 px-6 w-2/4">
+                          <div className="font-label-md text-center text-label-md text-on-surface group-hover:text-primary transition-colors">
+                            {project.title}
+                          </div>
+                          <div className="text-on-surface-variant text-center mt-0.5">
+                            {project.description}
+                          </div>
+                        </td>
+                        <td className="py-4 px-6 w-0.66/4 text-center">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary font-label-sm text-label-sm border border-secondary/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            {project.status}
+                          </span>
+                        </td>
+                        <td className="py-4 w-0.66/4 px-6 text-center   text-on-surface-variant">
+                          {new Date(project.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}
+                        </td>
+                        <td className="py-4 w-0.66/4 px-6 text-center font-label-md text-label-md">
+                          {project.budget}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -296,20 +291,21 @@ const page = () => {
                   </thead>
                   <tbody className="font-body-sm text-body-sm text-on-surface">
                     {/* <!-- Overdue Invoice --> */}
-                    <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
+                    {invoices.map((invoice) => (
+                      <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
                       <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
-                        INV-2023-089
+                        {invoice.invoiceNumber}
                       </td>
                       <td className="py-4 px-6 text-on-surface-variant">
-                        Sep 30, 2023
+                        {invoice.dueDate}
                       </td>
                       <td className="py-4 px-6">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container/50 text-on-error-container font-label-sm text-label-sm border border-error/20">
-                          Overdue
+                          {invoice.status}
                         </span>
                       </td>
                       <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
-                        $3,200.00
+                        {invoice.amount}
                       </td>
                       <td className="py-4 px-6 text-right">
                         <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
@@ -318,63 +314,15 @@ const page = () => {
                           </span>
                         </button>
                       </td>
-                    </tr>
-                    {/* <!-- Pending Invoice --> */}
-                    <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
-                      <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
-                        INV-2023-094
-                      </td>
-                      <td className="py-4 px-6 text-on-surface-variant">
-                        Oct 15, 2023
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant text-on-surface-variant font-label-sm text-label-sm border border-outline-variant">
-                          Pending
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
-                        $4,500.00
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                          <span className="material-symbols-outlined">
-                            download
-                          </span>
-                        </button>
-                      </td>
-                    </tr>
-                    {/* <!-- Paid Invoice --> */}
-                    <tr className="hover:bg-surface-container-highest/30 transition-colors group">
-                      <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
-                        INV-2023-072
-                      </td>
-                      <td className="py-4 px-6 text-on-surface-variant">
-                        Aug 01, 2023
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary font-label-sm text-label-sm border border-secondary/20">
-                          Paid
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface-variant line-through opacity-70">
-                        $8,500.00
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                          <span className="material-symbols-outlined">
-                            download
-                          </span>
-                        </button>
-                      </td>
-                    </tr>
+                    </tr>))}
                   </tbody>
                 </table>
               </div>
             </div>
           </section>
-        </main>
+        </div>
       </div>
-    </body>
+    </div>
   );
 };
 

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { IUser } from "./user.model";
-import  User  from "./user.model";
+
 
 export interface IProject extends mongoose.Document {
     clientID : mongoose.Types.ObjectId;
@@ -17,7 +16,7 @@ const projectSchema = new mongoose.Schema<IProject>({
     clientID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Client",
-        required: true,
+        required: false,
     },
     client:{
         type: String,
