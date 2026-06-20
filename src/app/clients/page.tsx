@@ -8,15 +8,20 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ClientCard from "@/components/ClientCard";
 import AddClient from "@/components/AddCLient";
+import Pagination from "@/components/Pagination";
+import { set } from "mongoose";
 
 const page = () => {
   const session = useSession();
   const [clients, setClients] = useState<any[]>([]);
+  const [clientOffset, setClientOffset] = useState<number>(0);
+  const [totalClients, setTotalClients] = useState<number>(0);
+  const limit = 9;
   useEffect(() => {
     const fetchClients = async () => {
       if (session) {
         try {
-          const response = await axios.get("/api/Clients");
+          const response = await axios.get(`/api/Clients?offset=${clientOffset}&limit=${limit}`);
           const fetchedClients = Array.isArray(response.data.data.clients)
             ? response.data.data.clients
             : Array.isArray(response.data.data.clients)
@@ -25,6 +30,7 @@ const page = () => {
           console.log("Fetched clients:", fetchedClients);
 
           setClients(fetchedClients);
+          setTotalClients(response.data.data.total);
         } catch (error) {
           console.error("Error fetching clients:", error);
         }
@@ -32,14 +38,13 @@ const page = () => {
     };
 
     fetchClients();
-  }, []);
+  }, [clientOffset, limit]);
   const router = useRouter();
-  const handleClick = (id : string) =>{
-    router.replace(`/clients/${id}`)
-  }
+  const handleClick = (id: string) => {
+    router.replace(`/clients/${id}`);
+  };
   const [AddClientOpen, setAddClientOpen] = useState<boolean>(false);
-  
-  
+
   return (
     <div>
       <Sidebar />
@@ -47,9 +52,12 @@ const page = () => {
       <div className=" flex w-auto flex-col flex-1 max-w-full ml-64  md:px-gutter gap-2">
         <TopNavbar />
         {/* Header */}
-       <div className={`${AddClientOpen ? " ": "hidden" }`}>
-          <AddClient open={AddClientOpen} onClose={() => setAddClientOpen(false)} />
-       </div>
+        <div className={`${AddClientOpen ? " " : "hidden"}`}>
+          <AddClient
+            open={AddClientOpen}
+            onClose={() => setAddClientOpen(false)}
+          />
+        </div>
         <div className={`${AddClientOpen ? "hidden" : ""} `}>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md mb-xl">
             <div>
@@ -60,7 +68,10 @@ const page = () => {
                 Manage your active and archived client relationships.
               </p>
             </div>
-            <button onClick={() => setAddClientOpen(true)} className="bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center gap-2">
+            <button
+              onClick={() => setAddClientOpen(true)}
+              className="bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center gap-2"
+            >
               <span className="material-symbols-outlined text-[20px]">
                 person_add
               </span>
@@ -104,6 +115,14 @@ const page = () => {
                 />
               </div>
             ))}
+          </div>
+          <div className="p-4">
+            <Pagination
+              total={totalClients}
+              limit={limit}
+              offset={clientOffset}
+              onPageChange={(newOffset) => setClientOffset(newOffset)}
+            />
           </div>
         </div>
       </div>
