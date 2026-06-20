@@ -1,9 +1,8 @@
 import {z} from "zod";
 
 export const createInvoiceSchema = z.object({
-    invoiceNumber: z.number().positive("Invoice number must be a positive number"),
-    projectId: z.string().min(1, "Project ID is required"),
-    amount: z.number().positive("Amount must be a positive number"),
+    invoiceNumber: z.number().positive("Invoice number must be a positive number").optional(),
+    
     dueDate: z.string().min(1, "Due date is required").refine((date) => !isNaN(Date.parse(date)), {
         message: "Invalid date format",
     }),

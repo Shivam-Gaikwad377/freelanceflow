@@ -6,6 +6,8 @@ import { isValidObjectId } from "mongoose";
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { updateClientSchema } from "@/schemas/updateClient.schema";
+import { clientTotalBilledPipeline } from "@/lib/pipelines/client.pipeline";
+import mongoose from "mongoose";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -30,11 +32,15 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     await connectToDatabase();
 
-    const client = await Client.findOne({
-      _id: id,
-      userId: session.user._id,
-    }).lean();
-
+    const [client] = await Client.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id),
+          userId: new mongoose.Types.ObjectId(session.user._id),
+        },
+      },
+      ...clientTotalBilledPipeline,
+    ]);
     if (!client) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Client not found" },

@@ -1,12 +1,12 @@
 "use client";
-import React, { use } from "react";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import axios from "axios";
 
 const TopNavbar = () => {
   const { data: session } = useSession();
-  const [profileImage, setProfileImage] = React.useState<string>(""); 
+  const [profileImage, setProfileImage] = useState<string>(""); 
   useEffect(() => {
     const fetchProfileImage = async () => {
       

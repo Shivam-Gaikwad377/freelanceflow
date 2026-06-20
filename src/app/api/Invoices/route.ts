@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import Client from "@/models/client.model";
 import Project from "@/models/project.model";
+
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -22,15 +23,14 @@ export async function POST(request: Request) {
     }
     await connectToDatabase();
 
-    const { projectId, dueDate, status, lineItems, client } =
+    const { projectId, dueDate, status, lineItems, clientID } =
       await request.json();
     const parseResult = createInvoiceSchema.safeParse({
-      projectId,
-  
+     
       dueDate,
       status,
       lineItems,
-      client,
+
     });
 
     if (!parseResult.success) {
@@ -50,6 +50,8 @@ export async function POST(request: Request) {
       owner: ownerID,
       amount,
       invoiceNumber,
+      clientID,
+      projectId,
     });
     await newInvoice.save();
 
@@ -97,20 +99,26 @@ export async function GET(request: Request) {
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
     const searchBy = searchParams.get("searchBy") || "invoiceNumber";
-    const filter: any = { userId: ownerID };
+    const filter: any = { owner: ownerID };
     if(status) filter.status = status;
     if (search) {
       if (searchBy === "invoiceNumber") {
         filter.invoiceNumber = { $regex: search, $options: "i" };
 
       }
-     else if (searchBy === "client") {
-          const matchingClients: any[] = await Client.find({ userId : ownerID, name: { $regex: search, $options: "i" } }).select("_id");
-          if (matchingClients.length > 0) {
-            filter.clientId = { $in: matchingClients.map(c => c._id) };
+      
+      // NEW: Explicitly handle searching by an exact Client ID
+      else if (searchBy === "clientId") {
+        filter.clientID = search;
+      }
+      else if (searchBy === "clientName") {
+        const matchingClients = await Client.find({
+          name: { $regex: search, $options: "i" },
+          userId: ownerID,
+        }).select("_id");
 
-          }
-        }
+        filter.clientID = { $in: matchingClients.map((c) => c._id) };
+      }
       else if (searchBy === "project") {
           const matchingProjects: any[] = await Project.find({ userId : ownerID, name: { $regex: search, $options: "i" } }).select("_id");
           if (matchingProjects.length > 0) {
@@ -119,6 +127,7 @@ export async function GET(request: Request) {
           }
     }
   }
+  
    
 
     const [invoices, total] = await Promise.all([

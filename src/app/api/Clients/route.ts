@@ -6,7 +6,8 @@ import Client from "@/models/client.model";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-
+import Invoice from "@/models/invoice.model";
+import mongoose from "mongoose";
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -22,7 +23,8 @@ export async function POST(request: Request) {
     }
     await connectToDatabase();
 
-    const { name, email, company, phone, status, description } = await request.json();
+    const { name, email, company, phone, status, description } =
+      await request.json();
 
     const parseResult = createClientSchema.safeParse({
       name,
@@ -90,8 +92,8 @@ export async function GET(request: Request) {
     const sort = searchParams.get("sort") === "asc" ? 1 : -1;
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const search = searchParams.get("search") || "";
-    
-    const filter: any = { userId: ownerID };
+
+    const filter: any = { userId: new mongoose.Types.ObjectId(ownerID as string) };
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -101,11 +103,26 @@ export async function GET(request: Request) {
     }
 
     const [Clients, total] = await Promise.all([
-      Client.find(filter)
-        .sort({ [sortBy]: sort })
-        .skip(offset)
-        .limit(limit)
-        .lean(),
+      Client.aggregate([
+        { $match: filter },
+        {
+          $lookup: {
+            from: "invoices",
+            localField: "_id",
+            foreignField: "clientID",
+            as: "invoices",
+          },
+        },
+        {
+          $addFields: {
+            totalBilled: { $sum: "$invoices.amount" },
+          },
+        },
+        { $project: { invoices: 0 } },
+        { $sort: { [sortBy]: sort } },
+        { $skip: offset },
+        { $limit: limit },
+      ]),
       Client.countDocuments(filter),
     ]);
 

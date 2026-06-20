@@ -12,7 +12,7 @@ export interface IInvoice extends mongoose.Document {
         quantity: number;
         price: number;
     }[];
-    client: mongoose.Types.ObjectId;
+    clientID: mongoose.Types.ObjectId;
 }
 
 const invoiceSchema = new mongoose.Schema<IInvoice>({
@@ -60,7 +60,7 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
             },
         },
     ],
-    client: {
+    clientID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Client",
         required: true,

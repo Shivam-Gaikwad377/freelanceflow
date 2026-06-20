@@ -36,6 +36,7 @@ const page = () => {
   const handleClick = (id : string) =>{
     router.replace(`/clients/${id}`)
   }
+  
   return (
     <div>
       <Sidebar />
@@ -92,6 +93,7 @@ const page = () => {
                 status={client?.status}
                 phone={client?.phone}
                 email={client?.email}
+                totalBilled={client?.totalBilled}
               />
             </div>
           ))}

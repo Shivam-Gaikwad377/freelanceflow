@@ -6,18 +6,29 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
+import Pagination from "@/components/Pagination";
+import { ZodNumber } from "zod";
+import Link from 'next/link';
 
 const page = () => {
   const session = useSession();
   const [client, setClient] = useState<any>(null);
   const pathname = usePathname();
   const id = pathname.split("/").pop();
+  const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
+  const [projectOffset, setProjectOffset] = useState<number>(0);
+  
+
+  const limit = 5;
+  const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
+  const [projectTotal, setProjectTotal] = useState<number>(0);
   useEffect(() => {
     const fetchClient = async () => {
       if (session) {
         try {
           const response = await axios.get(`/api/Clients/${id}`);
           setClient(response.data.data);
+          
         } catch (error) {
           console.error("Error fetching client:", error);
         }
@@ -31,36 +42,38 @@ const page = () => {
       if (session) {
         try {
           const response = await axios.get(
-            `/api/projects?searchBy=clientId&search=${id}&offset=0&limit=5`
+            `/api/projects?searchBy=clientId&search=${id}&offset=${projectOffset}&limit=${limit}`
           );
           setProjects(response.data.data.projects);
-          console.log(projects)
+          setProjectTotal(response.data.data.total);
+
+          console.log(projects);
         } catch (error) {
           console.error("Error fetching projects:", error);
         }
       }
     };
     fetchProjects();
-  }, [id]);
+  }, [id, projectOffset]);
   const [invoices, setInvoices] = useState<any[]>([]);
-  // useEffect(() => {
-  //   const fetchInvoices = async () => {
-  //     if (session) {
-  //       try {
-  //         const response = await axios.get(
-  //           `/api/Invoices?searchBy=client&search=${id}&offset=0&limit=5`
-  //         );
-  //         setInvoices(response.data.data.invoices);
-  //       } catch (error) {
-  //         console.error("Error fetching invoices:", error);
-  //       }
-  //     }
-  //   };
-  //   fetchInvoices();
-  // }, [id]);
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      if (session) {
+        try {
+          const response = await axios.get(
+            `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}&sortBy=dueDate&sort=asc`
+          );
+          setInvoices(response.data.data.invoices);
+          setInvoiceTotal(response.data.data.total);
+        } catch (error) {
+          console.error("Error fetching invoices:", error);
+        }
+      }
+    };
+    fetchInvoices();
+  }, [id, invoiceOffset]);
 
-  const totalBilled = 12450.0; // Placeholder for total billed amount, replace with actual data from API
-  const outstandingBalance = 3200.0; // Placeholder for outstanding balance, replace with actual data from API
+  
   const router = useRouter();
   return (
     <div className="bg-background text-on-surface font-body-md antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
@@ -74,19 +87,19 @@ const page = () => {
         <div className="flex-1 overflow-y-auto pt-24 pb-xxl px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
           {/* <!-- Breadcrumbs --> */}
           <button className="flex items-center gap-1 px-2 py-1 -ml-2 mb-2 text-primary font-label-md text-label-md hover:bg-surface-container-high rounded-lg transition-colors group">
-            <span className="material-symbols-outlined text-[20px]">
+            <span className="material-symbols-outlined text-[20px]" onClick={() => router.replace("/clients")}>
               chevron_left
             </span>
             <span className="">Back to Clients</span>
           </button>
           <nav className="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant mb-6">
-            <a className="hover:text-primary transition-colors" href="#">
+            <Link className="hover:text-primary transition-colors" href="/clients">
               Clients
-            </a>
+            </Link>
             <span className="material-symbols-outlined text-[16px]">
               chevron_right
             </span>
-            <span className="text-on-surface font-semibold">Acme Corp</span>
+            <span className="text-on-surface font-semibold">{client?.company || "Client Name"}</span>
           </nav>
           {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
           <section className="bg-surface-container-lowest rounded-[16px] border border-outline-variant p-lg md:p-xl mb-xl shadow-sm relative overflow-hidden">
@@ -169,53 +182,41 @@ const page = () => {
                       Lifetime Value
                     </p>
                     <p className="font-display text-headline-md font-bold text-on-surface">
-                      {totalBilled.toLocaleString("en-US", {
+                      {client?.totalBilled?.toLocaleString("en-US", {
                         style: "currency",
                         currency: session?.data?.user?.currency || "USD",
                       })}
                     </p>
                   </div>
                   <div className="w-px bg-outline-variant h-full hidden md:block"></div>
-                  <div className="text-left md:text-right">
-                    <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
-                      Outstanding
-                    </p>
-                    <p className="font-display text-headline-md font-bold text-tertiary">
-                      {outstandingBalance.toLocaleString("en-US", {
-                        style: "currency",
-                        currency: session?.data?.user?.currency || "USD",
-                      })}
-                    </p>
-                  </div>
+                 
                 </div>
               </div>
             </div>
           </section>
           {/* 2. Project History Section */}
-          <section className="mb-xl">
+          <section className="mb-xl flex flex-col gap-2 ">
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-display text-headline-sm font-semibold text-on-surface">
                 Project History
               </h3>
-              <button className="text-primary font-label-md text-label-md hover:underline hover:text-primary/80 transition-colors">
-                View All
-              </button>
+              
             </div>
-            <div className="bg-surface-container-lowest rounded-[16px] border border-outline-variant shadow-sm overflow-hidden">
+            <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-[16px] border overflow-hidden border-outline-variant shadow-sm ">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-surface-container-low border-b border-outline-variant">
-                      <th className="py-3 w-2/4 px-6 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                      <th className="py-3 w-2/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                         Project Name
                       </th>
-                      <th className="py-3 w-0.66/4 px-6 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                      <th className="py-3 w-0.66/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                         Status
                       </th>
-                      <th className="py-3 w-0.66/4 px-6 text-center font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                      <th className="py-3 w-0.66/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                         Start Date
                       </th>
-                      <th className="py-3 w-0.66/4 px-6 text-center font-label-sm  text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-right">
+                      <th className="py-3 w-0.66/4 px-6  font-label-sm  text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold ">
                         Value
                       </th>
                     </tr>
@@ -224,40 +225,51 @@ const page = () => {
                     {projects.map((project) => (
                       <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group cursor-pointer">
                         <td className="py-4 px-6 w-2/4">
-                          <div className="font-label-md text-center text-label-md text-on-surface group-hover:text-primary transition-colors">
+                          <div className="font-label-md  text-label-md text-on-surface group-hover:text-primary transition-colors">
                             {project.title}
                           </div>
-                          <div className="text-on-surface-variant text-center mt-0.5">
+                          <div className="text-on-surface-variant  mt-0.5">
                             {project.description}
                           </div>
                         </td>
-                        <td className="py-4 px-6 w-0.66/4 text-center">
+                        <td className="py-4 px-6 w-0.66/4 ">
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary font-label-sm text-label-sm border border-secondary/20">
                             <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
                             {project.status}
                           </span>
                         </td>
-                        <td className="py-4 w-0.66/4 px-6 text-center   text-on-surface-variant">
+                        <td className="py-4 w-0.66/4 px-6    text-on-surface-variant">
                           {new Date(project.createdAt).toLocaleDateString(
                             "en-US",
                             {
+                              year: "numeric",
                               month: "short",
                               day: "numeric",
                             }
                           )}
                         </td>
-                        <td className="py-4 w-0.66/4 px-6 text-center font-label-md text-label-md">
+                        <td className="py-4 w-0.66/4 px-6  font-label-md text-label-md">
                           {project.budget}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+                
               </div>
+              
             </div>
+            <div>
+                <Pagination
+                    total={projectTotal}
+                    offset={projectOffset}
+                    limit={limit}
+                    onPageChange={(newOffset) => setProjectOffset(newOffset)}
+                  />
+              </div>
           </section>
           {/* <!-- 3. Invoices Section --> */}
-          <section>
+          <section className="mb-xl flex flex-col gap-2 ">
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-display text-headline-sm font-semibold text-on-surface">
                 Recent Invoices
@@ -293,31 +305,47 @@ const page = () => {
                     {/* <!-- Overdue Invoice --> */}
                     {invoices.map((invoice) => (
                       <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
-                      <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
-                        {invoice.invoiceNumber}
-                      </td>
-                      <td className="py-4 px-6 text-on-surface-variant">
-                        {invoice.dueDate}
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container/50 text-on-error-container font-label-sm text-label-sm border border-error/20">
-                          {invoice.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
-                        {invoice.amount}
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                          <span className="material-symbols-outlined">
-                            download
+                        <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
+                          {invoice.invoiceNumber}
+                        </td>
+                        <td className="py-4 px-6 text-on-surface-variant">
+                          {new Date(invoice.dueDate).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}
+                        </td>
+                        <td className="py-4 px-6">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container/50 text-on-error-container font-label-sm text-label-sm border border-error/20">
+                            {invoice.status}
                           </span>
-                        </button>
-                      </td>
-                    </tr>))}
+                        </td>
+                        <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
+                          {invoice.amount}
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+                            <span className="material-symbols-outlined">
+                              download
+                            </span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
+            </div>
+            <div>
+              <Pagination
+                total={invoiceTotal}
+                offset={invoiceOffset}
+                limit={limit}
+                onPageChange={(newOffset) => setInvoiceOffset(newOffset)}
+              />
             </div>
           </section>
         </div>

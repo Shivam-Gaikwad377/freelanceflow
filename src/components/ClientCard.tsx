@@ -4,13 +4,13 @@ type ClientCardProps = {
   phone: string;
   email: string;
   status: string;
+  totalBilled?: number;
 };
 type StatusColor = {
   [key: string]: string;
 };
 
-const ClientCard = ({ name, phone, email, status }: ClientCardProps) => {
-  const totalBilled = 12450.0;
+const ClientCard = ({ name, phone, email, status, totalBilled }: ClientCardProps) => {
   const statusColor: StatusColor = {
     active: "bg-secondary-container text-on-secondary-container",
     inactive: "bg-surface-variant text-on-surface-variant",
@@ -83,7 +83,7 @@ const ClientCard = ({ name, phone, email, status }: ClientCardProps) => {
           Total Billed
         </span>
         <span className="font-headline-sm text-headline-sm text-on-surface">
-          ${totalBilled.toLocaleString()}
+          {totalBilled?.toLocaleString()}
         </span>
       </div>
     </div>

@@ -21,7 +21,7 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-    
+
     const { title, description, client, clientID, budget, deadline, status } =
       await request.json();
 
@@ -32,7 +32,6 @@ export async function POST(request: Request) {
       budget,
       deadline,
       status,
-      
     });
 
     if (!parseResult.success) {
@@ -48,7 +47,7 @@ export async function POST(request: Request) {
     const newProject = new Project({
       ...parseResult.data,
       Owner: ownerID,
-      clientID: clientID ,
+      clientID: clientID,
     });
 
     await newProject.save();
@@ -99,17 +98,21 @@ export async function GET(request: Request) {
 
     const search = searchParams.get("search") || "";
     const searchBy = searchParams.get("searchBy") || "title";
-    
+
     const filter: any = { Owner: ownerID };
+
     if (search) {
       if (searchBy === "title") {
         filter.title = { $regex: search, $options: "i" };
-      } 
-      if (searchBy === "client") {
-         filter.clientID = search;
-        
+      }
+      // NEW: Explicitly handle searching by an exact Client ID
+      else if (searchBy === "clientId") {
+        filter.clientID = search;
+      }
+      // OPTIONAL: Keep your old logic under a new name if you have a search bar that searches clients by name
+      else if (searchBy === "clientName") {
         const matchingClients = await Client.find({
-          _id: { $regex: search, $options: "i" },
+          name: { $regex: search, $options: "i" },
           userId: ownerID,
         }).select("_id");
 
