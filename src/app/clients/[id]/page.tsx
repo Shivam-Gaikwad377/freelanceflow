@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import Pagination from "@/components/Pagination";
 import { ZodNumber } from "zod";
-import Link from 'next/link';
+import Link from "next/link";
 
 const page = () => {
   const session = useSession();
