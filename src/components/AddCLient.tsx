@@ -211,6 +211,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                 <button
                   className="px-xl py-[12px] text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
                   type="button"
+                  onClick={onClose}
                 >
                   Cancel
                 </button>
