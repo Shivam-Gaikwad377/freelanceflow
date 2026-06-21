@@ -251,3 +251,5 @@ input[type="password"]::-webkit-contacts-auto-fill-button {
   position: absolute;
   right: 0;
 }
+
+.kanban-col { min-height: calc(100vh - 200px); }

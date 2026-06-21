@@ -98,8 +98,9 @@ export async function GET(request: Request) {
 
     const search = searchParams.get("search") || "";
     const searchBy = searchParams.get("searchBy") || "title";
-
+    const status = searchParams.get("status") || "";
     const filter: any = { Owner: ownerID };
+    if (status) filter.status = status;
 
     if (search) {
       if (searchBy === "title") {
@@ -118,6 +119,7 @@ export async function GET(request: Request) {
 
         filter.clientID = { $in: matchingClients.map((c) => c._id) };
       }
+      
     }
 
     const [projects, total] = await Promise.all([
