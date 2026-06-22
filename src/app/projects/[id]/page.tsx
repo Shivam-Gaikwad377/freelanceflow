@@ -128,7 +128,7 @@ const page = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0 md:ml-64 relative">
         {/* TopAppBar (Shared Component) */}
-        <div className="fixed top-0 right-0 left-0 md:left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-10 flex justify-between items-center px-lg transition-all">
+        <div className="fixed top-0 right-0 left-0 md:left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-9 flex justify-between items-center px-lg transition-all">
           <TopNavbar />
         </div>
         {/* <div><EditCLient open={editOpen} onClose={()=> setEditOpen(false)} client={client} /></div> */}
@@ -173,7 +173,7 @@ const page = () => {
             <div className="col-span-8 space-y-gutter">
               <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-lg overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                <div className="flex justify-between items-start relative z-10">
+                <div className="flex justify-between items-start relative z-9">
                   <div>
                     <span className="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm uppercase tracking-wider mb-sm inline-block">
                       In Progress
@@ -208,7 +208,7 @@ const page = () => {
                     </h3>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-lg border-t border-outline-variant/30 pt-lg relative z-10">
+                <div className="grid grid-cols-3 gap-lg border-t border-outline-variant/30 pt-lg relative z-9">
                   <div className="flex items-start flex-col gap-2">
                     <p className="text-label-sm text-on-surface-variant uppercase mb-1">
                       Start Date
@@ -379,7 +379,7 @@ const page = () => {
 
              
 
-             
+              
             </div>
           </div>
         </div>
