@@ -253,3 +253,11 @@ input[type="password"]::-webkit-contacts-auto-fill-button {
 }
 
 .kanban-col { min-height: calc(100vh - 200px); }
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

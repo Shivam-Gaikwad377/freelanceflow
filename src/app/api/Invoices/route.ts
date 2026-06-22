@@ -14,10 +14,7 @@ export async function POST(request: Request) {
     const ownerID = session?.user?._id;
     if (!ownerID || !session) {
       return NextResponse.json<ApiResponse>(
-        {
-          success: false,
-          message: "Unauthorized",
-        },
+        { success: false, message: "Unauthorized" },
         { status: 401 }
       );
     }
@@ -25,12 +22,11 @@ export async function POST(request: Request) {
 
     const { projectId, dueDate, status, lineItems, clientID } =
       await request.json();
+
     const parseResult = createInvoiceSchema.safeParse({
-     
       dueDate,
       status,
       lineItems,
-
     });
 
     if (!parseResult.success) {
@@ -39,12 +35,15 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
     const amount = parseResult.data.lineItems.reduce(
       (sum, item) => sum + item.quantity * item.price,
       0
     );
+
     const count = await Invoice.countDocuments({ owner: ownerID });
     const invoiceNumber = count + 1;
+
     const newInvoice = new Invoice({
       ...parseResult.data,
       owner: ownerID,
@@ -53,6 +52,7 @@ export async function POST(request: Request) {
       clientID,
       projectId,
     });
+
     await newInvoice.save();
 
     return NextResponse.json<ApiResponse>(
@@ -62,10 +62,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating invoice:", error);
     return NextResponse.json<ApiResponse>(
-      {
-        success: false,
-        message: "An error occurred while creating the invoice",
-      },
+      { success: false, message: "An error occurred while creating the invoice" },
       { status: 500 }
     );
   }
@@ -86,49 +83,43 @@ export async function GET(request: Request) {
     await connectToDatabase();
 
     const { searchParams } = new URL(request.url);
-    const offset = Math.max(
-      0,
-      parseInt(searchParams.get("offset") ?? "0", 10) || 0
-    );
-    const limit = Math.min(
-      50,
-      parseInt(searchParams.get("limit") ?? "10", 10) || 10
-    );
+    const offset = Math.max(0, parseInt(searchParams.get("offset") ?? "0", 10) || 0);
+    const limit = Math.min(50, parseInt(searchParams.get("limit") ?? "10", 10) || 10);
     const sort = searchParams.get("sort") === "asc" ? 1 : -1;
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
+    const projectId = searchParams.get("projectId") || "";
     const searchBy = searchParams.get("searchBy") || "invoiceNumber";
+
     const filter: any = { owner: ownerID };
-    if(status) filter.status = status;
+
+    if (status) filter.status = status;
+    if (projectId) filter.projectId = projectId;
+
     if (search) {
       if (searchBy === "invoiceNumber") {
         filter.invoiceNumber = { $regex: search, $options: "i" };
-
-      }
-      
-      // NEW: Explicitly handle searching by an exact Client ID
-      else if (searchBy === "clientId") {
+      } else if (searchBy === "clientId") {
         filter.clientID = search;
-      }
-      else if (searchBy === "clientName") {
+      } else if (searchBy === "clientName") {
         const matchingClients = await Client.find({
           name: { $regex: search, $options: "i" },
           userId: ownerID,
         }).select("_id");
 
         filter.clientID = { $in: matchingClients.map((c) => c._id) };
-      }
-      else if (searchBy === "project") {
-          const matchingProjects: any[] = await Project.find({ userId : ownerID, name: { $regex: search, $options: "i" } }).select("_id");
-          if (matchingProjects.length > 0) {
-            filter.projectId = { $in: matchingProjects.map(p => p._id) };
+      } else if (searchBy === "project") {
+        const matchingProjects = await Project.find({
+          userId: ownerID,
+          name: { $regex: search, $options: "i" },
+        }).select("_id");
 
-          }
+        
+          filter.projectId = { $in: matchingProjects.map((p) => p._id) };
+        
+      }
     }
-  }
-  
-   
 
     const [invoices, total] = await Promise.all([
       Invoice.find(filter)

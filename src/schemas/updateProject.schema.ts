@@ -6,4 +6,6 @@ export const updateProjectSchema = z.object({
     budget: z.number().positive().optional(),
     deadline: z.string().optional(),
     status: z.enum(["open", "in Progress", "completed"]).optional(),
+    isStarted: z.boolean().optional(),
+    StartedAt: z.string().optional(),
 })

@@ -105,7 +105,7 @@ const page = () => {
             <span className="text-on-surface font-semibold">{client?.company || "Client Name"}</span>
           </nav>
           {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
-          <section className="bg-surface-container-lowest rounded-[16px] border border-outline-variant p-lg md:p-xl mb-xl shadow-sm relative overflow-hidden">
+          <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg md:p-xl mb-xl shadow-sm relative overflow-hidden">
             {/* Subtle decorative background element */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary-container/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
@@ -207,7 +207,7 @@ const page = () => {
               </h3>
               
             </div>
-            <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-[16px] border overflow-hidden border-outline-variant shadow-sm ">
+            <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-2xl border overflow-hidden border-outline-variant shadow-sm ">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -286,7 +286,7 @@ const page = () => {
                 Filter
               </button>
             </div>
-            <div className="bg-surface-container-lowest rounded-[16px] border border-outline-variant shadow-sm overflow-hidden">
+            <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>

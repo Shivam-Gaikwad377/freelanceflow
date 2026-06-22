@@ -1,26 +1,12 @@
+"use client"
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ProjectCard from "@/components/ProjectCard";
+import {useRouter} from "next/navigation";
 
 // ── Types ──────────────────────────────────────────────────
-type Status = "open" | "in progress" | "completed";
-
-interface Project {
-  id: string;
-  title: string;
-  client: string;
-  deadline: string;
-  budget: number;
-  status: Status;
-}
-
-interface ApiResponse {
-  data: Project[];
-  total: number;
-  offset: number;
-}
-
+type Status = "open" | "in progress" | "completed"
 interface ProjectKanbanBoardProps {
   status: Status;
 }
@@ -32,12 +18,13 @@ const STATUS_STYLES: Record<Status, string> = {
   completed:   "w-2 h-2 rounded-full bg-secondary",
 };
 
-// ── Component ───────────────────────────────────────────────
+
 const ProjectKanbanBoard = ({ status }: ProjectKanbanBoardProps) => {
   const [projects, setProjects] = useState<any[]>([]);
   const [total,    setTotal]    = useState(0);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState<string | null>(null);
+  const Router = useRouter();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -56,10 +43,10 @@ const ProjectKanbanBoard = ({ status }: ProjectKanbanBoardProps) => {
     };
 
     fetchProjects();
-  }, [status]);
+  }, []);
 
   return (
-    <div className="flex-1 flex flex-col gap-md kanban-col bg-surface-container-low/50 rounded-xl p-md border border-outline-variant/20">
+    <div className="flex-1 flex flex-col gap-md kanban-col bg-surface-container-low/50 max-h-screen rounded-xl p-md border border-outline-variant/20">
       
       {/* Header */}
       <div className="flex items-center justify-between mb-sm">
@@ -73,7 +60,7 @@ const ProjectKanbanBoard = ({ status }: ProjectKanbanBoardProps) => {
       </div>
 
       {/* Cards container */}
-      <div className="flex flex-col gap-md overflow-y-auto pr-1 pb-4">
+      <div className="flex flex-col gap-md overflow-y-auto scrollbar-hide pr-1 pb-4">
 
         {/* Loading */}
         {loading && Array.from({ length: 3 }).map((_, i) => (
@@ -94,14 +81,16 @@ const ProjectKanbanBoard = ({ status }: ProjectKanbanBoardProps) => {
 
         {/* Cards — key directly on ProjectCard, no wrapper div */}
         {!loading && !error && projects.map((project) => (
-          <ProjectCard
-            key={project.id}  
-            title={project.title}
-            client={project.client}
-            deadline={project.deadline}
-            budget={project.budget}
-            status={project.status}
-          />
+          <div onClick={()=> Router.push(`/projects/${project?._id}`)}>
+            <ProjectCard
+              key={project?._id}
+              title={project?.title}
+              client={project?.client}
+              deadline={project?.deadline}
+              budget={project?.budget}
+              status={project?.status}
+            />
+          </div>
         ))}
 
       </div>

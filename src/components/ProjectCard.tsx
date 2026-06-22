@@ -1,4 +1,4 @@
-import { Project } from "next/dist/build/swc/types";
+
 import React from "react";
 interface ProjectPageProps {
   // Define any props you want to pass to the component here
@@ -6,14 +6,14 @@ interface ProjectPageProps {
     client: string; // Client name
     deadline: string; // Deadline date
     budget: number; // Project budget
-    onClick?: () => void; // Optional click handler
+     // Optional click handler
     status: "open" | "in progress" | "completed"; // Project status
-
+     // Optional click handler
 }
 type style = {
   [key: string]: string;
 };
-const ProjectPage = ({ title, client, deadline,budget,status, onClick }: ProjectPageProps) => {
+const ProjectCard = ({ title, client, deadline,budget,status  }: ProjectPageProps) => {
  
     const clientInitialsColor: style = {
     A: "bg-amber-200", // Amber
@@ -57,15 +57,18 @@ const ProjectPage = ({ title, client, deadline,budget,status, onClick }: Project
           <span className="material-symbols-outlined text-[14px]">
             calendar_today
           </span>
-          {deadline}
+          {new Date(deadline).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
         </div>
-        <div className={`${clientInitialsColor[client.charAt(0).toUpperCase()]} w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-[10px] font-bold text-primary`}>
-          {client.charAt(0).toUpperCase() +
-              client.split(" ").slice(-1)[0].charAt(0).toUpperCase()}
-        </div>
+        {/* <div className={`${clientInitialsColor[client.charAt(0).toUpperCase()]} w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-[10px] font-bold text-primary`}>
+        
+        </div> */}
       </div>
     </div>
   );
 };
 
-export default ProjectPage;
+export default ProjectCard;

@@ -10,6 +10,9 @@ export interface IProject extends mongoose.Document {
     status: "open" | "in progress" | "completed";
     Owner?: mongoose.Types.ObjectId;
     client?: string;
+    isStarted?: boolean;
+    StartedAt?: Date;
+    
 }
 
 const projectSchema = new mongoose.Schema<IProject>({
@@ -46,6 +49,13 @@ const projectSchema = new mongoose.Schema<IProject>({
     Owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+    },
+    isStarted: {
+        type: Boolean,
+        default: false,
+    },
+    StartedAt: {
+        type: Date,
     },
 }, {timestamps: true});
 
