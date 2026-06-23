@@ -78,12 +78,8 @@ const page = () => {
   const router = useRouter();
   return (
     <div className="bg-background text-on-surface font-body-md antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
-      <Sidebar />
+   
       <div className="flex-1 flex flex-col min-w-0 md:ml-64 relative">
-        {/* TopAppBar (Shared Component) */}
-        <div className="fixed top-0 right-0 left-0 md:left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-10 flex justify-between items-center px-lg transition-all">
-          <TopNavbar />
-        </div>
          <div><EditCLient open={editOpen} onClose={()=> setEditOpen(false)} client={client} /></div>
         {/* <!-- Scrollable Content Canvas --> */}
         <div className={`${editOpen ? 'blur-sm' : ''} flex-1 overflow-y-auto p-10 md:px-gutter max-w-container-max mx-auto w-full`}>

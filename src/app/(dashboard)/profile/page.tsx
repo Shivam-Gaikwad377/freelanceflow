@@ -129,10 +129,10 @@ const page = () => {
     router.push("/verify-email?newEmail=" + encodeURIComponent(newEmail));
   };
   return (
-    <div>
-      <Sidebar />
+    
+      
       <div className="md:ml-64">
-        <TopNavbar />
+       
         <main className="flex-1 overflow-y-auto p-margin-mobile md:p-gutter lg:p-xl">
           <div className="max-w-3xl mx-auto space-y-lg">
             <div className="mb-lg">
@@ -402,7 +402,7 @@ const page = () => {
           </div>
         </main>
       </div>
-    </div>
+   
   );
 };
 

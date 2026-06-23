@@ -11,10 +11,7 @@ const page = () => {
     const status = ["open", "in progress", "completed"] as const;
   return (
     <div className="text-on-background  font-body-md bg-background antialiased selection:bg-primary selection:text-on-primary">
-      <TopNavbar />
       <div className="flex h-screen pt-16 md:pt-0">
-        <Sidebar />
-
         <main className="flex-1 md:ml-64  bg-background px-xxl py-xl  flex flex-col h-full w-full max-w-400 mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-md mb-xl">
             <div>

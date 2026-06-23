@@ -46,11 +46,10 @@ const page = () => {
   const [AddClientOpen, setAddClientOpen] = useState<boolean>(false);
 
   return (
-    <div>
-      <Sidebar />
+    
 
-      <div className=" flex w-auto flex-col flex-1 max-w-full ml-64  md:px-gutter gap-2">
-        <TopNavbar />
+      <div className=" flex w-auto flex-col flex-1 max-w-full ml-64  md:p-gutter gap-2">
+        
         {/* Header */}
         <div className={`${AddClientOpen ? " " : "hidden"}`}>
           <AddClient
@@ -126,39 +125,7 @@ const page = () => {
           </div>
         </div>
       </div>
-      {/* <!-- BottomNavBar (Mobile Only) --> */}
-      <nav className="md:hidden flex justify-around items-center w-full px-lg py-sm bg-surface-container-lowest border-t border-outline-variant fixed bottom-0 z-40 pb-[env(safe-area-inset-bottom)]">
-        <a
-          className="flex flex-col items-center gap-1 p-2 text-on-surface-variant"
-          href="#"
-        >
-          <span className="material-symbols-outlined">dashboard</span>
-          <span className="font-label-sm text-[10px]">Dashboard</span>
-        </a>
-        <a
-          className="flex flex-col items-center gap-1 p-2 text-primary font-bold"
-          href="#"
-        >
-          <span className="material-symbols-outlined icon-fill">group</span>
-          <span className="font-label-sm text-[10px]">Clients</span>
-        </a>
-        <a
-          className="flex flex-col items-center gap-1 p-2 text-on-surface-variant"
-          href="#"
-        >
-          <span className="material-symbols-outlined">receipt_long</span>
-          <span className="font-label-sm text-[10px]">Invoices</span>
-        </a>
-        <a
-          className="flex flex-col items-center gap-1 p-2 text-on-surface-variant"
-          href="#"
-        >
-          <span className="material-symbols-outlined">folder_open</span>
-          <span className="font-label-sm text-[10px]">Projects</span>
-        </a>
-      </nav>
-      {/* <!-- Add Client Drawer/Overlay --> */}
-    </div>
+     
   );
 };
 

@@ -42,7 +42,8 @@
     "use-debounce": "^10.1.1",
     "usehooks-ts": "^3.1.1",
     "validator": "^13.15.35",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
