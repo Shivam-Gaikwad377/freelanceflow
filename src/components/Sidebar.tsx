@@ -7,15 +7,15 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Router } from "lucide-react";
 import AddProject from "./AddProject";
+import {useUiStore} from "@/store/useUiStore";
 const Sidebar = () => {
   const activeItem : any = usePathname().split("/")[1] ;
   const router = useRouter();  
-  const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
+  const openAddProject = useUiStore((state) => state.openAddProject);
+  
   return (
     <>
-      <div className={`${isAddProjectOpen ? "" : "hidden"} fixed inset-0 z-30 bg-black bg-opacity-50`} >
-        <AddProject />
-      </div>
+      
       <nav className="hidden md:flex flex-col p-md w-64 h-screen bg-surface-container-lowest border-r border-outline-variant fixed left-0 top-0 z-20">
         <div className="flex items-center space-x-3 mb-xl px-sm pt-sm">
           <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-md">
@@ -30,7 +30,7 @@ const Sidebar = () => {
             </p>
           </div>
         </div>
-        <button onClick={()=> setIsAddProjectOpen(true)} className="w-full bg-primary text-on-primary py-3 rounded-lg mb-8 font-label-md hover:bg-surface-tint transition-colors shadow-[0_4px_12px_rgba(70,72,212,0.2)]">
+        <button onClick={()=> openAddProject(null)} className="w-full cursor-pointer hover:scale-102 acitve: scale-98 transition-all duration-100 bg-primary text-on-primary py-3 rounded-lg mb-8 font-label-md hover:bg-surface-tint  shadow-[0_4px_12px_rgba(70,72,212,0.2)]">
           + New Project
         </button>
         <div className="flex-1 space-y-sm">
