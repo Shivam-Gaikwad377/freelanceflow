@@ -4,6 +4,7 @@ import './globals.css'
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner"
 import Providers from './providers';
+import Sidebar from '@/components/Sidebar';
 
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
