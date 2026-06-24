@@ -8,6 +8,9 @@ import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
 import Sidebar from "@/components/Sidebar";
 import TopNavbar from "@/components/TopNavbar";
 import { set } from "mongoose";
+import EditClientDrawer from "@/components/EditClient";
+import EditProjectDrawer from "@/components/EditProject";
+import { toast } from "sonner";
 type StatusColor = {
   [key: string]: string;
 };
@@ -49,6 +52,8 @@ const page = () => {
   const [start, setStart] = useState(new Date());
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
   const [viewAll, setViewAll] = useState(false);
+  const [edit, setEdit] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -102,6 +107,7 @@ const page = () => {
       const response = await axios.patch(`/api/projects/${id}`, {
         isStarted: true,
         StartedAt: new Date(),
+        status: "in progress",
       });
       setProject(response.data.data);
     } catch (error) {
@@ -122,12 +128,36 @@ const page = () => {
       console.error("Error fetching invoices:", error);
     }
   };
-
+  const handleMarkAsDone = async () => {
+    try {
+      const response = await axios.patch(`/api/projects/${id}`, {
+        status: "completed",
+        isCompleted: true,
+      });
+      if(response.data.success) {
+        setProject(response.data.data);
+        router.refresh();
+        toast.success("Project marked as completed");
+      }
+      
+    } catch (error) {
+      console.error("Error marking project as done:", error);
+    }
+  };
   return (
     <div className="flex-1 flex flex-col min-w-0 md:ml-64 relative">
       <div
         className={` flex-1 overflow-y-auto p-10  md:px-gutter max-w-container-max mx-auto w-full`}
       >
+        <div>
+          <EditProjectDrawer
+            open={edit}
+            onClose={() => {
+              setEdit(false);
+            }}
+            project={project}
+          />
+        </div>
         {/* <!-- Breadcrumbs --> */}
         <div className="flex justify-between items-center mb-xl">
           <nav className="flex items-center gap-2 text-on-surface-variant font-label-md">
@@ -146,18 +176,23 @@ const page = () => {
             </span>
           </nav>
           <div className="flex gap-md">
-            <button className="px-md py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container rounded-lg font-label-md transition-all flex items-center gap-2">
+            <button
+              className="px-md py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container rounded-lg font-label-md transition-all flex items-center gap-2"
+              onClick={() => setEdit(true)}
+            >
               <span className="material-symbols-outlined text-[20px]">
                 edit
               </span>
               Edit Project
             </button>
-            <button className="px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20">
-              <span className="material-symbols-outlined text-[20px]">
-                check_circle
-              </span>
-              Mark as Done
-            </button>
+            {!project?.isCompleted && (
+              <button className="px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20">
+                <span className="material-symbols-outlined text-[20px]">
+                  check_circle
+                </span>
+                Mark as Done
+              </button>
+            )}
           </div>
         </div>
         {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
