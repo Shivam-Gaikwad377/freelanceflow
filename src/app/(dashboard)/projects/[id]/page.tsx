@@ -4,11 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
-import Sidebar from "@/components/Sidebar";
-import TopNavbar from "@/components/TopNavbar";
-import { set } from "mongoose";
-import EditClientDrawer from "@/components/EditClient";
 import EditProjectDrawer from "@/components/EditProject";
 import { toast } from "sonner";
 type StatusColor = {
@@ -132,7 +127,7 @@ const page = () => {
     try {
       const response = await axios.patch(`/api/projects/${id}`, {
         status: "completed",
-        isCompleted: true,
+        
       });
       if(response.data.success) {
         setProject(response.data.data);
@@ -145,7 +140,7 @@ const page = () => {
     }
   };
   return (
-    <div className="flex-1 flex flex-col min-w-0 md:ml-64 relative">
+    <div className="flex-1 flex flex-col min-w-0 relative">
       <div
         className={` flex-1 overflow-y-auto p-10  md:px-gutter max-w-container-max mx-auto w-full`}
       >
@@ -185,8 +180,8 @@ const page = () => {
               </span>
               Edit Project
             </button>
-            {!project?.isCompleted && (
-              <button className="px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20">
+            {!(project?.status === "completed") && (
+              <button onClick={handleMarkAsDone} className="px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20">
                 <span className="material-symbols-outlined text-[20px]">
                   check_circle
                 </span>

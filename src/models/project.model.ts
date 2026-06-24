@@ -12,7 +12,7 @@ export interface IProject extends mongoose.Document {
     client?: string;
     isStarted?: boolean;
     StartedAt?: Date;
-    isCompleted?: boolean;
+    
 }
 
 const projectSchema = new mongoose.Schema<IProject>({
@@ -57,10 +57,7 @@ const projectSchema = new mongoose.Schema<IProject>({
     StartedAt: {
         type: Date,
     },
-    isCompleted: {
-        type: Boolean,
-        default: false,
-    },
+    
 }, {timestamps: true});
 
 const ProjectModel =

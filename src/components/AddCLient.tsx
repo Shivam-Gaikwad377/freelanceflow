@@ -61,7 +61,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
 
   const [isLoading, setIsLoading] = useState(false);
   return (
-    <main className="  p-5 min-h-screen">
+    <div className="  p-5 min-h-screen">
       <div className=" mx-auto">
         {/* <!-- Header --> */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-xl gap-3">
@@ -209,14 +209,14 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
               {/* <!-- Actions --> */}
               <div className="flex items-center justify-end gap-md pt-lg border-t border-outline-variant/30 mt-xl">
                 <button
-                  className="px-xl py-[12px] text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
+                  className="px-xl py-3 text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
                   type="button"
                   onClick={onClose}
                 >
                   Cancel
                 </button>
                 <button
-                  className="bg-primary text-on-primary px-xl py-[12px] rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20"
+                  className="bg-primary text-on-primary px-xl py-3 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20"
                   type="submit"
                 >
                   Create Client
@@ -259,7 +259,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 };
 

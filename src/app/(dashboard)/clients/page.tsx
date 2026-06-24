@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
-import Sidebar from "@/components/Sidebar";
-import TopNavbar from "@/components/TopNavbar";
+
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -19,7 +18,7 @@ const page = () => {
   const limit = 9;
   useEffect(() => {
     const fetchClients = async () => {
-      if (session) {
+      if (session?.data?.user?._id) {
         try {
           const response = await axios.get(`/api/Clients?offset=${clientOffset}&limit=${limit}`);
           const fetchedClients = Array.isArray(response.data.data.clients)
@@ -48,7 +47,7 @@ const page = () => {
   return (
     
 
-      <div className=" flex w-auto flex-col flex-1 max-w-full ml-64  md:p-gutter gap-2">
+      <div className="flex flex-col flex-1 md:p-gutter gap-2">
         
         {/* Header */}
         <div className={`${AddClientOpen ? " " : "hidden"}`}>
@@ -89,7 +88,7 @@ const page = () => {
                 type="text"
               />
             </div>
-            <div className="relative min-w-[200px]">
+            <div className="relative min-w-50">
               <select className="w-full pl-4 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-body-md text-on-surface appearance-none outline-none cursor-pointer">
                 <option value="all">All Statuses</option>
                 <option value="active">Active</option>

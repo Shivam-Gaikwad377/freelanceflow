@@ -10,5 +10,4 @@ export const updateProjectSchema = z.object({
     isStarted: z.boolean().optional(),
     StartedAt: z.date().optional(),
     client: z.string().min(1, "Client name is required").optional(),
-    isCompleted: z.boolean().optional(),
 })

@@ -77,9 +77,7 @@ const page = () => {
   
   const router = useRouter();
   return (
-    <div className="bg-background text-on-surface font-body-md antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
-   
-      <div className="flex-1 flex flex-col min-w-0 md:ml-64 relative">
+   <div className="flex-1 flex flex-col min-w-0 relative">
          <div><EditCLient open={editOpen} onClose={()=> setEditOpen(false)} client={client} /></div>
         {/* <!-- Scrollable Content Canvas --> */}
         <div className={`${editOpen ? 'blur-sm' : ''} flex-1 overflow-y-auto p-10 md:px-gutter max-w-container-max mx-auto w-full`}>
@@ -351,7 +349,7 @@ const page = () => {
           </section>
         </div>
       </div>
-    </div>
+    
   );
 };
 

@@ -85,7 +85,7 @@ const AddProject = () => {
   if (!isAddProjectOpen) return null;
 
   return (
-    <div className="lg:pl-64 py-10  z-100 min-h-screen">
+    <div className=" py-10  z-100 min-h-screen">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-xl gap-md">
           <div>

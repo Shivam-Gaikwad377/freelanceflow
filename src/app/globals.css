@@ -261,3 +261,11 @@ input[type="password"]::-webkit-contacts-auto-fill-button {
     display: none;
   }
 }
+
+body {
+  @apply bg-background text-on-surface font-body-md antialiased;
+}
+
+::selection {
+  @apply bg-primary-container text-on-primary-container;
+}
