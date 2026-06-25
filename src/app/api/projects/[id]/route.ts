@@ -33,7 +33,7 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     const project = await Project.findOne({
       _id: id,
-      Owner: session.user._id,
+      userId: session.user._id,
     }).lean();
 
     if (!project) {
@@ -78,7 +78,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     await connectToDatabase();
     const deleted = await Project.findOneAndDelete({
       _id: id,
-      Owner: session.user._id,
+      userId: session.user._id,
     });
     if (!deleted) {
       return NextResponse.json<ApiResponse>(
@@ -134,7 +134,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       );
     }
     const updatedProject = await Project.findOneAndUpdate(
-      { _id: id, Owner: session.user._id },
+      { _id: id, userId: session.user._id },
       { $set: validation.data },
       { new: true }
     ).lean();

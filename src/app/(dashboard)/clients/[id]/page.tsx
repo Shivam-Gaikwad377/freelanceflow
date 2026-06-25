@@ -1,13 +1,12 @@
 "use client";
 import React from "react";
-import Sidebar from "@/components/Sidebar";
-import TopNavbar from "@/components/TopNavbar";
+
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import Pagination from "@/components/Pagination";
-import { ZodNumber } from "zod";
+
 import Link from "next/link";
 import EditCLient from "@/components/EditClient"
 

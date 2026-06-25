@@ -7,12 +7,14 @@ import axios from "axios";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination";
 
+
 const page = () => {
   const session = useSession();
   const [invoices, setInvoices] = useState<any[]>([]);
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [totalInvoices, setTotalInvoices] = useState<number>(0);
   const limit = 9;
+  const router = useRouter();
   useEffect(() => {
     const fetchInvoices = async () => {
       if (session?.data?.user?._id) {
@@ -193,8 +195,9 @@ const page = () => {
               <tbody className="font-body-sm text-body-sm">
                 {invoices.map((invoice) => (
                   <tr
+                    onClick={()=> router.push(`/invoices/${invoice._id}`)}
                     key={invoice?._id}
-                    className="border-b border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
+                    className="border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
                   >
                     <td className="py-sm px-lg font-medium text-on-surface">
                       {invoice?.invoiceNumber}

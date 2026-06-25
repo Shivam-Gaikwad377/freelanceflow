@@ -32,7 +32,7 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     const invoice = await Invoice.findOne({
       _id: id,
-      owner: session.user._id,
+      userId: session.user._id,
     }).lean();
 
     if (!invoice) {
