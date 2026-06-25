@@ -7,7 +7,7 @@ import ApiResponse from "@/types/ApiResponse";
 import { emailSchema } from "@/schemas/email.schema";
 import { sendVerificationEmail } from "@/helpers/sendVerificationemail";
 
-export async function PUT(request: Request) {
+export async function put(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {

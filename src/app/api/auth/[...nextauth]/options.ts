@@ -54,13 +54,24 @@ export const authOptions: NextAuthOptions = {
   ],
   //callbacks to include user ID and verification status in JWT token and session
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // Runs only on initial sign-in
       if (user) {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.email = user.email;
-        token.currency = user?.currency;
+        token.currency = user.currency;
+        token.name = user.name;
       }
+
+      // Runs when update() is called from client
+      if (trigger === "update" && session) {
+        token.name = session.name;
+        token.currency = session.currency;
+
+        token.isVerified = session.isVerified;
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -69,6 +80,8 @@ export const authOptions: NextAuthOptions = {
         session.user.isVerified = token.isVerified;
         session.user.email = token.email;
         session.user.currency = token.currency;
+        session.user.name = token.name;
+        session.user.businessName = token.businessName;
       }
       return session;
     },

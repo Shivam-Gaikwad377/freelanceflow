@@ -18,14 +18,14 @@ const page = () => {
       if (session?.data?.user?._id) {
         try {
           const response = await axios.get(
-            `/api/Invoices?offset=${invoiceOffset}&limit=${limit}`
+            `/api/Invoices?offset=${invoiceOffset}&limit=${limit}&sort=asc`
           );
           const fetchedInvoices = Array.isArray(response.data.data.invoices)
             ? response.data.data.invoices
             : Array.isArray(response.data.data.invoices)
               ? response.data.data.invoices
               : [];
-          console.log("Fetched invoices:", fetchedInvoices);
+          console.log("Fetched invoices:", session);
           setInvoices(fetchedInvoices);
           setTotalInvoices(response.data.data.total);
         } catch (error) {
@@ -37,8 +37,18 @@ const page = () => {
 
     fetchInvoices();
   }, [invoiceOffset, limit, session?.data?.user?._id]);
+  const currencys = [
+    { code: "USD", symbol: "$" },
+    { code: "EUR", symbol: "€" },
+    { code: "GBP", symbol: "£" },
+    { code: "JPY", symbol: "¥" },
+    { code: "CAD", symbol: "C$" },
+    { code: "INR", symbol: "₹" },
+    { code: "AUD", symbol: "A$" },
+    { code: "CHF", symbol: "CHF" },
+  ];
   return (
-    <main className="flex-1  min-h-screen bg-background">
+    <div className="flex-1  min-h-screen bg-background">
       <div className="max-w-container-max mx-auto p-lg md:p-xl space-y-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-md">
           <div>
@@ -55,7 +65,7 @@ const page = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">
           <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
             <div className="flex items-center justify-between mb-sm">
               <span className="font-label-md text-label-md text-on-surface-variant">
@@ -100,7 +110,7 @@ const page = () => {
               </p>
             </div>
           </div>
-          <div className="glass-card rounded-xl p-lg flex flex-col justify-between !border-l-4 !border-0 !border-accent">
+          <div className="glass-card rounded-xl p-lg flex flex-col justify-between border-l-4! border-0! border-accent!">
             <div className="flex items-center justify-between mb-sm">
               <span className="font-label-md text-label-md text-on-surface-variant">
                 Overdue
@@ -118,7 +128,7 @@ const page = () => {
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex flex-col md:flex-row gap-md items-center justify-between glass-card rounded-lg p-sm">
           <div className="relative w-full md:w-96">
@@ -163,23 +173,20 @@ const page = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-outline-variant/50">
-                  <th className="py-md px-lg font-label-sm text-label-sm text-on-surface-variant font-semibold">
-                    Invoice ID
+                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
+                    Invoice Number
                   </th>
-                  <th className="py-md px-lg font-label-sm text-label-sm text-on-surface-variant font-semibold">
+                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
                     Client
                   </th>
-                  <th className="py-md px-lg font-label-sm text-label-sm text-on-surface-variant font-semibold">
+                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
                     Issue Date
                   </th>
-                  <th className="py-md px-lg font-label-sm text-label-sm text-on-surface-variant font-semibold text-right">
+                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold text-right">
                     Amount
                   </th>
-                  <th className="py-md px-lg font-label-sm text-label-sm text-on-surface-variant font-semibold text-center">
+                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold text-center">
                     Status
-                  </th>
-                  <th className="py-md px-lg font-label-sm text-label-sm text-on-surface-variant font-semibold text-right">
-                    Actions
                   </th>
                 </tr>
               </thead>
@@ -194,9 +201,13 @@ const page = () => {
                     </td>
                     <td className="py-sm px-lg">
                       <div className="flex items-center gap-sm">
-                        <div className="w-8 h-8 rounded-full bg-surface-variant overflow-hidden">
+                        <div className="p-2 aspect-square rounded-full flex text-label-md items-center justify-center bg-surface-variant overflow-hidden">
                           {invoice?.client.charAt(0).toUpperCase() +
-                            invoice?.client.split(" ").slice(-1)[0].charAt(0).toUpperCase()}
+                            invoice?.client
+                              .split(" ")
+                              .slice(-1)[0]
+                              .charAt(0)
+                              .toUpperCase()}
                         </div>
                         <span className="text-on-surface">
                           {invoice?.client}
@@ -204,10 +215,17 @@ const page = () => {
                       </div>
                     </td>
                     <td className="py-sm px-lg text-on-surface-variant">
-                      {invoice?.invoiceDate}
+                      {new Date(invoice?.createdAt).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
                     </td>
                     <td className="py-sm px-lg text-right font-medium text-on-surface">
-                      {invoice?.totalAmount?.toLocaleString("en-US", {
+                      {invoice?.amount?.toLocaleString("en-US", {
                         style: "currency",
                         currency: session?.data?.user?.currency || "USD",
                       })}
@@ -217,56 +235,24 @@ const page = () => {
                         Pending
                       </span>
                     </td>
-                    <td className="py-sm px-lg text-right">
-                      <div className="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-1 rounded hover:bg-surface-variant text-on-surface-variant">
-                          <span className="material-symbols-outlined text-[18px]">
-                            edit
-                          </span>
-                        </button>
-                        <button className="p-1 rounded hover:bg-surface-variant text-on-surface-variant">
-                          <span className="material-symbols-outlined text-[18px]">
-                            send
-                          </span>
-                        </button>
-                        <button className="p-1 rounded hover:bg-surface-variant text-on-surface-variant">
-                          <span className="material-symbols-outlined text-[18px]">
-                            picture_as_pdf
-                          </span>
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           <div className="p-sm flex items-center justify-between border-t border-outline-variant/30 text-label-sm text-on-surface-variant bg-surface-container-lowest/50">
-            <span>Showing 1 to 3 of 24 entries</span>
             <div className="flex gap-1">
-              <button
-                className="px-2 py-1 rounded hover:bg-surface-variant disabled:opacity-50"
-                disabled={true}
-              >
-                &lt;
-              </button>
-              <button className="px-2 py-1 rounded bg-primary text-on-primary">
-                1
-              </button>
-              <button className="px-2 py-1 rounded hover:bg-surface-variant">
-                2
-              </button>
-              <button className="px-2 py-1 rounded hover:bg-surface-variant">
-                3
-              </button>
-              <button className="px-2 py-1 rounded hover:bg-surface-variant">
-                &gt;
-              </button>
+              <Pagination
+                total={totalInvoices}
+                offset={invoiceOffset}
+                limit={limit}
+                onPageChange={(newOffset) => setInvoiceOffset(newOffset)}
+              />
             </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 };
 

@@ -8,7 +8,8 @@ import { toast } from "sonner";
 import formData from "form-data";
 
 const page = () => {
-  const session = useSession();
+  const { data: session, update } = useSession();
+
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
   const currencys = [
@@ -54,8 +55,9 @@ const page = () => {
   };
 
   const [editing, setEditing] = useState(false);
+
   useEffect(() => {
-    if (!session?.data?.user?._id) {
+    if (!session || !session.user) {
       // Redirect to login page if not authenticated
       router.replace("/login");
     }
@@ -64,6 +66,7 @@ const page = () => {
         const response = await axios.get("/api/user/Profile");
         console.log("Profile data:", response.data);
         setProfile(response.data.data);
+        
       };
       fetchProfile();
     } catch (error: any) {
@@ -104,7 +107,7 @@ const page = () => {
         businessName,
         currency,
       });
-      if (email !== profile?.email) {
+      if (email && email !== profile?.email) {
         const responseEmail = await axios.put("/api/user/email/email-change", {
           newEmail: email,
         });
@@ -113,10 +116,12 @@ const page = () => {
           toast.success(
             "Email change request sent. Please verify your new email."
           );
+              await update({ name, businessName, currency, email });
         }
       }
       const updatedProfile = await axios.get("/api/user/Profile");
       setProfile(updatedProfile.data.data);
+      await update({ name, businessName, currency });
       toast.success("Profile updated successfully!");
       setEditing(false);
     } catch (error: any) {
@@ -194,6 +199,7 @@ const page = () => {
                       className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface"
                       type="text"
                       onChange={(e) => setName(e.target.value)}
+                      defaultValue={profile?.name}
                     />
                   ) : (
                     <p className="font-body-md text-body-md text-on-surface">
@@ -212,6 +218,7 @@ const page = () => {
                       onChange={(e) => {
                         setEmail(e.target.value);
                       }}
+                      defaultValue={profile?.email}
                     />
                   ) : (
                     <p className="font-body-md text-body-md text-on-surface">
@@ -244,10 +251,11 @@ const page = () => {
                       className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface"
                       type="text"
                       onChange={(e) => setBusinessName(e.target.value)}
+                      defaultValue={profile?.businessName}
                     />
                   ) : (
                     <p className="font-body-md text-body-md text-on-surface">
-                      {profile?.bussinessName || "No business name set"}
+                      {profile?.businessName || "No business name set"}
                     </p>
                   )}
                 </div>
