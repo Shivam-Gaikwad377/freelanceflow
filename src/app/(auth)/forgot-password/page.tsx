@@ -1,32 +1,34 @@
-"use client"
+"use client";
 import axios from "axios";
 import React from "react";
-import {useRef, useState} from "react";
-import {useRouter} from "next/navigation";
-import {toast} from "sonner";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import ApiResponse from "@/types/ApiResponse";
 const page = () => {
-    
-    const [email, setEmail] = useState("");
-    const router = useRouter();
+  const [email, setEmail] = useState("");
+  const router = useRouter();
 
-    const onSubmit = async () => {
-       
-        if(!email){
-            toast.error("Please enter your email address.");
-            return;
-        }
-        try {
-            const response: ApiResponse = await axios.post("/api/auth/forgot-password", {email});
-            if (response.data.success) {
-                toast.success("Password reset email sent successfully. Please check your email for the OTP.");
-                router.replace("/reset-password?email=" + email);
-            }
-        } catch (error) {
-            toast.error("Failed to send password reset otp.");
-        }
-    
-    };
+  const onSubmit = async () => {
+    if (!email) {
+      toast.error("Please enter your email address.");
+      return;
+    }
+    try {
+      const response: ApiResponse = await axios.post(
+        "/api/auth/forgot-password",
+        { email }
+      );
+      if (response.data.success) {
+        toast.success(
+          "Password reset email sent successfully. Please check your email for the OTP."
+        );
+        router.replace("/reset-password?email=" + email);
+      }
+    } catch (error) {
+      toast.error("Failed to send password reset otp.");
+    }
+  };
 
   return (
     <div className="antialiased  flex flex-col min-h-full p-0 m-0 relative pt-20 overflow-x-hidden">
@@ -79,11 +81,14 @@ const page = () => {
                   id="email"
                   placeholder="name@example.com"
                   type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <button onClick={ (e) => onSubmit()} className="w-full py-md px-lg bg-primary hover:bg-primary-container text-on-primary font-body-md font-semibold rounded-lg shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-sm group">
+              <button
+                onClick={(e) => onSubmit()}
+                className="w-full py-md px-lg bg-primary hover:bg-primary-container text-on-primary font-body-md font-semibold rounded-lg shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-sm group"
+              >
                 <span>Send OTP</span>
                 <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
                   arrow_forward

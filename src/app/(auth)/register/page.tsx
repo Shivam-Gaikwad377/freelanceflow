@@ -122,7 +122,6 @@ const page = () => {
                       ? errors.name.message
                       : "Invalid name"}
                   </p>
-
                 )}
               </div>
               {/* <!-- Email --> */}
@@ -146,7 +145,7 @@ const page = () => {
                     },
                   })}
                 />
-                
+
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">
                     {typeof errors.email.message === "string"
@@ -177,7 +176,7 @@ const page = () => {
                   })}
                 />
                 {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 text-sm mt-1">
                     {typeof errors.password.message === "string"
                       ? errors.password.message
                       : "Invalid password"}

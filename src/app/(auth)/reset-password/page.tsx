@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
-import  Link from "next/link";
+import Link from "next/link";
 import ApiResponse from "@/types/ApiResponse";
 const page = () => {
   const [timer, setTimer] = useState(5); // 5 minutes in seconds
@@ -52,11 +52,14 @@ const page = () => {
       return;
     }
     try {
-      const response: ApiResponse = await axios.post("/api/auth/reset-password", {
-        email,
-        verificationToken: enteredOtp,
-        newPassword,
-      });
+      const response: ApiResponse = await axios.post(
+        "/api/auth/reset-password",
+        {
+          email,
+          verificationToken: enteredOtp,
+          newPassword,
+        }
+      );
       toast.success(response.data.message || "Password reset successfully");
       router.replace("/login");
     } catch (err: any) {
@@ -81,9 +84,12 @@ const page = () => {
   };
   const handleResend = async () => {
     try {
-      const response: ApiResponse = await axios.post("/api/auth/forgot-password", {
-        email,
-      });
+      const response: ApiResponse = await axios.post(
+        "/api/auth/forgot-password",
+        {
+          email,
+        }
+      );
       if (response.data.success) {
         toast.success(
           response.data.message ||

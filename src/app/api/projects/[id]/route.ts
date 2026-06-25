@@ -2,7 +2,7 @@ import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { NextResponse } from "next/server";
 import Project from "@/models/project.model";
-import { projectSchema } from "@/schemas/project.schema";
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { isValidObjectId } from "mongoose";
@@ -190,7 +190,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
       );
     }
     const updated = await Project.findOneAndUpdate(
-      { _id: id, Owner: session.user._id },
+      { _id: id, userId: session.user._id },
       { $set: parseResult.data },
       { new: true }
     );

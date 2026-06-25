@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
@@ -13,19 +13,18 @@ const page = () => {
   const [timer, setTimer] = useState(5); // 5 minutes in seconds
   const [resend, setResend] = useState(false);
   const searchParams = useSearchParams();
-const email = searchParams.get("email") || ""
+  const email = searchParams.get("email") || "";
   const [otp, setOtp] = useState<string[]>(Array(6).fill("")); // Initialize an array of 6 empty strings
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleOtpChange = (index: number, value: string) => {
-    
-      // Only allow digits
-      const newOtp = [...otp];
-      newOtp[index] = value.slice(-1); // Ensure only the last digit is kept
-      setOtp(newOtp);
-    
+    // Only allow digits
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1); // Ensure only the last digit is kept
+    setOtp(newOtp);
+
     if (index < 5 && value) {
       (inputRef.current as (HTMLInputElement | null)[] | null)?.[
         index + 1
@@ -54,7 +53,10 @@ const email = searchParams.get("email") || ""
       });
       router.replace("/login");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Invalid verification code. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "Invalid verification code. Please try again."
+      );
     }
   };
   const handlePaste = (e: React.ClipboardEvent) => {
@@ -93,9 +95,10 @@ const email = searchParams.get("email") || ""
       }
     } catch (err: any) {
       setError(
-        err.response?.data?.message || "Failed to resend verification code. Please try again."
+        err.response?.data?.message ||
+          "Failed to resend verification code. Please try again."
       );
-      
+
       return;
     }
   };

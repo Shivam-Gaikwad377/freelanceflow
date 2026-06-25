@@ -4,14 +4,10 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import Pagination from "@/components/Pagination";
-
-import Link from "next/link";
 
 const page = () => {
   const [invoice, setInvoice] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -271,7 +267,7 @@ const page = () => {
             </thead>
             <tbody>
               {invoice?.lineItems?.map((item: any, index: number) => (
-                <tr key={index} >
+                <tr key={index}>
                   <td className="py-2.75 text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
                     {item.description}
                   </td>
