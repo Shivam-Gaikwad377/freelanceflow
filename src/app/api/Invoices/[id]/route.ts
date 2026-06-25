@@ -134,7 +134,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
     if (!isValidObjectId(id)) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Invalid client ID" },
+        { success: false, message: "Invalid invoice ID" },
         { status: 400 }
       );
     }

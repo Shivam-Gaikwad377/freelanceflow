@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { title, description, client, clientID, budget, deadline, status } =
+    const { title, description, client, clientId, budget, deadline, status } =
       await request.json();
 
     const parseResult = projectSchema.safeParse({
@@ -46,8 +46,8 @@ export async function POST(request: Request) {
 
     const newProject = new Project({
       ...parseResult.data,
-      Owner: ownerID,
-      clientID: clientID,
+      userId: ownerID,
+      clientId: clientId,
     });
 
     await newProject.save();
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
     const search = searchParams.get("search") || "";
     const searchBy = searchParams.get("searchBy") || "title";
     const status = searchParams.get("status") || "";
-    const filter: any = { Owner: ownerID };
+    const filter: any = { userId: ownerID };
     if (status) filter.status = status;
 
     if (search) {
@@ -108,7 +108,7 @@ export async function GET(request: Request) {
       }
       // NEW: Explicitly handle searching by an exact Client ID
       else if (searchBy === "clientId") {
-        filter.clientID = search;
+        filter.clientId = search;
       }
       // OPTIONAL: Keep your old logic under a new name if you have a search bar that searches clients by name
       else if (searchBy === "clientName") {
@@ -117,7 +117,7 @@ export async function GET(request: Request) {
           userId: ownerID,
         }).select("_id");
 
-        filter.clientID = { $in: matchingClients.map((c) => c._id) };
+        filter.clientId = { $in: matchingClients.map((c) => c._id) };
       }
       
     }

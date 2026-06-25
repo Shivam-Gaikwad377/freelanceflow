@@ -14,4 +14,5 @@ export const createInvoiceSchema = z.object({
             price: z.number().positive("Price must be a positive number"),
         })
     ).min(1, "At least one line item is required"),
+    client: z.string().min(1, "Client name is required"),
 });

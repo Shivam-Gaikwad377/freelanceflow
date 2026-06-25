@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import ClientCard from "@/components/ClientCard";
 import AddClient from "@/components/AddCLient";
 import Pagination from "@/components/Pagination";
-import { set } from "mongoose";
+
 
 const page = () => {
   const session = useSession();

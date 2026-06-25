@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export interface IInvoice extends mongoose.Document {
     invoiceNumber: number;
-    owner: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId;
     projectId: mongoose.Types.ObjectId;
     amount: number;
     dueDate: Date;
@@ -12,7 +12,8 @@ export interface IInvoice extends mongoose.Document {
         quantity: number;
         price: number;
     }[];
-    clientID: mongoose.Types.ObjectId;
+    clientId: mongoose.Types.ObjectId;
+    client: string;
 }
 
 const invoiceSchema = new mongoose.Schema<IInvoice>({
@@ -26,7 +27,7 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
         required: true,
         unique: true,
     },
-    owner: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
@@ -60,13 +61,19 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
             },
         },
     ],
-    clientID: {
+    clientId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Client",
         required: true,
     },
+    client: {
+        type: String,
+        required: true,
+    },
 }, {timestamps: true});
-
+invoiceSchema.index({ userId: 1, createdAt: -1 });
+invoiceSchema.index({ userId: 1, status: 1 });
+invoiceSchema.index({ userId: 1, clientId: 1 });
 const InvoiceModel =
   (mongoose.models.Invoice as mongoose.Model<IInvoice>) ||
   mongoose.model<IInvoice>("Invoice", invoiceSchema);

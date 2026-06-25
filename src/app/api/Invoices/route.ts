@@ -20,13 +20,14 @@ export async function POST(request: Request) {
     }
     await connectToDatabase();
 
-    const { projectId, dueDate, status, lineItems, clientID } =
+    const { projectId, dueDate, status, lineItems, clientId, client } =
       await request.json();
 
     const parseResult = createInvoiceSchema.safeParse({
       dueDate,
       status,
       lineItems,
+      client,
     });
 
     if (!parseResult.success) {
@@ -41,15 +42,15 @@ export async function POST(request: Request) {
       0
     );
 
-    const count = await Invoice.countDocuments({ owner: ownerID });
+    const count = await Invoice.countDocuments({ userId: ownerID });
     const invoiceNumber = count + 1;
 
     const newInvoice = new Invoice({
       ...parseResult.data,
-      owner: ownerID,
+      userId: ownerID,
       amount,
       invoiceNumber,
-      clientID,
+      clientId,
       projectId,
     });
 
@@ -92,7 +93,7 @@ export async function GET(request: Request) {
     const projectId = searchParams.get("projectId") || "";
     const searchBy = searchParams.get("searchBy") || "invoiceNumber";
 
-    const filter: any = { owner: ownerID };
+    const filter: any = { userId: ownerID };
 
     if (status) filter.status = status;
     if (projectId) filter.projectId = projectId;
@@ -101,14 +102,14 @@ export async function GET(request: Request) {
       if (searchBy === "invoiceNumber") {
         filter.invoiceNumber = { $regex: search, $options: "i" };
       } else if (searchBy === "clientId") {
-        filter.clientID = search;
+        filter.clientId = search;
       } else if (searchBy === "clientName") {
         const matchingClients = await Client.find({
           name: { $regex: search, $options: "i" },
           userId: ownerID,
         }).select("_id");
 
-        filter.clientID = { $in: matchingClients.map((c) => c._id) };
+        filter.clientId = { $in: matchingClients.map((c) => c._id) };
       } else if (searchBy === "project") {
         const matchingProjects = await Project.find({
           userId: ownerID,
