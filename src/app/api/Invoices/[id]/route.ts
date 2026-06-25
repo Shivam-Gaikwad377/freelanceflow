@@ -91,7 +91,7 @@ export async function PUT(request: Request, { params }: RouteContext) {
 
     await connectToDatabase();
     const updatedInvoice = await Invoice.findOneAndUpdate(
-      { _id: id, owner: session.user._id },
+      { _id: id, userId: session.user._id },
       { $set: validation.data },
       { new: true }
     ).lean();
@@ -153,7 +153,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       );
     }
     const updatedInvoice = await Invoice.findOneAndUpdate(
-      { _id: id, owner: session.user._id },
+      { _id: id, userId: session.user._id },
       { $set: validation.data },
       { new: true }
     ).lean();
@@ -201,7 +201,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     await connectToDatabase();
     const deleted = await Invoice.findOneAndDelete({
       _id: id,
-      owner: session.user._id,
+      userId: session.user._id,
     });
     if (!deleted) {
       return NextResponse.json<ApiResponse>(
