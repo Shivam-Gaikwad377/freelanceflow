@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { updateInvoiceSchema } from "@/schemas/updateInvoice.schema";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,6 +36,10 @@ const page = () => {
     reset,
     formState: { errors, isSubmitting },
   } = lineItemsForm;
+  const { fields, append, remove } = useFieldArray({
+    control: lineItemsForm.control,
+    name: "lineItems",
+  });
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -231,14 +235,18 @@ const page = () => {
                       ? new Date(invoice?.dueDate).toLocaleDateString("en-IN", {
                           year: "numeric",
                           month: "long",
-                        day: "numeric",
-                      })
-                    : "Not set"}
-                </p>
-                <span onClick={()=> setEditingDueDate(true)} className="material-symbols-outlined opacity-0 duration-200 transition-opacity group-hover:opacity-100 text-label-sm">
-                edit
-              </span>
-              </div>)}
+                          day: "numeric",
+                        })
+                      : "Not set"}
+                  </p>
+                  <span
+                    onClick={() => setEditingDueDate(true)}
+                    className="material-symbols-outlined opacity-0 duration-200 transition-opacity group-hover:opacity-100 text-label-sm"
+                  >
+                    edit
+                  </span>
+                </div>
+              )}
             </div>
             <div>
               <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
@@ -322,9 +330,22 @@ const page = () => {
           </div>
         </div>
         <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg">
-          <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
-            Line items
-          </p>
+          <div className="flex justify-between px-1">
+            <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
+              Line items
+            </p>
+            <button
+            className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
+              onClick={() => {
+                const newIndex = fields.length; // capture before append
+                append({ description: "", quantity: 1, price: 0 });
+                setEditingIndex(newIndex); // opens the new blank row in edit mode
+              }}
+            >
+              <span className="material-symbols-outlined text-[15px]">add</span>
+              Add item
+            </button>
+          </div>
           <table className="w-full table-fixed border-collapse">
             <thead>
               <tr className="border-b border-outline-variant/30">
@@ -346,7 +367,7 @@ const page = () => {
               </tr>
             </thead>
             <tbody>
-              {invoice?.lineItems?.map((item: any, index: number) =>
+              {fields.map((field: any, index: number) =>
                 editingIndex === index ? (
                   <tr key={index}>
                     <td className="p-2.75 text-right text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
@@ -355,7 +376,7 @@ const page = () => {
                         placeholder="e.g. Jonathan Smith"
                         required={true}
                         type="text"
-                        defaultValue={item.description}
+                        defaultValue={field.description}
                         {...register(`lineItems.${index}.description`, {
                           required: "Description is required",
                           minLength: {
@@ -372,7 +393,7 @@ const page = () => {
                         placeholder="e.g. Jonathan Smith"
                         required={true}
                         type="text"
-                        defaultValue={item.quantity}
+                        defaultValue={field.quantity}
                         {...register(`lineItems.${index}.quantity`, {
                           required: "Quantity is required",
                           valueAsNumber: true,
@@ -389,7 +410,7 @@ const page = () => {
                         placeholder="e.g. Jonathan Smith"
                         required={true}
                         type="text"
-                        defaultValue={item.price}
+                        defaultValue={field.price}
                         {...register(`lineItems.${index}.price`, {
                           required: "Price is required",
                           valueAsNumber: true,
@@ -401,7 +422,7 @@ const page = () => {
                       />
                     </td>
                     <td className="p-2.75 text-left text-[13px] w-[10%] font-medium text-on-surface">
-                      {item.price * item.quantity}
+                      {field.price * field.quantity}
                     </td>
                     <td className="p-2.75 flex gap-2 font-medium text-right justify-center items-center w-[15%] text-on-surface">
                       <button
@@ -423,16 +444,16 @@ const page = () => {
                 ) : (
                   <tr key={index}>
                     <td className="py-2.75 text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
-                      {item.description}
+                      {field.description}
                     </td>
                     <td className="py-2.75 text-left  text-[13px] w-[10%] text-on-surface-variant">
-                      {item.quantity}
+                      {field.quantity}
                     </td>
                     <td className="py-2.75 text-left  text-[13px] w-[15%] text-on-surface-variant">
-                      {item.price}
+                      {field.price}
                     </td>
                     <td className="py-2.75 text-left text-[13px] w-[15%] font-medium text-on-surface">
-                      {item.price * item.quantity}
+                      {field.price * field.quantity}
                     </td>
                     <td className="py-2.75 font-medium text-left w-[10%] text-on-surface">
                       <button
@@ -457,10 +478,10 @@ const page = () => {
                   Subtotal
                 </span>
                 <span className="text-[13px] text-on-surface">
-                  {invoice?.lineItems
+                  {fields
                     .reduce(
-                      (total: number, item: any) =>
-                        total + item.price * item.quantity,
+                      (total: number, field: any) =>
+                        total + field.price * field.quantity,
                       0
                     )
                     .toLocaleString("en-IN", {
@@ -474,10 +495,10 @@ const page = () => {
                   Total
                 </span>
                 <span className="text-[15px] font-medium text-on-surface">
-                  {invoice?.lineItems
+                  {fields
                     .reduce(
-                      (total: number, item: any) =>
-                        total + item.price * item.quantity,
+                      (total: number, field: any) =>
+                        total + field.price * field.quantity,
                       0
                     )
                     .toLocaleString("en-IN", {
