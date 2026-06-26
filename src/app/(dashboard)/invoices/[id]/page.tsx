@@ -4,6 +4,11 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { updateInvoiceSchema } from "@/schemas/updateInvoice.schema";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 const page = () => {
   const [invoice, setInvoice] = useState<any>(null);
@@ -14,6 +19,22 @@ const page = () => {
   const invoiceId = pathname.split("/").pop();
   const [client, setClient] = useState<any>(null);
   const [project, setProject] = useState<any>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const form = useForm<z.infer<typeof updateInvoiceSchema>>({
+    resolver: zodResolver(updateInvoiceSchema),
+    defaultValues: {
+      lineItems: invoice?.lineItems || [],
+      dueDate: invoice?.dueDate || "",
+      description: invoice?.description || "",
+    },
+  });
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = form;
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -71,6 +92,23 @@ const page = () => {
       }));
     } catch (error) {
       console.error("Error updating invoice status:", error);
+    }
+  };
+  const onSubmit = async (data: z.infer<typeof updateInvoiceSchema>) => {
+    try {
+      const response = await axios.patch(`/api/Invoices/${invoiceId}`, data);
+      if(response.data.success) {
+      setInvoice(response.data.data);
+      
+      setEditingIndex(null);
+      toast.success("Invoice updated successfully");
+      router.refresh();
+      }
+
+    }
+    catch (error) {
+      console.error("Error updating invoice:", error);
+      toast.error("Error updating invoice");
     }
   };
   return (
@@ -266,30 +304,95 @@ const page = () => {
               </tr>
             </thead>
             <tbody>
-              {invoice?.lineItems?.map((item: any, index: number) => (
-                <tr key={index}>
-                  <td className="py-2.75 text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
-                    {item.description}
-                  </td>
-                  <td className="py-2.75 text-left  text-[13px] w-[10%] text-on-surface-variant">
-                    {item.quantity}
-                  </td>
-                  <td className="py-2.75 text-left  text-[13px] w-[15%] text-on-surface-variant">
-                    {item.price}
-                  </td>
-                  <td className="py-2.75 text-left text-[13px] w-[15%] font-medium text-on-surface">
-                    {item.price * item.quantity}
-                  </td>
-                  <td className="py-2.75 font-medium text-left w-[10%] text-on-surface">
-                    <button className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
-                      <span className="material-symbols-outlined text-[15px]">
-                        edit
-                      </span>
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {invoice?.lineItems?.map((item: any, index: number) =>
+                editingIndex === index ? (
+                  <tr key={index}>
+                    <td className="p-2.75 text-right text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
+                      <input
+                        className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                        placeholder="e.g. Jonathan Smith"
+                        required={true}
+                        type="text"
+                        defaultValue={item.description}
+                        {...register(`lineItems.${index}.description`, {
+                          required: "Description is required",
+                          minLength: {
+                            value: 5,
+                            message:
+                              "Description must be at least 5 characters long",
+                          },
+                        })}
+                      />
+                    </td>
+                    <td className="p-2.75 text-right  text-[13px] w-[10%] text-on-surface-variant">
+                      <input
+                        className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                        placeholder="e.g. Jonathan Smith"
+                        required={true}
+                        type="text"
+                        defaultValue={item.quantity}
+                        {...register(`lineItems.${index}.quantity`, {
+                          required: "Quantity is required",
+                          min: {
+                            value: 1,
+                            message: "Quantity must be at least 1",
+                          },
+                        })}
+                      />
+                    </td>
+                    <td className="p-2.75 text-right  text-[13px] w-[15%] text-on-surface-variant">
+                      <input
+                        className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                        placeholder="e.g. Jonathan Smith"
+                        required={true}
+                        type="text"
+                        defaultValue={item.price}
+                        {...register(`lineItems.${index}.price`, {
+                          required: "Price is required",
+                          min: {
+                            value: 0,
+                            message: "Price must be a positive number",
+                          },
+                        })}
+                      />
+                    </td>
+                    <td className="p-2.75 text-left text-[13px] w-[10%] font-medium text-on-surface">
+                      {item.price * item.quantity}
+                    </td>
+                    <td className="p-2.75 flex gap-2 font-medium text-right justify-center items-center w-[15%] text-on-surface">
+                      <button onClick={()=> setEditingIndex(null)} className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
+                        Cancel
+                      </button>
+                      <button className="flex items-center gap-1.25 text-[13px] text-on-primary bg-primary hover:opacity-90 transition-opacity px-md py-xs rounded-lg">
+                        <span id="action-label">Save</span>
+                      </button>
+                    </td>
+                  </tr>
+                ) : (
+                  <tr key={index}>
+                    <td className="py-2.75 text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
+                      {item.description}
+                    </td>
+                    <td className="py-2.75 text-left  text-[13px] w-[10%] text-on-surface-variant">
+                      {item.quantity}
+                    </td>
+                    <td className="py-2.75 text-left  text-[13px] w-[15%] text-on-surface-variant">
+                      {item.price}
+                    </td>
+                    <td className="py-2.75 text-left text-[13px] w-[15%] font-medium text-on-surface">
+                      {item.price * item.quantity}
+                    </td>
+                    <td className="py-2.75 font-medium text-left w-[10%] text-on-surface">
+                      <button onClick={() => setEditingIndex(index)} className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
+                        <span className="material-symbols-outlined text-[15px]">
+                          edit
+                        </span>
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
           <div className="border-t border-outline-variant/30 mt-sm pt-3.5 flex justify-end">
