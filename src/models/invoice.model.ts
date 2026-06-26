@@ -14,6 +14,7 @@ export interface IInvoice extends mongoose.Document {
     }[];
     clientId: mongoose.Types.ObjectId;
     client: string;
+    paidAt?: Date;
 }
 
 const invoiceSchema = new mongoose.Schema<IInvoice>({
@@ -70,6 +71,9 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
         type: String,
         required: true,
     },
+    paidAt: {
+        type: Date,
+    }
 }, {timestamps: true});
 invoiceSchema.index({ userId: 1, createdAt: -1 });
 invoiceSchema.index({ userId: 1, status: 1 });

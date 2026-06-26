@@ -15,6 +15,21 @@ const page = () => {
   const [totalInvoices, setTotalInvoices] = useState<number>(0);
   const limit = 9;
   const router = useRouter();
+  const [stats, setStats] = useState({
+    outstanding: {
+      total: 0,
+      count: 0,
+    },
+    paidThisMonth: {
+      total: 0,
+      count: 0,
+    },
+    overdue: {
+      total: 0,
+      count: 0,
+    },
+  });
+
   useEffect(() => {
     const fetchInvoices = async () => {
       if (session?.data?.user?._id) {
@@ -39,6 +54,22 @@ const page = () => {
 
     fetchInvoices();
   }, [invoiceOffset, limit, session?.data?.user?._id]);
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (session?.data?.user?._id) {
+        try {
+          const response = await axios.get(`/api/Invoices/stats`);
+          setStats(response.data.data);
+        } catch (error) {
+          console.error("Error fetching invoice stats:", error);
+          toast.error("Error fetching invoice stats");
+        }
+      }
+    };
+
+    fetchStats();
+  }, [session?.data?.user?._id]);
+
   const currencys = [
     { code: "USD", symbol: "$" },
     { code: "EUR", symbol: "€" },
@@ -67,7 +98,7 @@ const page = () => {
           </button>
         </div>
 
-        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">
           <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
             <div className="flex items-center justify-between mb-sm">
               <span className="font-label-md text-label-md text-on-surface-variant">
@@ -79,16 +110,12 @@ const page = () => {
             </div>
             <div>
               <span className="font-display text-display text-on-surface">
-                $12,450
+                {stats?.outstanding?.total?.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: session?.data?.user?.currency || "USD",
+                      })}
               </span>
-              <div className="flex items-center gap-xs mt-xs text-secondary">
-                <span className="material-symbols-outlined text-[16px]">
-                  trending_up
-                </span>
-                <span className="font-label-sm text-label-sm">
-                  +4.2% from last month
-                </span>
-              </div>
+              
             </div>
           </div>
           <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
@@ -102,14 +129,15 @@ const page = () => {
             </div>
             <div>
               <span className="font-display text-display text-on-surface">
-                $8,200
+                {stats?.paidThisMonth?.total?.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: session?.data?.user?.currency || "USD",
+                })}
               </span>
               <div className="w-full bg-surface-variant h-unit rounded-full mt-sm overflow-hidden">
                 <div className="bg-secondary h-full w-[65%] rounded-full"></div>
               </div>
-              <p className="font-label-sm text-label-sm text-on-surface-variant mt-xs">
-                65% of monthly target
-              </p>
+             
             </div>
           </div>
           <div className="glass-card rounded-xl p-lg flex flex-col justify-between border-l-4! border-0! border-accent!">
@@ -123,14 +151,17 @@ const page = () => {
             </div>
             <div>
               <span className="font-display text-accent text-display text-error">
-                $1,850
+                {stats?.overdue?.total?.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: session?.data?.user?.currency || "USD",
+                })}
               </span>
               <p className="font-label-sm text-label-sm text-accent mt-xs">
-                2 invoices need attention
+                {stats?.overdue?.count} invoices need attention
               </p>
             </div>
           </div>
-        </div> */}
+        </div>
 
         <div className="flex flex-col md:flex-row gap-md items-center justify-between glass-card rounded-lg p-sm">
           <div className="relative w-full md:w-96">

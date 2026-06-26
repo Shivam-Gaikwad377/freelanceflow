@@ -90,13 +90,20 @@ const page = () => {
     try {
       const response = await axios.patch(`/api/Invoices/${invoiceId}`, {
         status: "paid",
+        paidAt: new Date(),
       });
+      if(response.data.success) {
       setInvoice((prevInvoice: any) => ({
         ...prevInvoice,
         status: "Paid",
+        paidAt: new Date(),
       }));
+      toast.success("Invoice marked as paid");
+      router.refresh();
+    }
     } catch (error) {
       console.error("Error updating invoice status:", error);
+      toast.error("Error updating invoice status");
     }
   };
   const handleLineItemsUpdate = async (
