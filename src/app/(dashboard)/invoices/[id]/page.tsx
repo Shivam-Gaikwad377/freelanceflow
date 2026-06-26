@@ -20,7 +20,8 @@ const page = () => {
   const [client, setClient] = useState<any>(null);
   const [project, setProject] = useState<any>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const form = useForm<z.infer<typeof updateInvoiceSchema>>({
+  const [editingDueDate, setEditingDueDate] = useState<boolean>(false);
+  const lineItemsForm = useForm<z.infer<typeof updateInvoiceSchema>>({
     resolver: zodResolver(updateInvoiceSchema),
     defaultValues: {
       lineItems: invoice?.lineItems || [],
@@ -34,7 +35,7 @@ const page = () => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = form;
+  } = lineItemsForm;
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -94,21 +95,49 @@ const page = () => {
       console.error("Error updating invoice status:", error);
     }
   };
-  const onSubmit = async (data: z.infer<typeof updateInvoiceSchema>) => {
+  const handleLineItemsUpdate = async (
+    data: z.infer<typeof updateInvoiceSchema>
+  ) => {
     try {
       const response = await axios.patch(`/api/Invoices/${invoiceId}`, data);
-      if(response.data.success) {
-      setInvoice(response.data.data);
-      
-      setEditingIndex(null);
-      toast.success("Invoice updated successfully");
-      router.refresh();
-      }
+      if (response.data.success) {
+        setInvoice(response.data.data);
 
-    }
-    catch (error) {
+        setEditingIndex(null);
+        toast.success("Invoice updated successfully");
+        router.refresh();
+      }
+    } catch (error) {
       console.error("Error updating invoice:", error);
       toast.error("Error updating invoice");
+    }
+  };
+  useEffect(() => {
+    if (invoice) {
+      reset({
+        lineItems: invoice.lineItems,
+        dueDate: invoice.dueDate || "",
+        description: invoice.description || "",
+      });
+    }
+  }, [invoice]);
+  const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDueDate = e.target.value;
+    try {
+      const response = await axios.patch(`/api/Invoices/${invoiceId}`, {
+        dueDate: newDueDate,
+      });
+      if (response.data.success) {
+        setInvoice((prevInvoice: any) => ({
+          ...prevInvoice,
+          dueDate: newDueDate,
+        }));
+        toast.success("Due date updated successfully");
+        setEditingDueDate(false);
+      }
+    } catch (error) {
+      console.error("Error updating due date:", error);
+      toast.error("Error updating due date");
     }
   };
   return (
@@ -188,15 +217,28 @@ const page = () => {
               <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
                 Due date
               </p>
-              <p className="text-label-md font-medium m-0 text-on-surface">
-                {invoice?.dueDate
-                  ? new Date(invoice?.dueDate).toLocaleDateString("en-IN", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                  : "Not set"}
-              </p>
+              {editingDueDate ? (
+                <input
+                  type="date"
+                  defaultValue={invoice?.dueDate}
+                  onChange={handleDateChange}
+                  className="text-label-md font-medium m-0 text-on-surface"
+                />
+              ) : (
+                <div className="cursor-pointer flex group items-center gap-1.25">
+                  <p className="text-label-md font-medium m-0 text-on-surface">
+                    {invoice?.dueDate
+                      ? new Date(invoice?.dueDate).toLocaleDateString("en-IN", {
+                          year: "numeric",
+                          month: "long",
+                        day: "numeric",
+                      })
+                    : "Not set"}
+                </p>
+                <span onClick={()=> setEditingDueDate(true)} className="material-symbols-outlined opacity-0 duration-200 transition-opacity group-hover:opacity-100 text-label-sm">
+                edit
+              </span>
+              </div>)}
             </div>
             <div>
               <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
@@ -333,6 +375,7 @@ const page = () => {
                         defaultValue={item.quantity}
                         {...register(`lineItems.${index}.quantity`, {
                           required: "Quantity is required",
+                          valueAsNumber: true,
                           min: {
                             value: 1,
                             message: "Quantity must be at least 1",
@@ -349,6 +392,7 @@ const page = () => {
                         defaultValue={item.price}
                         {...register(`lineItems.${index}.price`, {
                           required: "Price is required",
+                          valueAsNumber: true,
                           min: {
                             value: 0,
                             message: "Price must be a positive number",
@@ -360,10 +404,18 @@ const page = () => {
                       {item.price * item.quantity}
                     </td>
                     <td className="p-2.75 flex gap-2 font-medium text-right justify-center items-center w-[15%] text-on-surface">
-                      <button onClick={()=> setEditingIndex(null)} className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
+                      <button
+                        onClick={() => setEditingIndex(null)}
+                        className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
+                      >
                         Cancel
                       </button>
-                      <button className="flex items-center gap-1.25 text-[13px] text-on-primary bg-primary hover:opacity-90 transition-opacity px-md py-xs rounded-lg">
+                      <button
+                        onClick={lineItemsForm.handleSubmit(
+                          handleLineItemsUpdate
+                        )}
+                        className="flex items-center gap-1.25 text-[13px] text-on-primary bg-primary hover:opacity-90 transition-opacity px-md py-xs rounded-lg"
+                      >
                         <span id="action-label">Save</span>
                       </button>
                     </td>
@@ -383,7 +435,10 @@ const page = () => {
                       {item.price * item.quantity}
                     </td>
                     <td className="py-2.75 font-medium text-left w-[10%] text-on-surface">
-                      <button onClick={() => setEditingIndex(index)} className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
+                      <button
+                        onClick={() => setEditingIndex(index)}
+                        className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
+                      >
                         <span className="material-symbols-outlined text-[15px]">
                           edit
                         </span>

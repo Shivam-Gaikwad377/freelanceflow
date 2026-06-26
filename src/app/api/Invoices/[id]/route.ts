@@ -29,6 +29,7 @@ export async function GET(request: Request, { params }: RouteContext) {
     }
 
     await connectToDatabase();
+    
 
     const invoice = await Invoice.findOne({
       _id: id,
@@ -152,9 +153,13 @@ export async function PATCH(request: Request, { params }: RouteContext) {
         { status: 400 }
       );
     }
+     const amount = validation?.data?.lineItems?.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0
+    );
     const updatedInvoice = await Invoice.findOneAndUpdate(
       { _id: id, userId: session.user._id },
-      { $set: validation.data },
+      { $set: { ...validation.data, amount } },
       { new: true }
     ).lean();
     if (!updatedInvoice) {
