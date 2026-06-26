@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import Client from "@/models/client.model";
 import Project from "@/models/project.model";
+import { markOverdueInvoices } from "@/helpers/markOverdues";
 
 export async function POST(request: Request) {
   try {
@@ -55,6 +56,8 @@ export async function POST(request: Request) {
     });
 
     await newInvoice.save();
+
+    await markOverdueInvoices(ownerID);
 
     return NextResponse.json<ApiResponse>(
       { success: true, message: "Invoice created successfully" },
@@ -121,7 +124,7 @@ export async function GET(request: Request) {
         
       }
     }
-
+    await markOverdueInvoices(ownerID);
     const [invoices, total] = await Promise.all([
       Invoice.find(filter)
         .sort({ [sortBy]: sort })

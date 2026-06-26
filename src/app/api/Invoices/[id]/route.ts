@@ -6,6 +6,7 @@ import { isValidObjectId } from "mongoose";
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { updateInvoiceSchema } from "@/schemas/updateInvoice.schema";
+import { markOverdueInvoices } from "@/helpers/markOverdues";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -29,12 +30,12 @@ export async function GET(request: Request, { params }: RouteContext) {
     }
 
     await connectToDatabase();
-    
 
     const invoice = await Invoice.findOne({
       _id: id,
       userId: session.user._id,
     }).lean();
+    
 
     if (!invoice) {
       return NextResponse.json<ApiResponse>(
@@ -42,6 +43,7 @@ export async function GET(request: Request, { params }: RouteContext) {
         { status: 404 }
       );
     }
+    await markOverdueInvoices(session.user._id);
 
     return NextResponse.json<ApiResponse>(
       { success: true, message: "Invoice fetched successfully", data: invoice },
@@ -153,7 +155,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
         { status: 400 }
       );
     }
-     const amount = validation?.data?.lineItems?.reduce(
+    const amount = validation?.data?.lineItems?.reduce(
       (sum, item) => sum + item.quantity * item.price,
       0
     );
