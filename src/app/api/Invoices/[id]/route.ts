@@ -135,12 +135,12 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     }
     const id = (await params).id;
 
-    if (!isValidObjectId(id)) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Invalid invoice ID" },
-        { status: 400 }
-      );
-    }
+    // if (!isValidObjectId(id)) {
+    //   return NextResponse.json<ApiResponse>(
+    //     { success: false, message: "Invalid invoice ID" },
+    //     { status: 400 }
+    //   );
+    // }
 
     await connectToDatabase();
     const requestBody = await request.json();
@@ -149,10 +149,12 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          message: "Invalid request data",
+          message: validation.error.issues.length > 0
+            ? validation.error.issues[0].message
+            : "Invalid request data",
           data: validation.error.issues,
         },
-        { status: 400 }
+        { status: 401 }
       );
     }
     const amount = validation?.data?.lineItems?.reduce(

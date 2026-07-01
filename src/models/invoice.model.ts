@@ -6,7 +6,7 @@ export interface IInvoice extends mongoose.Document {
     projectId: mongoose.Types.ObjectId;
     amount: number;
     dueDate: Date;
-    status: "pending" | "paid" | "overdue";
+    status: "pending" | "Paid" | "overdue";
     lineItems: {
         description: string;
         quantity: number;
@@ -43,7 +43,7 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
     },  
     status: {
         type: String,
-        enum: ["pending", "paid", "overdue"],
+        enum: ["pending", "Paid", "overdue"],
         default: "pending",
     },
     lineItems: [

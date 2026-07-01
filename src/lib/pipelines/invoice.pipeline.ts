@@ -14,7 +14,7 @@ export const invoiceStatsPipeline = (ownerID: string) => [
       paidThisMonth: [
         {
           $match: {
-            status: "paid",
+            status: "Paid",
             paidAt: {
               $gte: new Date(
                 new Date().getFullYear(),

@@ -5,7 +5,7 @@ export const updateInvoiceSchema = z.object({
   projectId: z.string().optional(),
   amount: z.number().optional(),
   dueDate: z.string().optional(),
-  status: z.enum(["paid", "pending", "overdue"]).optional(),
+  status: z.enum(["Paid", "pending", "overdue"]).optional(),
   description: z.string().optional(),
   lineItems: z.array(
     z.object({
@@ -14,5 +14,5 @@ export const updateInvoiceSchema = z.object({
       price: z.number(),
     })
   ).optional(),
-  paidAt: z.date().optional(),
+  paidAt: z.coerce.date().optional(),
 });

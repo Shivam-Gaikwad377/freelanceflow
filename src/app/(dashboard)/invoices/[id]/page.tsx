@@ -22,7 +22,7 @@ const page = () => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingDueDate, setEditingDueDate] = useState<boolean>(false);
   const lineItemsForm = useForm<z.infer<typeof updateInvoiceSchema>>({
-    resolver: zodResolver(updateInvoiceSchema),
+    resolver: zodResolver(updateInvoiceSchema) as any,
     defaultValues: {
       lineItems: invoice?.lineItems || [],
       dueDate: invoice?.dueDate || "",
@@ -89,7 +89,7 @@ const page = () => {
   const handlePaid = async () => {
     try {
       const response = await axios.patch(`/api/Invoices/${invoiceId}`, {
-        status: "paid",
+        status: "Paid",
         paidAt: new Date(),
       });
       if(response.data.success) {
