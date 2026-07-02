@@ -34,7 +34,7 @@ const TopNavbar = () => {
         <button className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full cursor-pointer active:scale-95 flex items-center justify-center">
           <span className="material-symbols-outlined">notifications</span>
         </button>
-        <button className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full cursor-pointer active:scale-95 flex items-center justify-center hidden sm:flex">
+        <button className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full cursor-pointer active:scale-95 flex items-center justify-center sm:flex">
           <span className="material-symbols-outlined">help</span>
         </button>
         <div className="h-8 w-px bg-outline-variant mx-2 hidden sm:block"></div>

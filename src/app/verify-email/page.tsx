@@ -9,7 +9,7 @@ import ApiResponse from "@/types/ApiResponse";
 
 import { useSearchParams } from "next/navigation";
 
-const page = () => {
+const Page = () => {
   const [timer, setTimer] = useState(5); // 5 minutes in seconds
   const [resend, setResend] = useState(false);
   const searchParams = useSearchParams();
@@ -224,4 +224,4 @@ const email = searchParams.get("email") || ""
   );
 };
 
-export default page;
+export default Page;
