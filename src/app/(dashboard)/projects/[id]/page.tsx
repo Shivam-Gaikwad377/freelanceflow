@@ -318,6 +318,7 @@ const Page = () => {
                   <tbody className="divide-y divide-outline-variant/30">
                     {invoices?.map((invoice) => (
                       <tr
+                      onClick={()=> router.replace(`/invoices/${invoice?._id}`)}
                         key={invoice._id}
                         className="hover:bg-surface-container/50 transition-colors cursor-pointer group"
                       >
@@ -363,7 +364,7 @@ const Page = () => {
               <h4 className="font-label-md text-on-surface-variant uppercase mb-md">
                 Client Contact
               </h4>
-              <div className="flex items-center gap-md mb-lg">
+              <div onClick={()=> router.replace(`/clients/${project?.clientId}`)} className=" cursor-pointer flex items-center gap-md mb-lg">
                 <div
                   className={`${clientInitialsColor[client?.name.charAt(0).toUpperCase()]} w-14 h-14 rounded-full flex items-center font-bold text-xl justify-center object-cover border  border-surface-variant`}
                 >

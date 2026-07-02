@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { updateProjectSchema } from "@/schemas/updateProject.schema";
 import ApiResponse from "@/types/ApiResponse";
 
-
 interface Project {
   _id: string;
   title: string;
@@ -28,16 +27,19 @@ interface EditProjectDrawerProps {
   project: Project | null;
 }
 
-const EditProjectDrawer = ({ open, onClose, project }: EditProjectDrawerProps) => {
+const EditProjectDrawer = ({
+  open,
+  onClose,
+  project,
+}: EditProjectDrawerProps) => {
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof updateProjectSchema>>({
+  const form = useForm<z.input<typeof updateProjectSchema>>({
     resolver: zodResolver(updateProjectSchema),
     defaultValues: {
       title: "",
       description: "",
       budget: 0,
-      deadline: new Date(),
       status: "open",
       client: "",
     },
@@ -49,6 +51,13 @@ const EditProjectDrawer = ({ open, onClose, project }: EditProjectDrawerProps) =
     reset,
     formState: { errors, isSubmitting },
   } = form;
+  const toDateInputValue = (d: Date | string) => {
+    const date = new Date(d);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   // Populate form whenever the target project changes
   useEffect(() => {
@@ -57,18 +66,18 @@ const EditProjectDrawer = ({ open, onClose, project }: EditProjectDrawerProps) =
         title: project.title,
         description: project.description,
         budget: project.budget,
-        deadline: project.deadline,
+        deadline: toDateInputValue(project.deadline) as any,
         status: project.status,
         client: project.client || "",
       });
     }
   }, [project, reset]);
 
-  const onSubmit = async (data: z.infer<typeof updateProjectSchema>) => {
-    if (!project) return;
+  const onSubmit = async (data: z.input<typeof updateProjectSchema>) => {
+    if (!project?._id) return;
     try {
       const response = await axios.patch<ApiResponse>(
-        `/api/projects/${project._id}`,
+        `/api/projects/${project?._id}`,
         data
       );
       if (response.data.success) {
@@ -149,7 +158,9 @@ const EditProjectDrawer = ({ open, onClose, project }: EditProjectDrawerProps) =
                 {...register("title")}
               />
               {errors.title && (
-                <p className="text-error text-body-sm">{errors.title.message}</p>
+                <p className="text-error text-body-sm">
+                  {errors.title.message}
+                </p>
               )}
             </div>
 
@@ -181,12 +192,17 @@ const EditProjectDrawer = ({ open, onClose, project }: EditProjectDrawerProps) =
                   className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
                   placeholder="e.g. $5000"
                   type="number"
-                  {...register("budget")}
+                  {...register("budget", { valueAsNumber: true })}
                 />
+                {errors.budget && (
+                  <p className="text-error text-body-sm">
+                    {errors.budget.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-xs">
                 <label className="font-label-md text-label-md text-on-surface-variant block">
-                    Deadline
+                  Deadline
                 </label>
                 <input
                   className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
@@ -194,6 +210,11 @@ const EditProjectDrawer = ({ open, onClose, project }: EditProjectDrawerProps) =
                   type="date"
                   {...register("deadline")}
                 />
+                {errors.deadline && (
+                  <p className="text-error text-body-sm">
+                    {errors.deadline.message}
+                  </p>
+                )}
               </div>
             </div>
 

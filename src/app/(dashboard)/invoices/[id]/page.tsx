@@ -276,7 +276,7 @@ const Page = () => {
                   client?.name.split(" ").slice(-1)[0].charAt(0).toUpperCase()}
               </div>
               <div className="flex gap-1">
-                <p className="text-[14px] font-medium m-0 mb-0.75 text-on-surface">
+                <p onClick={()=> router.replace(`/clients/${invoice?.clientId}`)} className="cursor-pointer text-[14px] font-medium m-0 mb-0.75 text-on-surface">
                   {client?.name}
                 </p>
                 <span className="text-[11px] bg-secondary-container text-on-secondary-container px-[8px] py-0.5 rounded-lg">
@@ -309,7 +309,7 @@ const Page = () => {
                   folder
                 </span>
               </div>
-              <p className="text-[14px] font-medium m-0 text-on-surface">
+              <p onClick={()=> router.replace(`/projects/${invoice?.projectId}`)} className="cursor-pointer text-[14px] font-medium m-0 text-on-surface">
                 {project?.title}
               </p>
             </div>
