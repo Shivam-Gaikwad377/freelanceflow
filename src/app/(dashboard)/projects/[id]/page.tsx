@@ -67,6 +67,7 @@ const Page = () => {
     fetchData();
   }, [id]);
   useEffect(() => {
+    console.log("Fetching client");
     const fetchClient = async () => {
       try {
         const clientResponse = await axios.get(
@@ -79,7 +80,7 @@ const Page = () => {
       }
     };
     fetchClient();
-  }, [project?.clientID]);
+  }, [project]);
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -197,7 +198,7 @@ const Page = () => {
               <div className="flex justify-between items-start relative z-9">
                 <div>
                   <span className="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm uppercase tracking-wider mb-sm inline-block">
-                    In Progress
+                    {project?.status}
                   </span>
                   <h2 className="font-display text-headline-lg text-on-surface mt-2">
                     {project?.title}
