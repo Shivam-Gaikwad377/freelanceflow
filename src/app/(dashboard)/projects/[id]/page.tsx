@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 type StatusColor = {
   [key: string]: string;
 };
-const page = () => {
+const Page = () => {
   const clientInitialsColor: StatusColor = {
     A: "bg-amber-200", // Amber
     B: "bg-blue-200", // Blue
@@ -44,9 +44,8 @@ const page = () => {
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
   const pathname = usePathname();
   const id = pathname.split("/").pop();
-  const [start, setStart] = useState(new Date());
+  
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
-  const [viewAll, setViewAll] = useState(false);
   const [edit, setEdit] = useState(false);
   const router = useRouter();
   useEffect(() => {
@@ -55,7 +54,7 @@ const page = () => {
         const projectResponse = await axios.get(`/api/projects/${id}`);
         setProject(projectResponse.data.data);
         if (projectResponse.data.data.isStarted) {
-          setStart(projectResponse.data.data.StartedAt);
+         
           const diffInMs =
             Date.now() -
             new Date(projectResponse.data.data.StartedAt).getTime();
@@ -74,7 +73,7 @@ const page = () => {
           `/api/Clients/${project.clientID}`
         );
         setClient(clientResponse.data.data);
-        console.log("Fetched client data:", clientResponse.data.data);
+        
       } catch (error) {
         console.error("Error fetching client data:", error);
       }
@@ -111,7 +110,7 @@ const page = () => {
   };
 
   const handleViewAllInvoices = async () => {
-    setViewAll(true);
+   
     try {
       const response = await axios.get(
         `/api/Invoices?projectId=${id}&searchBy=project&limit=${invoicesTotal}`
@@ -409,4 +408,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -10,8 +10,9 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Image from "next/image";
 import ApiResponse from "@/types/ApiResponse";
-const page = () => {
+const Page = () => {
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -271,8 +272,10 @@ const page = () => {
           {/* <!-- Product Illustration Centerpiece --> */}
           <div className="relative z-10 grow flex items-center justify-center my-xl">
             <div className="relative w-full aspect-square rounded-2xl bg-on-primary/5 border border-on-primary/10 backdrop-blur-sm p-lg shadow-2xl flex items-center justify-center overflow-hidden group hover:bg-on-primary/10 transition-colors duration-500">
-              <img
+              <Image
                 alt="FreelanceFlow SaaS Dashboard Illustration"
+                fill
+                sizes="100vw"
                 className="w-full h-full object-cover rounded-xl opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ6jN1lR8L1uOkGQo2qRLuYU_HYGktzDw8dPT7huLCN9hO35IqkyXRp12Nar72Lw0-BmNIpOxMxZFll68YdUk93l32ZeITbqcU2gFyQyCEktvGhv5Tf_QkS4Cs5wUZSNrQzL7OnNhDTRfAsEceiqmM7xS-3l9Blt__ZUwj97im5MoH-CQniqEbMkElIPehyEjMAfYT4RPVHGLm9ZzSzgaevCqG3mHde-n5EIbT1qeQzprzSE1NYuM_E7TcjxzMqBJdbK8vhHgPqkJH"
               />
@@ -309,4 +312,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

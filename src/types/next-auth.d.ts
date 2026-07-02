@@ -1,5 +1,5 @@
 import "next-auth";
-import { int } from "zod";
+
 
 declare module "next-auth" {
   interface User {

@@ -1,11 +1,12 @@
 "use client";
 import axios from "axios";
 import React from "react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ApiResponse from "@/types/ApiResponse";
-const page = () => {
+import Image from "next/image";
+const Page = () => {
   const [email, setEmail] = useState("");
   const router = useRouter();
 
@@ -25,8 +26,8 @@ const page = () => {
         );
         router.replace("/reset-password?email=" + email);
       }
-    } catch (error) {
-      toast.error("Failed to send password reset otp.");
+    } catch (error: any) {
+      toast.error("Failed to send password reset otp." + error.message);
     }
   };
 
@@ -37,10 +38,12 @@ const page = () => {
           aria-hidden="true"
           className="fixed inset-0 -z-10 pointer-events-none overflow-hidden opacity-30"
         >
-          <img
+          <Image
             alt=""
-            className="w-full h-full object-fit scale-110 blur-2xl"
+            className="w-full h-full object-cover scale-110 blur-2xl"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5cLUWEf_p8Gvu43B9igYz_nNUVekCCOffUwGQTPRoPH5Dv-LyuZP1lV7BxAY8euVUlOgn4TfdWe5k3sWh1W2hm8fcuRC1gDae0tFFrddkytYuucosY2ZSo3qJYZBnY3UuHH9H3N7LBryRFwLhwmQsmEtYyNyxht3ARorldYHsmRYjfsev0gT3ksHXTeP8rmn9_418j3z64-QprUK7TE-jHrf_X6Eo_27DgqeDSWzTazURLWHqM9m_U5i32sHArWwNdA3blQ_BK_4m"
+            fill
+            sizes="100vw"
           />
         </div>
         <div className="w-full max-w-110 bg-background text-on-background glass-card rounded-lg shadow-xl overflow-hidden transition-all duration-500 ease-in-out transform scale-100">
@@ -86,7 +89,7 @@ const page = () => {
                 />
               </div>
               <button
-                onClick={(e) => onSubmit()}
+                onClick={() => onSubmit()}
                 className="w-full py-md px-lg bg-primary hover:bg-primary-container text-on-primary font-body-md font-semibold rounded-lg shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-sm group"
               >
                 <span>Send OTP</span>
@@ -113,4 +116,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -1,5 +1,5 @@
 "use client";
-import React, { use } from "react";
+import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -10,7 +10,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-const page = () => {
+const Page = () => {
   const [invoice, setInvoice] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
@@ -131,7 +131,7 @@ const page = () => {
         description: invoice.description || "",
       });
     }
-  }, [invoice]);
+  }, [ invoice]);
   const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDueDate = e.target.value;
     try {
@@ -522,4 +522,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

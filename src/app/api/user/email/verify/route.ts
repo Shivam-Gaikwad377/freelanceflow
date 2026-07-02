@@ -1,7 +1,6 @@
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import ApiResponse from "@/types/ApiResponse";
-import { emailSchema } from "@/schemas/email.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/[...nextauth]/options";
 import { NextResponse } from "next/server";

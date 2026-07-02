@@ -1,7 +1,7 @@
 import User from "@/models/user.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/[...nextauth]/options";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse} from "next/server";
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { emailSchema } from "@/schemas/email.schema";

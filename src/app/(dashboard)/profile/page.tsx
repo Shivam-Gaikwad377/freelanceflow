@@ -5,9 +5,10 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
-import formData from "form-data";
+import Image from "next/image";
 
-const page = () => {
+
+const Page = () => {
   const { data: session, update } = useSession();
 
   const router = useRouter();
@@ -64,7 +65,7 @@ const page = () => {
     try {
       const fetchProfile = async () => {
         const response = await axios.get("/api/user/Profile");
-        console.log("Profile data:", response.data);
+     
         setProfile(response.data.data);
         
       };
@@ -72,7 +73,7 @@ const page = () => {
     } catch (error: any) {
       toast.error(("Error fetching profile" + error.message) as string);
     }
-  }, []);
+  }, [session , router]);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -147,7 +148,7 @@ const page = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-lg border-b border-outline-variant pb-lg mb-lg">
             <div className="relative group">
               <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-surface bg-surface-container-high relative">
-                <img
+                <Image
                   alt="User avatar"
                   className="w-full h-full object-cover"
                   src={profile?.avatar.avatarUrl || "/images/avatar.png"}
@@ -398,4 +399,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

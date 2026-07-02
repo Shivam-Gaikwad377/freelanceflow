@@ -7,6 +7,7 @@ import React from "react";
 import { Form, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Image from "next/image";
 import { signInSchema } from "@/schemas/signin.schema";
 
 import { toast } from "sonner";
@@ -22,10 +23,9 @@ export default function SignIn() {
       password: "",
     },
   });
-  const [existingEmail, setExistingEmail] = useState(true);
+  
   const {
     register,
-    handleSubmit,
     watch,
     formState: { errors, isSubmitting },
   } = form;
@@ -37,7 +37,6 @@ export default function SignIn() {
         identifier: data.identifier,
         password: data.password,
       });
-      console.log(result);
       if (result?.error) {
         toast.error(result.error, { position: "top-right" });
         setError(result.error);
@@ -47,8 +46,8 @@ export default function SignIn() {
         });
         router.replace("/dashboard");
       }
-    } catch (error) {
-      setError("Invalid email or password");
+    } catch (error: any) {
+      setError("Invalid email or password"+ error.message);
     }
   };
 
@@ -59,10 +58,12 @@ export default function SignIn() {
           aria-hidden="true"
           className="fixed inset-0 -z-10 pointer-events-none overflow-hidden opacity-30"
         >
-          <img
+          <Image
             alt=""
-            className="w-full h-full object-fit scale-110 blur-2xl"
+            className="w-full h-full object-cover scale-110 blur-2xl"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5cLUWEf_p8Gvu43B9igYz_nNUVekCCOffUwGQTPRoPH5Dv-LyuZP1lV7BxAY8euVUlOgn4TfdWe5k3sWh1W2hm8fcuRC1gDae0tFFrddkytYuucosY2ZSo3qJYZBnY3UuHH9H3N7LBryRFwLhwmQsmEtYyNyxht3ARorldYHsmRYjfsev0gT3ksHXTeP8rmn9_418j3z64-QprUK7TE-jHrf_X6Eo_27DgqeDSWzTazURLWHqM9m_U5i32sHArWwNdA3blQ_BK_4m"
+            fill
+            sizes="100vw"
           />
         </div>
         <div className="w-full max-w-110 bg-surface-container-lowest rounded-lg border border-outline-variant p-xl shadow-level-3 relative z-10 flex flex-col backdrop-blur-sm">

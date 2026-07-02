@@ -27,7 +27,7 @@ const AddProject = () => {
       description: "",
       deadline: new Date().toISOString().split("T")[0],
       status: "open", // Default to today's date
-      clientID: "", // Default to empty string
+      clientId: "" // Default to empty string
     },
   });
   const {
@@ -78,7 +78,7 @@ const AddProject = () => {
   useEffect(() => {
     if (prefillClient) {
       form.setValue("client", prefillClient.name);
-      form.setValue("clientID", prefillClient.id);
+      form.setValue("clientId", prefillClient.id);
     }
   }, [prefillClient, form]);
 
@@ -131,13 +131,13 @@ const AddProject = () => {
                     Client
                   </label>
                   <select
-                    value={form.watch("clientID")}
+                    value={form.watch("clientId")}
                     className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md appearance-none"
                     onChange={(e) => {
                       const selected = clients.find(
                         (c) => c._id === e.target.value
                       );
-                      form.setValue("clientID", e.target.value, {
+                      form.setValue("clientId", e.target.value, {
                         shouldValidate: true,
                       });
                       form.setValue("client", selected?.name || "", {

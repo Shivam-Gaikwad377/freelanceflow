@@ -1,6 +1,6 @@
 "use client";
-
-import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import {  useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
@@ -90,6 +90,7 @@ const email = searchParams.get("email") || ""
         setTimer(5);
         setResend(false);
         setError(null);
+        toast.success("Verification code resent successfully.");
       }
     } catch (err: any) {
       setError(
@@ -107,9 +108,11 @@ const email = searchParams.get("email") || ""
           aria-hidden="true"
           className="fixed inset-0 -z-10 pointer-events-none overflow-hidden opacity-30"
         >
-          <img
+          <Image
+            fill
+            sizes="100vw"
             alt=""
-            className="w-full h-full object-fit scale-110 blur-2xl"
+            className="w-full h-full object-cover scale-110 blur-2xl"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5cLUWEf_p8Gvu43B9igYz_nNUVekCCOffUwGQTPRoPH5Dv-LyuZP1lV7BxAY8euVUlOgn4TfdWe5k3sWh1W2hm8fcuRC1gDae0tFFrddkytYuucosY2ZSo3qJYZBnY3UuHH9H3N7LBryRFwLhwmQsmEtYyNyxht3ARorldYHsmRYjfsev0gT3ksHXTeP8rmn9_418j3z64-QprUK7TE-jHrf_X6Eo_27DgqeDSWzTazURLWHqM9m_U5i32sHArWwNdA3blQ_BK_4m"
           />
         </div>

@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import Pagination from "@/components/Pagination";
 
 
-const page = () => {
+const Page = () => {
   const session = useSession();
   const [invoices, setInvoices] = useState<any[]>([]);
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
@@ -42,11 +42,11 @@ const page = () => {
             : Array.isArray(response.data.data.invoices)
               ? response.data.data.invoices
               : [];
-          console.log("Fetched invoices:", session);
+         
           setInvoices(fetchedInvoices);
           setTotalInvoices(response.data.data.total);
         } catch (error) {
-          console.error("Error fetching invoices:", error);
+         
           toast.error("Error fetching invoices");
         }
       }
@@ -70,16 +70,7 @@ const page = () => {
     fetchStats();
   }, [session?.data?.user?._id]);
 
-  const currencys = [
-    { code: "USD", symbol: "$" },
-    { code: "EUR", symbol: "€" },
-    { code: "GBP", symbol: "£" },
-    { code: "JPY", symbol: "¥" },
-    { code: "CAD", symbol: "C$" },
-    { code: "INR", symbol: "₹" },
-    { code: "AUD", symbol: "A$" },
-    { code: "CHF", symbol: "CHF" },
-  ];
+  
   return (
     <div className="flex-1  min-h-screen bg-background">
       <div className="max-w-container-max mx-auto p-lg md:p-xl space-y-xl">
@@ -290,4 +281,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

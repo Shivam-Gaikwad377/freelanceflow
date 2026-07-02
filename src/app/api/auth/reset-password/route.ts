@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       email,
     });
     if (!user) {
-      return NextResponse.json(
+      return NextResponse.json<ApiResponse>(
         {
           success: false,
           message: "User not found",
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       newPassword,
     });
     if (!parseResult.success) {
-      return NextResponse.json(
+      return NextResponse.json<ApiResponse>(
         {
           success: false,
           message: parseResult.error.issues
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       ? user.ExpiresAt > new Date()
       : false;
     if (!isCodeValid || !isCodeNotExpired) {
-      return NextResponse.json(
+      return NextResponse.json<ApiResponse>(
         {
           success: false,
           message: "Invalid or expired verification code",
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     user.ExpiresAt = undefined;
     await user.save();
     //return success response
-    return NextResponse.json(
+    return NextResponse.json<ApiResponse>(
       {
         success: true,
         message: "Password reset successfully",
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error("Error resetting password:", error);
-    return NextResponse.json(
+    return NextResponse.json<ApiResponse>(
       {
         success: false,
         message: "An error occurred while resetting password",

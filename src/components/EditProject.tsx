@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateProjectSchema } from "@/schemas/updateProject.schema";
 import ApiResponse from "@/types/ApiResponse";
-import { Edit } from "lucide-react";
+
 
 interface Project {
   _id: string;
@@ -267,14 +267,14 @@ const EditProjectDrawer = ({ open, onClose, project }: EditProjectDrawerProps) =
             <button
               type="button"
               onClick={onClose}
-              className="px-xl py-[12px] text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
+              className="px-xl py-3 text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-primary text-on-primary px-xl py-[12px] rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20 flex items-center gap-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              className="bg-primary text-on-primary px-xl py-3 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20 flex items-center gap-sm disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>

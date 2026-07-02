@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { useState } from "react";
+
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Router } from "lucide-react";
-import AddProject from "./AddProject";
+
+
 import {useUiStore} from "@/store/useUiStore";
 const Sidebar = () => {
   const activeItem : any = usePathname().split("/")[1] ;

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import axios from "axios";
+import Image from "next/image";
 
 const TopNavbar = () => {
   const { data: session } = useSession();
@@ -41,7 +42,7 @@ const TopNavbar = () => {
           Support
         </button>
         <div className="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant cursor-pointer ml-sm">
-          <img
+          <Image
             alt="User avatar"
             className="w-full h-full object-cover"
             src={profileImage}

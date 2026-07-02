@@ -1,4 +1,4 @@
-import User from "@/models/user.model";
+
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { NextResponse } from "next/server";
@@ -6,7 +6,7 @@ import Client from "@/models/client.model";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-import Invoice from "@/models/invoice.model";
+
 import mongoose from "mongoose";
 export async function POST(request: Request) {
   try {

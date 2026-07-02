@@ -1,5 +1,5 @@
 import {z} from "zod";
-import { is } from "zod/v4/locales";
+
 
 export const updateProjectSchema = z.object({
     title: z.string().min(3).optional(),

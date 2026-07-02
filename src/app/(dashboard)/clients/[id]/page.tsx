@@ -8,8 +8,9 @@ import Pagination from "@/components/Pagination";
 
 import Link from "next/link";
 import EditCLient from "@/components/EditClient";
+import { toast } from "sonner";
 
-const page = () => {
+const Page = () => {
   const session = useSession();
   const [client, setClient] = useState<any>(null);
   const pathname = usePathname();
@@ -33,7 +34,7 @@ const page = () => {
       }
     };
     fetchClient();
-  }, [id]);
+  }, [session?.data?.user?.id, id]);
   const [projects, setProjects] = useState<any[]>([]);
   useEffect(() => {
     const fetchProjects = async () => {
@@ -45,9 +46,9 @@ const page = () => {
           setProjects(response.data.data.projects);
           setProjectTotal(response.data.data.total);
 
-          console.log(projects);
+         
         } catch (error) {
-          console.error("Error fetching projects:", error);
+          toast.error("Error fetching projects: " + error);
         }
       }
     };
@@ -232,7 +233,7 @@ const page = () => {
                 </thead>
                 <tbody className="font-body-sm text-body-sm text-on-surface">
                   {projects.map((project) => (
-                    <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group cursor-pointer">
+                    <tr key={project._id} className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group cursor-pointer">
                       <td className="py-4 px-6 w-2/4">
                         <div className="font-label-md  text-label-md text-on-surface group-hover:text-primary transition-colors">
                           {project.title}
@@ -311,7 +312,7 @@ const page = () => {
                 <tbody className="font-body-sm text-body-sm text-on-surface">
                   {/* <!-- Overdue Invoice --> */}
                   {invoices.map((invoice) => (
-                    <tr className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
+                    <tr key={invoice?._id} className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
                       <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
                         {invoice.invoiceNumber}
                       </td>
@@ -357,4 +358,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

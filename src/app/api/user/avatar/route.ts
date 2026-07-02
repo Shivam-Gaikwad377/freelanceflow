@@ -5,7 +5,7 @@ import User from "@/models/user.model";
 import { getToken } from "next-auth/jwt";
 import ImageKit from "imagekit"; // Fixed casing casing conventions
 import ApiResponse from "@/types/ApiResponse";
-import formData from "form-data"; // Import form-data for handling multipart/form-data requests
+
 
 // Initialize ImageKit Client
 const imagekitClient = new ImageKit({

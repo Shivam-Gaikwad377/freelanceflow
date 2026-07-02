@@ -13,7 +13,7 @@ interface ProjectPageProps {
 type style = {
   [key: string]: string;
 };
-const ProjectCard = ({ title, client, deadline,budget,status  }: ProjectPageProps) => {
+const ProjectCard = ({ title, client, deadline  }: ProjectPageProps) => {
  
     const clientInitialsColor: style = {
     A: "bg-amber-200", // Amber

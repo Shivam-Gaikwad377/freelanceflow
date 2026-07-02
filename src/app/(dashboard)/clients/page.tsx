@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation";
 import ClientCard from "@/components/ClientCard";
 import AddClient from "@/components/AddCLient";
 import Pagination from "@/components/Pagination";
-
-const page = () => {
+import {toast} from "sonner";
+ 
+const Page = () => {
   const session = useSession();
   const [clients, setClients] = useState<any[]>([]);
   const [clientOffset, setClientOffset] = useState<number>(0);
@@ -26,18 +27,17 @@ const page = () => {
             : Array.isArray(response.data.data.clients)
               ? response.data.data.clients
               : [];
-          console.log("Fetched clients:", fetchedClients);
-
+         
           setClients(fetchedClients);
           setTotalClients(response.data.data.total);
         } catch (error) {
-          console.error("Error fetching clients:", error);
+          toast.error("Error fetching clients: " + error);
         }
       }
     };
 
     fetchClients();
-  }, [clientOffset, limit]);
+  }, [session?.data?.user?._id, clientOffset, limit]);
   const router = useRouter();
   const handleClick = (id: string) => {
     router.replace(`/clients/${id}`);
@@ -124,4 +124,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -7,8 +7,9 @@ import axios from "axios";
 import { toast } from "sonner";
 import Link from "next/link";
 import ApiResponse from "@/types/ApiResponse";
-const page = () => {
-  const [timer, setTimer] = useState(5); // 5 minutes in seconds
+import Image from "next/image";
+const Page = () => {
+  const [timer, setTimer] = useState(60); // 5 minutes in seconds
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
   const [otp, setOtp] = useState<string[]>(Array(6).fill("")); // Initialize an array of 6 empty strings
@@ -112,10 +113,12 @@ const page = () => {
           aria-hidden="true"
           className="fixed inset-0 -z-10 pointer-events-none overflow-hidden opacity-30"
         >
-          <img
+          <Image
             alt=""
-            className="w-full h-full object-fit scale-110 blur-2xl"
+            className="w-full h-full object-cover scale-110 blur-2xl"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5cLUWEf_p8Gvu43B9igYz_nNUVekCCOffUwGQTPRoPH5Dv-LyuZP1lV7BxAY8euVUlOgn4TfdWe5k3sWh1W2hm8fcuRC1gDae0tFFrddkytYuucosY2ZSo3qJYZBnY3UuHH9H3N7LBryRFwLhwmQsmEtYyNyxht3ARorldYHsmRYjfsev0gT3ksHXTeP8rmn9_418j3z64-QprUK7TE-jHrf_X6Eo_27DgqeDSWzTazURLWHqM9m_U5i32sHArWwNdA3blQ_BK_4m"
+            fill
+            sizes="100vw"
           />
         </div>
         <div className="relative z-10 w-full max-w-110 px-margin-mobile">
@@ -262,4 +265,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

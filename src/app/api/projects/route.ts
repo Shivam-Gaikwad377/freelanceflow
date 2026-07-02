@@ -1,4 +1,4 @@
-import User from "@/models/user.model";
+
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { NextResponse } from "next/server";
