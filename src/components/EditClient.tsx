@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import * as z from "zod";
@@ -31,12 +31,12 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
   const form = useForm<z.infer<typeof createClientSchema>>({
     resolver: zodResolver(createClientSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      description: "",
-      status: "active",
+      name: client?.name || "",
+      email: client?.email || "",
+      phone: client?.phone || "",
+      company: client?.company || "",
+      description: client?.description || "",
+      status: client?.status || "active",
     },
   });
 
@@ -46,10 +46,12 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
     reset,
     formState: { errors, isSubmitting },
   } = form;
-
+  const wasOpen = useRef(false);
   // Populate form whenever the target client changes
   useEffect(() => {
-    if (client) {
+    console.log("reset effect ran — open:", open, "client:", client);
+    if (open && client) {
+      console.log("Populating form with client data:", client);
       reset({
         name: client.name,
         email: client.email,
@@ -59,13 +61,15 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
         status: client.status,
       });
     }
-  }, [client, reset]);
+    
+  }, [open, client, reset]);
 
   const onSubmit = async (data: z.infer<typeof createClientSchema>) => {
-    if (!client) return;
+    
+      console.log("RHF data about to submit:", data);
     try {
       const response = await axios.patch<ApiResponse>(
-        `/api/Clients/${client._id}`,
+        `/api/Clients/${client?._id}`,
         data
       );
       if (response.data.success) {
@@ -83,7 +87,7 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
       });
     }
   };
-
+console.log("EditClientDrawer RENDERED, open:", open, "client:", client);
   return (
     <>
       {/* Backdrop */}
@@ -143,6 +147,7 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
                 className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
                 placeholder="e.g. Jonathan Smith"
                 type="text"
+
                 {...register("name")}
               />
               {errors.name && (
@@ -159,6 +164,7 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
                 className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
                 placeholder="jonathan@example.com"
                 type="email"
+
                 {...register("email")}
               />
               {errors.email && (
@@ -178,6 +184,7 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
                   className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
                   placeholder="+1 (555) 000-0000"
                   type="tel"
+
                   {...register("phone")}
                 />
               </div>
@@ -189,6 +196,7 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
                   className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
                   placeholder="Acme Corp"
                   type="text"
+
                   {...register("company")}
                 />
               </div>
@@ -203,6 +211,7 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
                 className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
                 placeholder="Street Address, Suite, City, ZIP, Country"
                 rows={3}
+
                 {...register("description")}
               />
             </div>
@@ -219,6 +228,7 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
                       className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
                       type="radio"
                       value="active"
+ 
                       {...register("status")}
                     />
                     <div className="absolute w-3 h-3 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
@@ -233,6 +243,7 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
                       className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
                       type="radio"
                       value="inactive"
+                    
                       {...register("status")}
                     />
                     <div className="absolute w-3 h-3 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
@@ -250,14 +261,14 @@ const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-xl py-[12px] text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
+              className="px-xl py-3 text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-primary text-on-primary px-xl py-[12px] rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20 flex items-center gap-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              className="bg-primary text-on-primary px-xl py-3 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20 flex items-center gap-sm disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>

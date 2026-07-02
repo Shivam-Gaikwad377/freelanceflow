@@ -135,12 +135,12 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     }
     const id = (await params).id;
 
-    // if (!isValidObjectId(id)) {
-    //   return NextResponse.json<ApiResponse>(
-    //     { success: false, message: "Invalid invoice ID" },
-    //     { status: 400 }
-    //   );
-    // }
+    if (!isValidObjectId(id)) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "Invalid invoice ID" },
+        { status: 400 }
+      );
+    }
 
     await connectToDatabase();
     const requestBody = await request.json();

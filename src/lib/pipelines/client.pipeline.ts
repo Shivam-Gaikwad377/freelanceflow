@@ -4,7 +4,7 @@ export const clientTotalBilledPipeline = [
     $lookup: {
       from: "invoices",
       localField: "_id",
-      foreignField: "clientID",
+      foreignField: "clientId",
       as: "invoices",
     },
   },

@@ -5,19 +5,20 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import Pagination from "@/components/Pagination";
-
+import { useUiStore } from "@/store/useUiStore";
 import Link from "next/link";
-import EditCLient from "@/components/EditClient";
+import EditClientDrawer from "@/components/EditClient";
 import { toast } from "sonner";
 
 const Page = () => {
+  const { openAddProject } = useUiStore();
   const session = useSession();
   const [client, setClient] = useState<any>(null);
   const pathname = usePathname();
   const id = pathname.split("/").pop();
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [projectOffset, setProjectOffset] = useState<number>(0);
-
+  
   const [editOpen, setEditOpen] = useState(false);
   const limit = 5;
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
@@ -76,7 +77,7 @@ const Page = () => {
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
       <div>
-        <EditCLient
+        <EditClientDrawer
           open={editOpen}
           onClose={() => setEditOpen(false)}
           client={client}
@@ -181,7 +182,7 @@ const Page = () => {
                   </span>
                   Edit Client
                 </button>
-                <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
+                <button onClick={() => openAddProject({ id: client?._id, name: client?.name })} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
                   <span className="material-symbols-outlined text-[18px]">
                     add
                   </span>
@@ -233,7 +234,7 @@ const Page = () => {
                 </thead>
                 <tbody className="font-body-sm text-body-sm text-on-surface">
                   {projects.map((project) => (
-                    <tr key={project._id} className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group cursor-pointer">
+                    <tr onClick={() => router.replace(`/projects/${project._id}`)} key={project._id} className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
                       <td className="py-4 px-6 w-2/4">
                         <div className="font-label-md  text-label-md text-on-surface group-hover:text-primary transition-colors">
                           {project.title}
@@ -293,7 +294,7 @@ const Page = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-surface-container-low border-b border-outline-variant">
+                  <tr  className="bg-surface-container-low border-b border-outline-variant">
                     <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                       Invoice #
                     </th>
@@ -312,7 +313,7 @@ const Page = () => {
                 <tbody className="font-body-sm text-body-sm text-on-surface">
                   {/* <!-- Overdue Invoice --> */}
                   {invoices.map((invoice) => (
-                    <tr key={invoice?._id} className="border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
+                    <tr onClick={()=>router.replace(`/invoices/${invoice._id}`)} key={invoice?._id} className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
                       <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
                         {invoice.invoiceNumber}
                       </td>

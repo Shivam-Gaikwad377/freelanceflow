@@ -30,7 +30,7 @@ const clientSchema = new mongoose.Schema<IClient>({
   status: {
     type: String,
     enum: ["active", "inactive"],
-    default: "active",
+
   },
   userId: {
     type: mongoose.Types.ObjectId,

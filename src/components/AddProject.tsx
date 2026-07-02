@@ -30,6 +30,17 @@ const AddProject = () => {
       clientId: "" // Default to empty string
     },
   });
+  useEffect(() => {
+  if (isAddProjectOpen) {
+    form.reset({
+      title: "",
+      description: "",
+      clientId: prefillClient?.id ?? "",
+      status: "open",
+      deadline: undefined,
+    });
+  }
+}, [isAddProjectOpen, prefillClient]);
   const {
     register,
     handleSubmit,

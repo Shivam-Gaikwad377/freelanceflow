@@ -7,20 +7,18 @@ import Image from "next/image";
 
 const TopNavbar = () => {
   const { data: session } = useSession();
-  const [profileImage, setProfileImage] = useState<string>(""); 
+  const [profileImage, setProfileImage] = useState<string>("");
   useEffect(() => {
     const fetchProfileImage = async () => {
-      
-        try {
-          const response = await axios.get("/api/user/Profile");
-          setProfileImage(response.data?.data.avatar?.avatarUrl);
-        } catch (error) {
-          console.error("Error fetching profile image:", error);
-        
-        }
+      try {
+        const response = await axios.get("/api/user/Profile");
+        setProfileImage(response.data?.data.avatar?.avatarUrl);
+      } catch (error) {
+        console.error("Error fetching profile image:", error);
+      }
     };
     fetchProfileImage();
-      },[session])
+  }, [session]);
 
   return (
     <header className="w-full h-16 bg-surface/80 border-b-[1.5px] z-10 border-b-outline-variant backdrop-blur-md flex justify-between items-center  sticky top-0 ">
@@ -29,7 +27,7 @@ const TopNavbar = () => {
           FreelanceFlow
         </span>
       </div>
-      
+
       <div className="flex items-center gap-md ml-auto">
         <button className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full cursor-pointer active:scale-95 flex items-center justify-center">
           <span className="material-symbols-outlined">notifications</span>
@@ -46,6 +44,8 @@ const TopNavbar = () => {
             alt="User avatar"
             className="w-full h-full object-cover"
             src={profileImage}
+            width={32}
+            height={32}
           />
         </div>
       </div>

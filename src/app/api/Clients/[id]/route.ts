@@ -148,6 +148,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     await connectToDatabase();
     const requestBody = await request.json();
     const validation = updateClientSchema.safeParse(requestBody);
+    console.log("parsed:", validation.data);
     if (!validation.success) {
       return NextResponse.json<ApiResponse>(
         {

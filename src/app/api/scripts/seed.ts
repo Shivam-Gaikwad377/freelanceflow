@@ -109,12 +109,12 @@ async function seed() {
         }));
 
         const statusRoll = Math.random();
-        let invStatus: "pending" | "paid" | "overdue";
+        let invStatus: "pending" | "Paid" | "overdue";
         let paidAt: Date | undefined;
         const dueDate = randDate(20, 15);
 
         if (statusRoll < 0.4) {
-          invStatus = "paid";
+          invStatus = "Paid";
           paidAt = randDate(-10, 8);
         } else if (statusRoll < 0.7) {
           invStatus = "pending";

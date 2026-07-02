@@ -70,7 +70,7 @@ const Page = () => {
     const fetchClient = async () => {
       try {
         const clientResponse = await axios.get(
-          `/api/Clients/${project.clientID}`
+          `/api/Clients/${project.clientId}`
         );
         setClient(clientResponse.data.data);
         
