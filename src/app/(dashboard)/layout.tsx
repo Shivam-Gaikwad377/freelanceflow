@@ -3,6 +3,7 @@ import Sidebar from '@/components/Sidebar'
 import Topbar from '@/components/TopNavbar'
 import AddProject from '@/components/AddProject'
 import { useUiStore } from '@/store/useUiStore'
+import AddInvoice from '@/components/AddInvoice'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isAnyModalOpen = useUiStore((state) => state.activeModal !== null);
@@ -14,6 +15,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <main className="flex-1">
           <div className={isAnyModalOpen ? "hidden" : ""}>{children}</div>
         </main>
+        <AddInvoice />
         <AddProject />
       </div>
     </div>

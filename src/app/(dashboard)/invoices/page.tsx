@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination";
+import { useUiStore } from "@/store/useUiStore";
 
 
 const Page = () => {
@@ -13,6 +14,7 @@ const Page = () => {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [totalInvoices, setTotalInvoices] = useState<number>(0);
+  const openModal = useUiStore((state) => state.openModal);
   const limit = 9;
   const router = useRouter();
   const [stats, setStats] = useState({
@@ -83,7 +85,7 @@ const Page = () => {
               Manage your billing and track payments.
             </p>
           </div>
-          <button className="flex items-center justify-center gap-sm bg-primary text-on-primary font-label-md text-label-md py-sm px-lg rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
+          <button onClick={()=> openModal("addInvoice")} className="flex items-center justify-center gap-sm bg-primary text-on-primary font-label-md text-label-md py-sm px-lg rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
             <span className="material-symbols-outlined text-sm">add</span>
             Create New Invoice
           </button>
