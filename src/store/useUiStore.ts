@@ -1,19 +1,33 @@
 import { create } from "zustand";
 
-interface preFillClient {
-    name: string;
-    id: string;
+type ModalType = "addProject" | "addInvoice" | null;
+
+interface PrefillClient {
+  name: string;
+  id: string;
 }
-interface UiState{
-    isAddProjectOpen: boolean;
-    prefillClient: preFillClient | null;
-    openAddProject: (prefillClient: preFillClient | null) => void;
-    closeAddProject: () => void;
+
+interface PrefillProject {
+  name: string;
+  id: string;
+  clientId?: string;
+}
+
+interface ModalContext {
+  prefillClient?: PrefillClient | null;
+  prefillProject?: PrefillProject | null;
+}
+
+interface UiState {
+  activeModal: ModalType;
+  modalContext: ModalContext;
+  openModal: (modal: ModalType, context?: ModalContext) => void;
+  closeModal: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
-    isAddProjectOpen: false,
-    prefillClient: null,
-    openAddProject: (prefillClient: preFillClient | null) => set({ isAddProjectOpen: true, prefillClient }),
-    closeAddProject: () => set({ isAddProjectOpen: false, prefillClient: null }),
+  activeModal: null,
+  modalContext: {},
+  openModal: (modal, context = {}) => set({ activeModal: modal, modalContext: context }),
+  closeModal: () => set({ activeModal: null, modalContext: {} }),
 }));
