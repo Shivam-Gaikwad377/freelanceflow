@@ -13,7 +13,9 @@ import ApiResponse from "@/types/ApiResponse";
 import { projectSchema } from "@/schemas/project.schema";
 import { useSession } from "next-auth/react";
 const AddProject = () => {
-  const { isAddProjectOpen, prefillClient, closeAddProject } = useUiStore();
+  const { activeModal, modalContext, closeModal } = useUiStore();
+const isOpen = activeModal === "addProject";
+const prefillClient = modalContext.prefillClient;
   const [clients, setClients] = useState<{ _id: string; name: string }[]>([]);
   const session = useSession();
   const router = useRouter();
@@ -31,7 +33,7 @@ const AddProject = () => {
     },
   });
   useEffect(() => {
-  if (isAddProjectOpen) {
+  if (isOpen) {
     form.reset({
       title: "",
       description: "",
@@ -40,7 +42,7 @@ const AddProject = () => {
       deadline: undefined,
     });
   }
-}, [isAddProjectOpen, prefillClient]);
+}, [isOpen, prefillClient]);
   const {
     register,
     handleSubmit,
@@ -57,7 +59,7 @@ const AddProject = () => {
         toast.success("Project added successfully!", {
           position: "top-right",
         });
-        closeAddProject();
+        closeModal();
         router.replace("/projects");
       }
     } catch (err: any) {
@@ -93,7 +95,7 @@ const AddProject = () => {
     }
   }, [prefillClient, form]);
 
-  if (!isAddProjectOpen) return null;
+  if (!isOpen) return null;
 
   return (
     <div className=" py-10  z-100 min-h-screen">
@@ -270,7 +272,7 @@ const AddProject = () => {
                   className="px-xl py-3 text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
                   type="button"
                   onClick={() => {
-                    closeAddProject();
+                    closeModal();
                   }}
                 >
                   Cancel

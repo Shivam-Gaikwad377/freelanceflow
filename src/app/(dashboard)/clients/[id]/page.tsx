@@ -11,7 +11,7 @@ import EditClientDrawer from "@/components/EditClient";
 import { toast } from "sonner";
 
 const Page = () => {
-  const { openAddProject } = useUiStore();
+  const { openModal } = useUiStore();
   const session = useSession();
   const [client, setClient] = useState<any>(null);
   const pathname = usePathname();
@@ -182,7 +182,7 @@ const Page = () => {
                   </span>
                   Edit Client
                 </button>
-                <button onClick={() => openAddProject({ id: client?._id, name: client?.name })} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
+                <button onClick={() => openModal("addProject", { prefillClient: { name: client?.name, id: client?._id } })} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
                   <span className="material-symbols-outlined text-[18px]">
                     add
                   </span>
