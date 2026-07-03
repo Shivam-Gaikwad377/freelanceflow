@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import { useUiStore } from "@/store/useUiStore";
-import Link from "next/link";
+
 import { Form, useForm } from "react-hook-form";
 import axios from "axios";
 import { useState } from "react";
@@ -9,7 +9,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import ApiResponse from "@/types/ApiResponse";
+
 import { projectSchema } from "@/schemas/project.schema";
 import { useSession } from "next-auth/react";
 const AddProject = () => {

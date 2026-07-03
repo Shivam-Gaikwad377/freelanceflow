@@ -15,12 +15,18 @@ export interface IInvoice extends mongoose.Document {
     clientId: mongoose.Types.ObjectId;
     client: string;
     paidAt?: Date;
+    issueDate: Date;
+    project: string;
 }
 
 const invoiceSchema = new mongoose.Schema<IInvoice>({
     projectId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Project",
+        required: true,
+    },
+    project: {
+        type: String,
         required: true,
     },
     invoiceNumber: {
@@ -35,6 +41,10 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
     },
     amount: {
         type: Number,
+        required: true,
+    },
+    issueDate: {
+        type: Date,
         required: true,
     },
     dueDate: {
