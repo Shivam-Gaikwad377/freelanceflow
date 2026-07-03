@@ -66,7 +66,10 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating invoice:", error);
     return NextResponse.json<ApiResponse>(
-      { success: false, message: "An error occurred while creating the invoice" },
+      {
+        success: false,
+        message: "An error occurred while creating the invoice",
+      },
       { status: 500 }
     );
   }
@@ -87,8 +90,14 @@ export async function GET(request: Request) {
     await connectToDatabase();
 
     const { searchParams } = new URL(request.url);
-    const offset = Math.max(0, parseInt(searchParams.get("offset") ?? "0", 10) || 0);
-    const limit = Math.min(50, parseInt(searchParams.get("limit") ?? "10", 10) || 10);
+    const offset = Math.max(
+      0,
+      parseInt(searchParams.get("offset") ?? "0", 10) || 0
+    );
+    const limit = Math.min(
+      50,
+      parseInt(searchParams.get("limit") ?? "10", 10) || 10
+    );
     const sort = searchParams.get("sort") === "asc" ? 1 : -1;
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const search = searchParams.get("search") || "";
@@ -119,9 +128,7 @@ export async function GET(request: Request) {
           name: { $regex: search, $options: "i" },
         }).select("_id");
 
-        
-          filter.projectId = { $in: matchingProjects.map((p) => p._id) };
-        
+        filter.projectId = { $in: matchingProjects.map((p) => p._id) };
       }
     }
     await markOverdueInvoices(ownerID);

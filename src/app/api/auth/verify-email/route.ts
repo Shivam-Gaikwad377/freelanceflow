@@ -8,7 +8,6 @@ export async function POST(request: Request) {
     await connectToDatabase();
     const { email, verificationToken } = await request.json();
 
-   
     const user = await User.findOne({ email });
 
     if (!user) {

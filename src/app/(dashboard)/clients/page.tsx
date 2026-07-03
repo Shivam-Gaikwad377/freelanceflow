@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 import ClientCard from "@/components/ClientCard";
 import AddClient from "@/components/AddCLient";
 import Pagination from "@/components/Pagination";
-import {toast} from "sonner";
- 
+import { toast } from "sonner";
+
 const Page = () => {
   const session = useSession();
   const [clients, setClients] = useState<any[]>([]);
@@ -27,7 +27,7 @@ const Page = () => {
             : Array.isArray(response.data.data.clients)
               ? response.data.data.clients
               : [];
-         
+
           setClients(fetchedClients);
           setTotalClients(response.data.data.total);
         } catch (error) {

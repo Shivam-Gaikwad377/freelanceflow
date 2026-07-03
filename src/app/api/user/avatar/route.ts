@@ -6,7 +6,6 @@ import { getToken } from "next-auth/jwt";
 import ImageKit from "imagekit"; // Fixed casing casing conventions
 import ApiResponse from "@/types/ApiResponse";
 
-
 // Initialize ImageKit Client
 const imagekitClient = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
@@ -31,8 +30,8 @@ export async function PATCH(req: NextRequest) {
 
     // 2. Get the file from the request
     const uploadData = await req.formData();
-    const file = uploadData.get("avatar") ;
-    if ( typeof file === "string" || !file) {
+    const file = uploadData.get("avatar");
+    if (typeof file === "string" || !file) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "No file provided" },
         { status: 400 }
@@ -63,7 +62,6 @@ export async function PATCH(req: NextRequest) {
     }
 
     const buffer = Buffer.from(await (file as any).arrayBuffer());
-    
 
     // 5. Upload to ImageKit
     const result = await imagekitClient.upload({
@@ -84,7 +82,6 @@ export async function PATCH(req: NextRequest) {
       },
       { new: true }
     );
-    
 
     return NextResponse.json<ApiResponse>(
       {

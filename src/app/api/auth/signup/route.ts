@@ -9,19 +9,18 @@ export async function POST(request: Request) {
   try {
     //Connect to database and validate request body
     await connectToDatabase();
-    const { name, email, password } =
-      await request.json();
+    const { name, email, password } = await request.json();
     const parseResult = signupSchema.safeParse({
       name,
       email,
-      password
+      password,
     });
     if (!parseResult.success) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
           message: parseResult.error.issues
-            .map((err ) => err.message)
+            .map((err) => err.message)
             .join(", "),
         },
         { status: 400 }
@@ -43,17 +42,17 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-    //generate OTP and expiration time 
+    //generate OTP and expiration time
 
     const existingUserUnverifiedByEmail = await User.findOne({ email });
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000);
-    
+
     //hash password and either update existing unverified user or create a new user
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     if (existingUserUnverifiedByEmail) {
       existingUserUnverifiedByEmail.name = name; // ✅ add this
       existingUserUnverifiedByEmail.password = hashedPassword;

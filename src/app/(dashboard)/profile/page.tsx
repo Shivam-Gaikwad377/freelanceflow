@@ -7,7 +7,6 @@ import axios from "axios";
 import { toast } from "sonner";
 import Image from "next/image";
 
-
 const Page = () => {
   const { data: session, update } = useSession();
 
@@ -65,15 +64,14 @@ const Page = () => {
     try {
       const fetchProfile = async () => {
         const response = await axios.get("/api/user/Profile");
-     
+
         setProfile(response.data.data);
-        
       };
       fetchProfile();
     } catch (error: any) {
       toast.error(("Error fetching profile" + error.message) as string);
     }
-  }, [session , router]);
+  }, [session, router]);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -117,7 +115,7 @@ const Page = () => {
           toast.success(
             "Email change request sent. Please verify your new email."
           );
-              await update({ name, businessName, currency, email });
+          await update({ name, businessName, currency, email });
         }
       }
       const updatedProfile = await axios.get("/api/user/Profile");

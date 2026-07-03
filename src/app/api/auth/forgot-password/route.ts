@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    //find user by email 
+    //find user by email
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json<ApiResponse>(
@@ -59,7 +59,8 @@ export async function POST(request: Request) {
     return NextResponse.json<ApiResponse>(
       {
         success: true,
-        message: "Password reset email sent successfully. Please check your email for the OTP.",
+        message:
+          "Password reset email sent successfully. Please check your email for the OTP.",
       },
       { status: 200 }
     );

@@ -58,9 +58,7 @@ const Page = () => {
         err.response?.data?.message ||
           "Invalid verification code. Please try again."
       );
-      toast.error(
-        error
-      );
+      toast.error(error);
       return;
     }
   };

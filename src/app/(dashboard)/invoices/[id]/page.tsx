@@ -92,15 +92,15 @@ const Page = () => {
         status: "Paid",
         paidAt: new Date(),
       });
-      if(response.data.success) {
-      setInvoice((prevInvoice: any) => ({
-        ...prevInvoice,
-        status: "Paid",
-        paidAt: new Date(),
-      }));
-      toast.success("Invoice marked as paid");
-      router.refresh();
-    }
+      if (response.data.success) {
+        setInvoice((prevInvoice: any) => ({
+          ...prevInvoice,
+          status: "Paid",
+          paidAt: new Date(),
+        }));
+        toast.success("Invoice marked as paid");
+        router.refresh();
+      }
     } catch (error) {
       console.error("Error updating invoice status:", error);
       toast.error("Error updating invoice status");
@@ -131,7 +131,7 @@ const Page = () => {
         description: invoice.description || "",
       });
     }
-  }, [ invoice]);
+  }, [invoice]);
   const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDueDate = e.target.value;
     try {
@@ -276,7 +276,12 @@ const Page = () => {
                   client?.name.split(" ").slice(-1)[0].charAt(0).toUpperCase()}
               </div>
               <div className="flex gap-1">
-                <p onClick={()=> router.replace(`/clients/${invoice?.clientId}`)} className="cursor-pointer text-[14px] font-medium m-0 mb-0.75 text-on-surface">
+                <p
+                  onClick={() =>
+                    router.replace(`/clients/${invoice?.clientId}`)
+                  }
+                  className="cursor-pointer text-[14px] font-medium m-0 mb-0.75 text-on-surface"
+                >
                   {client?.name}
                 </p>
                 <span className="text-[11px] bg-secondary-container text-on-secondary-container px-[8px] py-0.5 rounded-lg">
@@ -309,7 +314,12 @@ const Page = () => {
                   folder
                 </span>
               </div>
-              <p onClick={()=> router.replace(`/projects/${invoice?.projectId}`)} className="cursor-pointer text-[14px] font-medium m-0 text-on-surface">
+              <p
+                onClick={() =>
+                  router.replace(`/projects/${invoice?.projectId}`)
+                }
+                className="cursor-pointer text-[14px] font-medium m-0 text-on-surface"
+              >
                 {project?.title}
               </p>
             </div>
@@ -342,7 +352,7 @@ const Page = () => {
               Line items
             </p>
             <button
-            className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
+              className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
               onClick={() => {
                 const newIndex = fields.length; // capture before append
                 append({ description: "", quantity: 1, price: 0 });

@@ -1,7 +1,7 @@
 import User from "@/models/user.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/[...nextauth]/options";
-import { NextResponse} from "next/server";
+import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { emailSchema } from "@/schemas/email.schema";
@@ -67,7 +67,7 @@ export async function put(request: Request) {
       .substring(2, 8)
       .toUpperCase();
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000);
-    
+
     existingUser.verificationToken = verificationToken;
     existingUser.ExpiresAt = expirationTime;
     existingUser.pendingEmail = newEmail;

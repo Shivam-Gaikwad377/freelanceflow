@@ -1,4 +1,3 @@
-
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { NextResponse } from "next/server";
@@ -93,7 +92,9 @@ export async function GET(request: Request) {
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const search = searchParams.get("search") || "";
 
-    const filter: any = { userId: new mongoose.Types.ObjectId(ownerID as string) };
+    const filter: any = {
+      userId: new mongoose.Types.ObjectId(ownerID as string),
+    };
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: "i" } },

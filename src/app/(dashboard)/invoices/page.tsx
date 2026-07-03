@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
 
-
 const Page = () => {
   const session = useSession();
   const [invoices, setInvoices] = useState<any[]>([]);
@@ -44,11 +43,10 @@ const Page = () => {
             : Array.isArray(response.data.data.invoices)
               ? response.data.data.invoices
               : [];
-         
+
           setInvoices(fetchedInvoices);
           setTotalInvoices(response.data.data.total);
         } catch (error) {
-         
           toast.error("Error fetching invoices");
         }
       }
@@ -72,7 +70,6 @@ const Page = () => {
     fetchStats();
   }, [session?.data?.user?._id]);
 
-  
   return (
     <div className="flex-1  min-h-screen bg-background">
       <div className="max-w-container-max mx-auto p-lg md:p-xl space-y-xl">
@@ -85,7 +82,10 @@ const Page = () => {
               Manage your billing and track payments.
             </p>
           </div>
-          <button onClick={()=> openModal("addInvoice")} className="flex items-center justify-center gap-sm bg-primary text-on-primary font-label-md text-label-md py-sm px-lg rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
+          <button
+            onClick={() => openModal("addInvoice")}
+            className="flex items-center justify-center gap-sm bg-primary text-on-primary font-label-md text-label-md py-sm px-lg rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm"
+          >
             <span className="material-symbols-outlined text-sm">add</span>
             Create New Invoice
           </button>
@@ -104,11 +104,10 @@ const Page = () => {
             <div>
               <span className="font-display text-display text-on-surface">
                 {stats?.outstanding?.total?.toLocaleString("en-US", {
-                        style: "currency",
-                        currency: session?.data?.user?.currency || "USD",
-                      })}
+                  style: "currency",
+                  currency: session?.data?.user?.currency || "USD",
+                })}
               </span>
-              
             </div>
           </div>
           <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
@@ -130,7 +129,6 @@ const Page = () => {
               <div className="w-full bg-surface-variant h-unit rounded-full mt-sm overflow-hidden">
                 <div className="bg-secondary h-full w-[65%] rounded-full"></div>
               </div>
-             
             </div>
           </div>
           <div className="glass-card rounded-xl p-lg flex flex-col justify-between border-l-4! border-0! border-accent!">
@@ -219,7 +217,7 @@ const Page = () => {
               <tbody className="font-body-sm text-body-sm">
                 {invoices.map((invoice) => (
                   <tr
-                    onClick={()=> router.push(`/invoices/${invoice._id}`)}
+                    onClick={() => router.push(`/invoices/${invoice._id}`)}
                     key={invoice?._id}
                     className="border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
                   >

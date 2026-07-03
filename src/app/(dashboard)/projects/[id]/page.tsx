@@ -44,7 +44,7 @@ const Page = () => {
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
   const pathname = usePathname();
   const id = pathname.split("/").pop();
-  
+
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
   const [edit, setEdit] = useState(false);
   const router = useRouter();
@@ -54,7 +54,6 @@ const Page = () => {
         const projectResponse = await axios.get(`/api/projects/${id}`);
         setProject(projectResponse.data.data);
         if (projectResponse.data.data.isStarted) {
-         
           const diffInMs =
             Date.now() -
             new Date(projectResponse.data.data.StartedAt).getTime();
@@ -74,7 +73,6 @@ const Page = () => {
           `/api/Clients/${project.clientId}`
         );
         setClient(clientResponse.data.data);
-        
       } catch (error) {
         console.error("Error fetching client data:", error);
       }
@@ -111,7 +109,6 @@ const Page = () => {
   };
 
   const handleViewAllInvoices = async () => {
-   
     try {
       const response = await axios.get(
         `/api/Invoices?projectId=${id}&searchBy=project&limit=${invoicesTotal}`
@@ -127,14 +124,12 @@ const Page = () => {
     try {
       const response = await axios.patch(`/api/projects/${id}`, {
         status: "completed",
-        
       });
-      if(response.data.success) {
+      if (response.data.success) {
         setProject(response.data.data);
         router.refresh();
         toast.success("Project marked as completed");
       }
-      
     } catch (error) {
       console.error("Error marking project as done:", error);
     }
@@ -181,7 +176,10 @@ const Page = () => {
               Edit Project
             </button>
             {!(project?.status === "completed") && (
-              <button onClick={handleMarkAsDone} className="px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20">
+              <button
+                onClick={handleMarkAsDone}
+                className="px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20"
+              >
                 <span className="material-symbols-outlined text-[20px]">
                   check_circle
                 </span>
@@ -318,7 +316,9 @@ const Page = () => {
                   <tbody className="divide-y divide-outline-variant/30">
                     {invoices?.map((invoice) => (
                       <tr
-                      onClick={()=> router.replace(`/invoices/${invoice?._id}`)}
+                        onClick={() =>
+                          router.replace(`/invoices/${invoice?._id}`)
+                        }
                         key={invoice._id}
                         className="hover:bg-surface-container/50 transition-colors cursor-pointer group"
                       >
@@ -364,7 +364,10 @@ const Page = () => {
               <h4 className="font-label-md text-on-surface-variant uppercase mb-md">
                 Client Contact
               </h4>
-              <div onClick={()=> router.replace(`/clients/${project?.clientId}`)} className=" cursor-pointer flex items-center gap-md mb-lg">
+              <div
+                onClick={() => router.replace(`/clients/${project?.clientId}`)}
+                className=" cursor-pointer flex items-center gap-md mb-lg"
+              >
                 <div
                   className={`${clientInitialsColor[client?.name.charAt(0).toUpperCase()]} w-14 h-14 rounded-full flex items-center font-bold text-xl justify-center object-cover border  border-surface-variant`}
                 >

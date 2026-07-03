@@ -268,16 +268,16 @@ const AddInvoice = () => {
           </div>
     
           <div className="mt-6 pt-4 flex flex-col items-end gap-2">
-            <div className="flex justify-between w-full max-w-[240px] font-body-sm text-body-sm text-on-surface-variant">
+            <div className="flex justify-between w-full max-w-60 font-body-sm text-body-sm text-on-surface-variant">
               <span>Subtotal</span>
               <span>23,000.00</span>
             </div>
-            <div className="flex justify-between w-full max-w-[240px] font-body-sm text-body-sm text-on-surface-variant">
+            <div className="flex justify-between w-full max-w-60 font-body-sm text-body-sm text-on-surface-variant">
               <span>Tax (18%)</span>
               <span>4,140.00</span>
             </div>
             <div
-              className="flex justify-between w-full max-w-[240px] font-headline-sm text-headline-sm text-on-surface mt-2">
+              className="flex justify-between w-full max-w-60 font-headline-sm text-headline-sm text-on-surface mt-2">
               <span>Total</span>
               <span>27,140.00</span>
             </div>

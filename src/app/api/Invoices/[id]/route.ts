@@ -35,7 +35,6 @@ export async function GET(request: Request, { params }: RouteContext) {
       _id: id,
       userId: session.user._id,
     }).lean();
-    
 
     if (!invoice) {
       return NextResponse.json<ApiResponse>(
@@ -149,9 +148,10 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          message: validation.error.issues.length > 0
-            ? validation.error.issues[0].message
-            : "Invalid request data",
+          message:
+            validation.error.issues.length > 0
+              ? validation.error.issues[0].message
+              : "Invalid request data",
           data: validation.error.issues,
         },
         { status: 401 }

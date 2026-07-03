@@ -18,7 +18,7 @@ const Page = () => {
   const id = pathname.split("/").pop();
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [projectOffset, setProjectOffset] = useState<number>(0);
-  
+
   const [editOpen, setEditOpen] = useState(false);
   const limit = 5;
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
@@ -46,8 +46,6 @@ const Page = () => {
           );
           setProjects(response.data.data.projects);
           setProjectTotal(response.data.data.total);
-
-         
         } catch (error) {
           toast.error("Error fetching projects: " + error);
         }
@@ -182,7 +180,14 @@ const Page = () => {
                   </span>
                   Edit Client
                 </button>
-                <button onClick={() => openModal("addProject", { prefillClient: { name: client?.name, id: client?._id } })} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
+                <button
+                  onClick={() =>
+                    openModal("addProject", {
+                      prefillClient: { name: client?.name, id: client?._id },
+                    })
+                  }
+                  className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
+                >
                   <span className="material-symbols-outlined text-[18px]">
                     add
                   </span>
@@ -234,7 +239,11 @@ const Page = () => {
                 </thead>
                 <tbody className="font-body-sm text-body-sm text-on-surface">
                   {projects.map((project) => (
-                    <tr onClick={() => router.replace(`/projects/${project._id}`)} key={project._id} className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
+                    <tr
+                      onClick={() => router.replace(`/projects/${project._id}`)}
+                      key={project._id}
+                      className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
+                    >
                       <td className="py-4 px-6 w-2/4">
                         <div className="font-label-md  text-label-md text-on-surface group-hover:text-primary transition-colors">
                           {project.title}
@@ -294,7 +303,7 @@ const Page = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr  className="bg-surface-container-low border-b border-outline-variant">
+                  <tr className="bg-surface-container-low border-b border-outline-variant">
                     <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                       Invoice #
                     </th>
@@ -313,7 +322,11 @@ const Page = () => {
                 <tbody className="font-body-sm text-body-sm text-on-surface">
                   {/* <!-- Overdue Invoice --> */}
                   {invoices.map((invoice) => (
-                    <tr onClick={()=>router.replace(`/invoices/${invoice._id}`)} key={invoice?._id} className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group">
+                    <tr
+                      onClick={() => router.replace(`/invoices/${invoice._id}`)}
+                      key={invoice?._id}
+                      className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
+                    >
                       <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
                         {invoice.invoiceNumber}
                       </td>

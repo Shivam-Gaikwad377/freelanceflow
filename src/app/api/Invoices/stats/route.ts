@@ -9,7 +9,6 @@ import ApiResponse from "@/types/ApiResponse";
 import { markOverdueInvoices } from "@/helpers/markOverdues";
 import { invoiceStatsPipeline } from "@/lib/pipelines/invoice.pipeline";
 
-
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);

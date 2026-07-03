@@ -23,7 +23,7 @@ export default function SignIn() {
       password: "",
     },
   });
-  
+
   const {
     register,
     watch,
@@ -47,7 +47,7 @@ export default function SignIn() {
         router.replace("/dashboard");
       }
     } catch (error: any) {
-      setError("Invalid email or password"+ error.message);
+      setError("Invalid email or password" + error.message);
     }
   };
 

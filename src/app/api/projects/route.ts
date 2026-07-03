@@ -1,4 +1,3 @@
-
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { NextResponse } from "next/server";
@@ -119,7 +118,6 @@ export async function GET(request: Request) {
 
         filter.clientId = { $in: matchingClients.map((c) => c._id) };
       }
-      
     }
 
     const [projects, total] = await Promise.all([
