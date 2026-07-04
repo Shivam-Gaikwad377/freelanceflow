@@ -6,7 +6,7 @@ export const createInvoiceSchema = z.object({
   clientId: z.string().min(1, "Client is required"),
   issueDate: z.date(),
   dueDate: z.date(),
-  status: z.enum(["pending", "paid", "overdue"]),
+  status: z.enum(["pending", "paid", "overdue"]).optional(),
   lineItems: z.array(
     z.object({
       description: z.string().min(1, "Description is required"),

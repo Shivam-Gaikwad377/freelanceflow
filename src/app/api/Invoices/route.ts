@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
     await connectToDatabase();
 
-    const { projectId, dueDate, status, lineItems, clientId, client } =
+    const { projectId, dueDate, status, lineItems, clientId, client, issueDate,project } =
       await request.json();
 
     const parseResult = createInvoiceSchema.safeParse({
@@ -29,12 +29,16 @@ export async function POST(request: Request) {
       status,
       lineItems,
       client,
+      clientId,
+      projectId,
+      project,
+      issueDate,
     });
 
     if (!parseResult.success) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Invalid invoice data" },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
@@ -51,8 +55,6 @@ export async function POST(request: Request) {
       userId: ownerID,
       amount,
       invoiceNumber,
-      clientId,
-      projectId,
     });
 
     await newInvoice.save();

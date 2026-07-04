@@ -14,8 +14,8 @@ import { projectSchema } from "@/schemas/project.schema";
 import { useSession } from "next-auth/react";
 const AddProject = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
-const isOpen = activeModal === "addProject";
-const prefillClient = modalContext.prefillClient;
+  const isOpen = activeModal === "addProject";
+  const prefillClient = modalContext.prefillClient;
   const [clients, setClients] = useState<{ _id: string; name: string }[]>([]);
   const session = useSession();
   const router = useRouter();
@@ -29,20 +29,20 @@ const prefillClient = modalContext.prefillClient;
       description: "",
       deadline: new Date().toISOString().split("T")[0],
       status: "open", // Default to today's date
-      clientId: "" // Default to empty string
+      clientId: "", // Default to empty string
     },
   });
   useEffect(() => {
-  if (isOpen) {
-    form.reset({
-      title: "",
-      description: "",
-      clientId: prefillClient?.id ?? "",
-      status: "open",
-      deadline: undefined,
-    });
-  }
-}, [isOpen, prefillClient]);
+    if (isOpen) {
+      form.reset({
+        title: "",
+        description: "",
+        clientId: prefillClient?.id ?? "",
+        status: "open",
+        deadline: undefined,
+      });
+    }
+  }, [isOpen, prefillClient]);
   const {
     register,
     handleSubmit,
@@ -122,7 +122,7 @@ const prefillClient = modalContext.prefillClient;
             <Form
               control={form.control}
               onSubmit={({ data }) => onSubmit(data)}
-              onError={(errors) => console.log("Validation failed:", errors)} 
+              onError={(errors) => console.log("Validation failed:", errors)}
               className="space-y-lg"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
