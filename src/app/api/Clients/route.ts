@@ -91,6 +91,7 @@ export async function GET(request: Request) {
     const sort = searchParams.get("sort") === "asc" ? 1 : -1;
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const search = searchParams.get("search") || "";
+    const status = searchParams.get("status") || "";
 
     const filter: any = {
       userId: new mongoose.Types.ObjectId(ownerID as string),
@@ -101,6 +102,9 @@ export async function GET(request: Request) {
         { email: { $regex: search, $options: "i" } },
         { company: { $regex: search, $options: "i" } },
       ];
+    }
+    if (status && status !== "all") {
+      filter.status = status; // exact match, no regex needed
     }
 
     const [Clients, total] = await Promise.all([

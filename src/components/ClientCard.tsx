@@ -45,7 +45,7 @@ const ClientCard = ({ name, phone, email, status, totalBilled }: ClientCardProps
   };
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg hover:shadow-[0_8px_24px_-4px_rgba(70,72,212,0.04)] transition-shadow cursor-pointer group">
-      <div className="flex justify-between items-start mb-md">
+      <div className="flex justify-between items-center mb-md e-2">
         <div className="flex items-center gap-md">
           <div
             className={`${clientInitialsColor[name.charAt(0).toUpperCase()]} w-12 h-12 rounded-full flex items-center font-bold text-xl justify-center object-cover border  border-surface-variant`}
@@ -57,9 +57,7 @@ const ClientCard = ({ name, phone, email, status, totalBilled }: ClientCardProps
             <h3 className="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">
               {name}
             </h3>
-            <p className="font-body-sm text-body-sm text-on-surface-variant">
-              {email}
-            </p>
+            
           </div>
         </div>
         <span

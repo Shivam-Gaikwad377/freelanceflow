@@ -15,21 +15,38 @@ const Page = () => {
   const [clientOffset, setClientOffset] = useState<number>(0);
   const [totalClients, setTotalClients] = useState<number>(0);
   const limit = 9;
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   useEffect(() => {
     const fetchClients = async () => {
       if (session?.data?.user?._id) {
         try {
-          const response = await axios.get(
-            `/api/Clients?offset=${clientOffset}&limit=${limit}`
-          );
-          const fetchedClients = Array.isArray(response.data.data.clients)
-            ? response.data.data.clients
-            : Array.isArray(response.data.data.clients)
+          if (selectedStatus !== "all") {
+            
+            const response = await axios.get(
+              `/api/Clients?offset=${clientOffset}&limit=${limit}&status=${selectedStatus}`
+            );
+            const fetchedClients = Array.isArray(response.data.data.clients)
               ? response.data.data.clients
-              : [];
+              : Array.isArray(response.data.data.clients)
+                ? response.data.data.clients
+                : [];
+            setClients(fetchedClients);
+            setTotalClients(response.data.data.total);
+           
+          } else {
+            const response = await axios.get(
+              `/api/Clients?offset=${clientOffset}&limit=${limit}`
+            );
 
-          setClients(fetchedClients);
-          setTotalClients(response.data.data.total);
+            const fetchedClients = Array.isArray(response.data.data.clients)
+              ? response.data.data.clients
+              : Array.isArray(response.data.data.clients)
+                ? response.data.data.clients
+                : [];
+
+            setClients(fetchedClients);
+            setTotalClients(response.data.data.total);
+          }
         } catch (error) {
           toast.error("Error fetching clients: " + error);
         }
@@ -37,7 +54,7 @@ const Page = () => {
     };
 
     fetchClients();
-  }, [session?.data?.user?._id, clientOffset, limit]);
+  }, [session?.data?.user?._id, clientOffset, selectedStatus]);
   const router = useRouter();
   const handleClick = (id: string) => {
     router.replace(`/clients/${id}`);
@@ -86,11 +103,16 @@ const Page = () => {
             />
           </div>
           <div className="relative min-w-50">
-            <select className="w-full pl-4 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-body-md text-on-surface appearance-none outline-none cursor-pointer">
+            <select
+              onChange={(e) => {
+                setSelectedStatus(e.target.value);
+              }}
+              className="w-full pl-4 pr-10 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-body-md text-on-surface appearance-none outline-none cursor-pointer"
+            >
               <option value="all">All Statuses</option>
               <option value="active">Active</option>
-              <option value="archived">Archived</option>
-            </select>
+              <option value="inactive">Inactive</option>
+            </select> 
             <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
               expand_more
             </span>
