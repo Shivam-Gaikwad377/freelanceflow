@@ -25,6 +25,7 @@ const AddInvoice = () => {
   const session = useSession();
   const router = useRouter();
   const [addinglineIndex, setAddingLineIndex] = useState<number | null>(null);
+  const [client, setClient] = useState<{ _id: string; name: string } | null>(null);
   const form = useForm<z.infer<typeof createInvoiceSchema>>({
     resolver: zodResolver(createInvoiceSchema),
     defaultValues: {
@@ -130,9 +131,27 @@ const AddInvoice = () => {
       form.setValue("projectId", prefillProject?.id || "");
     }
   }, [prefillClient, prefillProject, form]);
+  useEffect(()=>{
+    if(prefillClient){
+      const selectedClient = clients.find(c => c._id === prefillClient.id);
+      setClient(selectedClient || null);
+    }
+    const fetchClientProject = async () => {
+      if(client){
+        console.log("Fetching projects for client:", client._id);
+        try {
+          const response = await axios.get(`/api/projects?searchBy=clientId&search=${client._id}`);
+          setProjects(response.data.data.projects);
+        } catch (error) {
+          console.error("Error fetching client projects:", error);
+        }
+      }
+    };
+    fetchClientProject();
+  }, [client, prefillClient]);
 
   if (!isOpen) return null;
-  console.log("prefillClient:");
+  
   return (
     <main className="py-10  overflow-y-auto flex justify-center">
       <Form
@@ -186,6 +205,7 @@ const AddInvoice = () => {
                     form.setValue("client", selected?.name || "", {
                       shouldValidate: true,
                     });
+                    setClient(selected || null);
                   }}
                   className="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all appearance-none"
                 >
