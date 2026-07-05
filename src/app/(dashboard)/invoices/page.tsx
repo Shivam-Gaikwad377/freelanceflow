@@ -9,6 +9,17 @@ import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
 
 const Page = () => {
+  type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
+
+  const INVOICE_STATUS_FILTERS: {
+    label: string;
+    value: InvoiceStatusFilter;
+  }[] = [
+    { label: "All", value: "all" },
+    { label: "Paid", value: "Paid" },
+    { label: "Pending", value: "pending" },
+    { label: "Overdue", value: "overdue" },
+  ];
   const session = useSession();
   const [invoices, setInvoices] = useState<any[]>([]);
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
@@ -16,6 +27,8 @@ const Page = () => {
   const openModal = useUiStore((state) => state.openModal);
   const limit = 9;
   const router = useRouter();
+  const [selectedStatus, setSelectedStatus] =
+    useState<InvoiceStatusFilter>("all");
   const [stats, setStats] = useState({
     outstanding: {
       total: 0,
@@ -35,17 +48,31 @@ const Page = () => {
     const fetchInvoices = async () => {
       if (session?.data?.user?._id) {
         try {
-          const response = await axios.get(
-            `/api/Invoices?offset=${invoiceOffset}&limit=${limit}&sort=asc`
-          );
-          const fetchedInvoices = Array.isArray(response.data.data.invoices)
-            ? response.data.data.invoices
-            : Array.isArray(response.data.data.invoices)
+          if (selectedStatus !== "all") {
+            const response = await axios.get(
+              `/api/Invoices?offset=${invoiceOffset}&limit=${limit}&sort=asc&status=${selectedStatus}`
+            );
+            const fetchedInvoices = Array.isArray(response.data.data.invoices)
               ? response.data.data.invoices
-              : [];
+              : Array.isArray(response.data.data.invoices)
+                ? response.data.data.invoices
+                : [];
 
-          setInvoices(fetchedInvoices);
-          setTotalInvoices(response.data.data.total);
+            setInvoices(fetchedInvoices);
+            setTotalInvoices(response.data.data.total);
+          } else {
+            const response = await axios.get(
+              `/api/Invoices?offset=${invoiceOffset}&limit=${limit}&sort=asc`
+            );
+            const fetchedInvoices = Array.isArray(response.data.data.invoices)
+              ? response.data.data.invoices
+              : Array.isArray(response.data.data.invoices)
+                ? response.data.data.invoices
+                : [];
+
+            setInvoices(fetchedInvoices);
+            setTotalInvoices(response.data.data.total);
+          }
         } catch (error) {
           toast.error("Error fetching invoices");
         }
@@ -53,7 +80,7 @@ const Page = () => {
     };
 
     fetchInvoices();
-  }, [invoiceOffset, limit, session?.data?.user?._id]);
+  }, [invoiceOffset, limit, session?.data?.user?._id, selectedStatus]);
   useEffect(() => {
     const fetchStats = async () => {
       if (session?.data?.user?._id) {
@@ -167,18 +194,25 @@ const Page = () => {
           </div>
           <div className="flex flex-wrap items-center gap-sm w-full md:w-auto">
             <div className="flex bg-surface-container-low rounded-md p-1">
-              <button className="px-sm py-xs rounded text-label-sm font-label-sm bg-surface-container-lowest shadow-sm text-on-surface">
-                All
-              </button>
-              <button className="px-sm py-xs rounded text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container-highest transition-colors">
-                Paid
-              </button>
-              <button className="px-sm py-xs rounded text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container-highest transition-colors">
-                Pending
-              </button>
-              <button className="px-sm py-xs rounded text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container-highest transition-colors">
-                Overdue
-              </button>
+              {INVOICE_STATUS_FILTERS.map((filter) => (
+                <label
+                  key={filter.value}
+                  className="px-sm py-xs rounded text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container-highest transition-colors cursor-pointer has-checked:bg-surface-container-lowest has-checked:shadow-sm has-checked:text-on-surface"
+                >
+                  <input
+                    type="radio"
+                    name="invoice-status-filter"
+                    value={filter.value}
+                    checked={selectedStatus === filter.value}
+                    onChange={() => {
+                      setSelectedStatus(filter.value);
+                      setInvoiceOffset(0);
+                    }}
+                    className="sr-only"
+                  />
+                  {filter.label}
+                </label>
+              ))}
             </div>
             <button className="flex items-center gap-xs px-sm py-sm border border-outline-variant rounded-md text-body-sm font-body-sm text-on-surface-variant hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
               <span className="material-symbols-outlined text-[18px]">
@@ -257,7 +291,7 @@ const Page = () => {
                     </td>
                     <td className="py-sm px-lg text-center">
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-container-high text-on-surface-variant">
-                        Pending
+                        {invoice?.status}
                       </span>
                     </td>
                   </tr>
