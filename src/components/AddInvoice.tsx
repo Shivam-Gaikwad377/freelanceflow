@@ -25,16 +25,14 @@ const AddInvoice = () => {
   const session = useSession();
   const router = useRouter();
   const [addinglineIndex, setAddingLineIndex] = useState<number | null>(null);
-  const [client, setClient] = useState<{ _id: string; name: string } | null>(null);
-  const form = useForm<z.infer<typeof createInvoiceSchema>>({
+  const [client, setClient] = useState<{ _id: string; name: string } | null>(
+    null
+  );
+  const form = useForm<z.input<typeof createInvoiceSchema>>({
     resolver: zodResolver(createInvoiceSchema),
     defaultValues: {
       lineItems: [
-        {
-          description: "",
-          quantity: 1,
-          price: 0,
-        },
+        
       ],
       status: "pending",
       project: "",
@@ -80,18 +78,16 @@ const AddInvoice = () => {
         dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         status: "pending",
         lineItems: [
-          {
-            description: "",
-            quantity: 1,
-            price: 0,
-          },
+         
         ],
 
         client: prefillClient?.name || "",
         clientId: prefillClient?.id || "",
         project: prefillProject?.name || "",
         projectId: prefillProject?.id || "",
+
       });
+      setAddingLineIndex(null);
     }
   }, [isOpen, prefillClient, prefillProject]);
   const {
@@ -101,8 +97,18 @@ const AddInvoice = () => {
     trigger,
     formState: { errors, isSubmitting },
   } = form;
-  const onSubmit = async (data: z.infer<typeof createInvoiceSchema>) => {
+  const watchedLineItems = watch("lineItems");
+
+  const subtotal = watchedLineItems.reduce(
+    (sum, item) =>
+      sum + (Number(item.quantity) || 0) * (Number(item.price) || 0),
+    0
+  );
+  const tax = subtotal * 0.18;
+  const total = subtotal + tax;
+  const onSubmit = async (data: z.input<typeof createInvoiceSchema>) => {
     try {
+      console.log("Submitting invoice data:", data);
       const response = await axios.post("/api/Invoices", data);
 
       // Only 2xx reaches here
@@ -131,16 +137,18 @@ const AddInvoice = () => {
       form.setValue("projectId", prefillProject?.id || "");
     }
   }, [prefillClient, prefillProject, form]);
-  useEffect(()=>{
-    if(prefillClient){
-      const selectedClient = clients.find(c => c._id === prefillClient.id);
+  useEffect(() => {
+    if (prefillClient) {
+      const selectedClient = clients.find((c) => c._id === prefillClient.id);
       setClient(selectedClient || null);
     }
     const fetchClientProject = async () => {
-      if(client){
+      if (client) {
         console.log("Fetching projects for client:", client._id);
         try {
-          const response = await axios.get(`/api/projects?searchBy=clientId&search=${client._id}`);
+          const response = await axios.get(
+            `/api/projects?searchBy=clientId&search=${client._id}`
+          );
           setProjects(response.data.data.projects);
         } catch (error) {
           console.error("Error fetching client projects:", error);
@@ -151,7 +159,7 @@ const AddInvoice = () => {
   }, [client, prefillClient]);
 
   if (!isOpen) return null;
-  
+
   return (
     <main className="py-10  overflow-y-auto flex justify-center">
       <Form
@@ -375,15 +383,12 @@ const AddInvoice = () => {
                                 `lineItems.${index}.quantity`,
                                 `lineItems.${index}.price`,
                               ]);
-                              if (!isValid) {
-                                toast.error("please enter all fields.", {
-                                  position: "top-right",
-                                });
-                              }
 
                               // 2. If valid, close the edit mode for this row
                               if (isValid) {
-                                setAddingLineIndex(index === addinglineIndex ? null : index);
+                                setAddingLineIndex(
+                                  index === addinglineIndex ? null : index
+                                );
                               }
                             }}
                             aria-label="Save item"
@@ -479,31 +484,20 @@ const AddInvoice = () => {
               <div className="flex justify-between w-full max-w-60 font-body-sm text-body-sm text-on-surface-variant">
                 <span>Subtotal</span>
                 <span>
-                  {fields
-                    .reduce((sum, item) => sum + item.quantity * item.price, 0)
-                    .toFixed(2)}
+                  {subtotal.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between w-full max-w-60 font-body-sm text-body-sm text-on-surface-variant">
                 <span>Tax (18%)</span>
                 <span>
-                  {(
-                    fields.reduce(
-                      (sum, item) => sum + item.quantity * item.price,
-                      0
-                    ) * 0.18
-                  ).toFixed(2)}
+                  {tax.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between w-full max-w-60 font-headline-sm text-headline-sm text-on-surface mt-2">
                 <span>Total</span>
                 <span>
-                  {(
-                    fields.reduce(
-                      (sum, item) => sum + item.quantity * item.price,
-                      0
-                    ) * 1.18
-                  ).toFixed(2)}
+                  {total.toFixed(2)}
+                 
                 </span>
               </div>
             </div>

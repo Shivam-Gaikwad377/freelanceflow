@@ -4,8 +4,8 @@ export const createInvoiceSchema = z.object({
   invoiceNumber: z.number().positive("Invoice number must be positive").optional(),
   projectId: z.string().min(1, "Project is required"),
   clientId: z.string().min(1, "Client is required"),
-  issueDate: z.date(),
-  dueDate: z.date(),
+  issueDate: z.coerce.date(),
+  dueDate: z.coerce.date(),
   status: z.enum(["pending", "paid", "overdue"]).optional(),
   lineItems: z.array(
     z.object({
