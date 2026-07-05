@@ -8,6 +8,7 @@ import ClientCard from "@/components/ClientCard";
 import AddClient from "@/components/AddCLient";
 import Pagination from "@/components/Pagination";
 import { toast } from "sonner";
+import useDebounce from "@/app/hooks/useDebounce";
 
 const Page = () => {
   const session = useSession();
@@ -16,12 +17,36 @@ const Page = () => {
   const [totalClients, setTotalClients] = useState<number>(0);
   const limit = 9;
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      if (session?.data?.user?._id) {
+        try {
+          const response = await axios.get(
+            `/api/Clients?offset=${clientOffset}&limit=${limit}&search=${debouncedSearchTerm}`
+          );
+          const fetchedClients = Array.isArray(response.data.data.clients)
+            ? response.data.data.clients
+            : [];
+          setClients(fetchedClients);
+          setTotalClients(response.data.data.total);
+        } catch (error) {
+          toast.error("Error fetching clients: " + error);
+        }
+      }
+    };
+
+    fetchClients();
+  }, [session?.data?.user?._id, clientOffset, debouncedSearchTerm]);
+
   useEffect(() => {
     const fetchClients = async () => {
       if (session?.data?.user?._id) {
         try {
           if (selectedStatus !== "all") {
-            
             const response = await axios.get(
               `/api/Clients?offset=${clientOffset}&limit=${limit}&status=${selectedStatus}`
             );
@@ -32,7 +57,6 @@ const Page = () => {
                 : [];
             setClients(fetchedClients);
             setTotalClients(response.data.data.total);
-           
           } else {
             const response = await axios.get(
               `/api/Clients?offset=${clientOffset}&limit=${limit}`
@@ -97,6 +121,8 @@ const Page = () => {
               search
             </span>
             <input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant transition-all outline-none"
               placeholder="Search clients by name..."
               type="text"
@@ -112,7 +138,7 @@ const Page = () => {
               <option value="all">All Statuses</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
-            </select> 
+            </select>
             <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
               expand_more
             </span>
@@ -120,18 +146,29 @@ const Page = () => {
         </div>
         {/* Client List (Bento Grid Style) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
-          {clients?.map((client) => (
-            <div onClick={() => handleClick(client?._id)}>
-              <ClientCard
-                key={client?._id}
-                name={client?.name}
-                status={client?.status}
-                phone={client?.phone}
-                email={client?.email}
-                totalBilled={client?.totalBilled}
-              />
+          {clients.length === 0 ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+              <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-2">
+                search_off
+              </span>
+              <p className="font-body-lg text-body-lg text-on-surface">
+                No clients found
+              </p>
+             
             </div>
-          ))}
+          ) : (
+            clients.map((client) => (
+              <div key={client?._id} onClick={() => handleClick(client?._id)}>
+                <ClientCard
+                  name={client?.name}
+                  status={client?.status}
+                  phone={client?.phone}
+                  email={client?.email}
+                  totalBilled={client?.totalBilled}
+                />
+              </div>
+            ))
+          )}
         </div>
         <div className="p-4">
           <Pagination
