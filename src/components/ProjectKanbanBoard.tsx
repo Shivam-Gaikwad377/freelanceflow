@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import ProjectCard from "@/components/ProjectCard";
 import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
+import useFetch from "@/app/hooks/useFetch";
 
 type Status = "open" | "in progress" | "completed";
 

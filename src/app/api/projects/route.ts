@@ -5,7 +5,7 @@ import Project from "@/models/project.model";
 import { projectSchema } from "@/schemas/project.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-import Client from "@/models/client.model";
+
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
@@ -96,36 +96,23 @@ export async function GET(request: Request) {
     );
 
     const search = searchParams.get("search") || "";
-    const searchBy = searchParams.get("searchBy") || "title";
     const status = searchParams.get("status") || "";
+    const clientId = searchParams.get("clientId") || "";
+    const sortBy = searchParams.get("sortBy") || "createdAt";
+    const sort = searchParams.get("sort") || "desc";
     const filter: any = { userId: ownerID };
     if (status) filter.status = status;
+    if (clientId) filter.clientId = clientId;
 
     if (search) {
-      if (searchBy === "title") {
-        filter.title = { $regex: search, $options: "i" };
-      }
-      // NEW: Explicitly handle searching by an exact Client ID
-      else if (searchBy === "clientId") {
-        filter.clientId = search;
-      }
-      // OPTIONAL: Keep your old logic under a new name if you have a search bar that searches clients by name
-      else if (searchBy === "clientName") {
-        const matchingClients = await Client.find({
-          name: { $regex: search, $options: "i" },
-          userId: ownerID,
-        }).select("_id");
-
-        filter.clientId = { $in: matchingClients.map((c) => c._id) };
-      }
+      filter.title = { $regex: search, $options: "i" };
     }
 
     const [projects, total] = await Promise.all([
       Project.find(filter)
-        .sort({ createdAt: -1 })
+        .sort({ [sortBy]: sort === "asc" ? 1 : -1 })
         .skip(offset)
-        .limit(limit)
-        .lean(),
+        .limit(limit),
       Project.countDocuments(filter),
     ]);
 

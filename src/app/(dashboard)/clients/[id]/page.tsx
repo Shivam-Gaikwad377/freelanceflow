@@ -9,6 +9,7 @@ import { useUiStore } from "@/store/useUiStore";
 import Link from "next/link";
 import EditClientDrawer from "@/components/EditClient";
 import { toast } from "sonner";
+import useFetch from "@/app/hooks/useFetch";
 
 const Page = () => {
   const { openModal } = useUiStore();
@@ -23,26 +24,21 @@ const Page = () => {
   const limit = 5;
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
   const [projectTotal, setProjectTotal] = useState<number>(0);
+
+  const { data: clientData, loading: clientLoading, error: clientError } = useFetch(`/api/Clients/${id}`);
   useEffect(() => {
-    const fetchClient = async () => {
-      if (session) {
-        try {
-          const response = await axios.get(`/api/Clients/${id}`);
-          setClient(response.data.data);
-        } catch (error) {
-          console.error("Error fetching client:", error);
-        }
-      }
-    };
-    fetchClient();
-  }, [session?.data?.user?.id, id]);
+    if (clientData) {
+      setClient(clientData);
+    }
+  }, [clientData]);
+
   const [projects, setProjects] = useState<any[]>([]);
   useEffect(() => {
     const fetchProjects = async () => {
       if (session) {
         try {
           const response = await axios.get(
-            `/api/projects?searchBy=clientId&search=${id}&offset=${projectOffset}&limit=${limit}`
+            `/api/projects?clientId=${id}&offset=${projectOffset}&limit=${limit}`
           );
           setProjects(response.data.data.projects);
           setProjectTotal(response.data.data.total);
@@ -56,10 +52,11 @@ const Page = () => {
   const [invoices, setInvoices] = useState<any[]>([]);
   useEffect(() => {
     const fetchInvoices = async () => {
-      if (session) {
+      // Wait for the session data to actually be populated
+      if (session?.data?.user) {
         try {
           const response = await axios.get(
-            `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}&sortBy=dueDate&sort=asc`
+            `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}`
           );
           setInvoices(response.data.data.invoices);
           setInvoiceTotal(response.data.data.total);
@@ -69,7 +66,7 @@ const Page = () => {
       }
     };
     fetchInvoices();
-  }, [id, invoiceOffset]);
+  }, [id, invoiceOffset, session?.data?.user]); // Add session dependency here
 
   const router = useRouter();
   return (

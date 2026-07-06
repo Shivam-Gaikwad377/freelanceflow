@@ -117,7 +117,9 @@ export async function GET(request: Request) {
 
     const filter: any = { userId: ownerID };
 
-    if (status!="all") filter.status = status;
+    if (status && status !== "all") {
+      filter.status = status;
+    }
     if (projectId) filter.projectId = projectId;
 
     if (search) {

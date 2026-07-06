@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
 import useDebounce from "@/app/hooks/useDebounce";
+import useFetch from "@/app/hooks/useFetch";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -49,97 +50,27 @@ const Page = () => {
       count: 0,
     },
   });
-
+  const { data: invoiceData, loading: invoiceLoading, error: invoiceError } = useFetch(`/api/Invoices`, {
+    offset: invoiceOffset,
+    limit,
+    sort: "asc",
+    status: selectedStatus !== "all" ? selectedStatus : undefined,
+    search: debouncedSearchTerm || undefined,
+    searchBy: isNumeric(debouncedSearchTerm) ? "invoiceNumber" : "clientName",
+  });
   useEffect(() => {
-    const searchInvoices = async () => {
-      if (!session?.data?.user?._id) return;
-      setIsSearching(true);
-      try {
-        if (isNumeric(debouncedSearchTerm)) {
-          const response = await axios.get(
-            `api/Invoices/?search=${debouncedSearchTerm}&searchBy=invoiceNumber&offset=${invoiceOffset}&limit=${limit}`
-          );
-          const fetchedInvoices = Array.isArray(response.data.data.invoices)
-            ? response.data.data.invoices
-            : Array.isArray(response.data.data.invoices)
-              ? response.data.data.invoices
-              : [];
-
-          setInvoices(fetchedInvoices);
-          setTotalInvoices(response.data.data.total);
-        } else {
-          const response = await axios.get(
-            `api/Invoices/?search=${debouncedSearchTerm}&searchBy=clientName&offset=${invoiceOffset}&limit=${limit}&sort=asc&status=${selectedStatus}`
-          );
-          const fetchedInvoices = Array.isArray(response.data.data.invoices)
-            ? response.data.data.invoices
-            : Array.isArray(response.data.data.invoices)
-              ? response.data.data.invoices
-              : [];
-
-          setInvoices(fetchedInvoices);
-          setTotalInvoices(response.data.data.total);
-        }
-      } catch (error) {
-        toast.error("Error searching invoices");
-      } finally {
-        setIsSearching(false);
-      }
-    };
-    searchInvoices();
-  }, [debouncedSearchTerm, invoiceOffset, limit, selectedStatus, session?.data?.user?._id]);
+    if (invoiceData) {
+      setInvoices(invoiceData?.invoices || []);
+      setTotalInvoices(invoiceData?.total || 0);
+    }
+  }, [invoiceData, session?.data?.user?._id]);
+  const { data: statsData, loading: statsLoading, error: statsError } = useFetch(`/api/Invoices/stats`);
   useEffect(() => {
-    const fetchInvoices = async () => {
-      if (session?.data?.user?._id) {
-        try {
-          if (selectedStatus !== "all") {
-            const response = await axios.get(
-              `/api/Invoices?offset=${invoiceOffset}&limit=${limit}&sort=asc&status=${selectedStatus}`
-            );
-            const fetchedInvoices = Array.isArray(response.data.data.invoices)
-              ? response.data.data.invoices
-              : Array.isArray(response.data.data.invoices)
-                ? response.data.data.invoices
-                : [];
+    if (statsData) {
+      setStats(statsData);
+    }
+  }, [statsData]);
 
-            setInvoices(fetchedInvoices);
-            setTotalInvoices(response.data.data.total);
-          } else {
-            const response = await axios.get(
-              `/api/Invoices?offset=${invoiceOffset}&limit=${limit}&sort=asc`
-            );
-            const fetchedInvoices = Array.isArray(response.data.data.invoices)
-              ? response.data.data.invoices
-              : Array.isArray(response.data.data.invoices)
-                ? response.data.data.invoices
-                : [];
-
-            setInvoices(fetchedInvoices);
-            setTotalInvoices(response.data.data.total);
-          }
-        } catch (error) {
-          toast.error("Error fetching invoices");
-        }
-      }
-    };
-
-    fetchInvoices();
-  }, [invoiceOffset, limit, session?.data?.user?._id, selectedStatus]);
-  useEffect(() => {
-    const fetchStats = async () => {
-      if (session?.data?.user?._id) {
-        try {
-          const response = await axios.get(`/api/Invoices/stats`);
-          setStats(response.data.data);
-        } catch (error) {
-          console.error("Error fetching invoice stats:", error);
-          toast.error("Error fetching invoice stats");
-        }
-      }
-    };
-
-    fetchStats();
-  }, [session?.data?.user?._id]);
 
   return (
     <div className="flex-1  min-h-screen bg-background">

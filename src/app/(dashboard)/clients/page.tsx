@@ -9,6 +9,7 @@ import AddClient from "@/components/AddCLient";
 import Pagination from "@/components/Pagination";
 import { toast } from "sonner";
 import useDebounce from "@/app/hooks/useDebounce";
+import useFetch from "@/app/hooks/useFetch";
 
 const Page = () => {
   const session = useSession();
@@ -21,64 +22,21 @@ const Page = () => {
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  const { data, loading, error } = useFetch(`/api/Clients`, {
+    offset: clientOffset,
+    limit,
+    status: selectedStatus !== "all" ? selectedStatus : undefined,
+    search: debouncedSearchTerm || undefined,
+  });
+
+  // Use another useEffect ONLY to sync the fetched data to your local state
   useEffect(() => {
-    const fetchClients = async () => {
-      if (session?.data?.user?._id) {
-        try {
-          const response = await axios.get(
-            `/api/Clients?offset=${clientOffset}&limit=${limit}&search=${debouncedSearchTerm}`
-          );
-          const fetchedClients = Array.isArray(response.data.data.clients)
-            ? response.data.data.clients
-            : [];
-          setClients(fetchedClients);
-          setTotalClients(response.data.data.total);
-        } catch (error) {
-          toast.error("Error fetching clients: " + error);
-        }
-      }
-    };
-
-    fetchClients();
-  }, [session?.data?.user?._id, clientOffset, debouncedSearchTerm]);
-
-  useEffect(() => {
-    const fetchClients = async () => {
-      if (session?.data?.user?._id) {
-        try {
-          if (selectedStatus !== "all") {
-            const response = await axios.get(
-              `/api/Clients?offset=${clientOffset}&limit=${limit}&status=${selectedStatus}`
-            );
-            const fetchedClients = Array.isArray(response.data.data.clients)
-              ? response.data.data.clients
-              : Array.isArray(response.data.data.clients)
-                ? response.data.data.clients
-                : [];
-            setClients(fetchedClients);
-            setTotalClients(response.data.data.total);
-          } else {
-            const response = await axios.get(
-              `/api/Clients?offset=${clientOffset}&limit=${limit}`
-            );
-
-            const fetchedClients = Array.isArray(response.data.data.clients)
-              ? response.data.data.clients
-              : Array.isArray(response.data.data.clients)
-                ? response.data.data.clients
-                : [];
-
-            setClients(fetchedClients);
-            setTotalClients(response.data.data.total);
-          }
-        } catch (error) {
-          toast.error("Error fetching clients: " + error);
-        }
-      }
-    };
-
-    fetchClients();
-  }, [session?.data?.user?._id, clientOffset, selectedStatus]);
+    if (data) {
+      setClients(data?.clients || []);
+      setTotalClients(data?.total || 0);
+    }
+  }, [data]);
+  
   const router = useRouter();
   const handleClick = (id: string) => {
     router.replace(`/clients/${id}`);
