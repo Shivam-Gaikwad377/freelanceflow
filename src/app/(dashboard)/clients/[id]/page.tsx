@@ -10,6 +10,7 @@ import Link from "next/link";
 import EditClientDrawer from "@/components/EditClient";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
+import ApiResponse from "@/types/ApiResponse";
 
 const Page = () => {
   const { openModal } = useUiStore();
@@ -19,12 +20,11 @@ const Page = () => {
   const id = pathname.split("/").pop();
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [projectOffset, setProjectOffset] = useState<number>(0);
-
   const [editOpen, setEditOpen] = useState(false);
   const limit = 5;
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
   const [projectTotal, setProjectTotal] = useState<number>(0);
-
+  const [invoices, setInvoices] = useState<any[]>([]);
   const { data: clientData, loading: clientLoading, error: clientError } = useFetch(`/api/Clients/${id}`);
   useEffect(() => {
     if (clientData) {
@@ -35,9 +35,9 @@ const Page = () => {
   const [projects, setProjects] = useState<any[]>([]);
   useEffect(() => {
     const fetchProjects = async () => {
-      if (session) {
+      if (session?.data?.user?._id) {
         try {
-          const response = await axios.get(
+          const response = await axios.get<ApiResponse>(
             `/api/projects?clientId=${id}&offset=${projectOffset}&limit=${limit}`
           );
           setProjects(response.data.data.projects);
@@ -48,14 +48,13 @@ const Page = () => {
       }
     };
     fetchProjects();
-  }, [id, projectOffset]);
-  const [invoices, setInvoices] = useState<any[]>([]);
+  }, [id, projectOffset, session?.data?.user?._id]);
   useEffect(() => {
     const fetchInvoices = async () => {
       // Wait for the session data to actually be populated
       if (session?.data?.user) {
         try {
-          const response = await axios.get(
+          const response = await axios.get<ApiResponse>(
             `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}`
           );
           setInvoices(response.data.data.invoices);
