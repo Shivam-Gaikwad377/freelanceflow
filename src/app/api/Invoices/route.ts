@@ -21,8 +21,16 @@ export async function POST(request: Request) {
     }
     await connectToDatabase();
 
-    const { projectId, dueDate, status, lineItems, clientId, client, issueDate,project } =
-      await request.json();
+    const {
+      projectId,
+      dueDate,
+      status,
+      lineItems,
+      clientId,
+      client,
+      issueDate,
+      project,
+    } = await request.json();
 
     const parseResult = createInvoiceSchema.safeParse({
       dueDate,
@@ -109,12 +117,13 @@ export async function GET(request: Request) {
 
     const filter: any = { userId: ownerID };
 
-    if (status) filter.status = status;
+    if (status!="all") filter.status = status;
     if (projectId) filter.projectId = projectId;
 
     if (search) {
       if (searchBy === "invoiceNumber") {
-        filter.invoiceNumber = { $regex: search, $options: "i" };
+        const parsed = Number(search);
+        filter.invoiceNumber = !isNaN(parsed) ? parsed : -1;
       } else if (searchBy === "clientId") {
         filter.clientId = search;
       } else if (searchBy === "clientName") {

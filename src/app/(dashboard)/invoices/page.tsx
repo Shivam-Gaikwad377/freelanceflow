@@ -7,6 +7,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
+import useDebounce from "@/app/hooks/useDebounce";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -29,6 +30,11 @@ const Page = () => {
   const router = useRouter();
   const [selectedStatus, setSelectedStatus] =
     useState<InvoiceStatusFilter>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const isNumeric = (str: string) => /^\d+$/.test(str.trim());
+
   const [stats, setStats] = useState({
     outstanding: {
       total: 0,
@@ -44,6 +50,44 @@ const Page = () => {
     },
   });
 
+  useEffect(() => {
+    const searchInvoices = async () => {
+      if (!session?.data?.user?._id) return;
+      setIsSearching(true);
+      try {
+        if (isNumeric(debouncedSearchTerm)) {
+          const response = await axios.get(
+            `api/Invoices/?search=${debouncedSearchTerm}&searchBy=invoiceNumber&offset=${invoiceOffset}&limit=${limit}`
+          );
+          const fetchedInvoices = Array.isArray(response.data.data.invoices)
+            ? response.data.data.invoices
+            : Array.isArray(response.data.data.invoices)
+              ? response.data.data.invoices
+              : [];
+
+          setInvoices(fetchedInvoices);
+          setTotalInvoices(response.data.data.total);
+        } else {
+          const response = await axios.get(
+            `api/Invoices/?search=${debouncedSearchTerm}&searchBy=clientName&offset=${invoiceOffset}&limit=${limit}&sort=asc&status=${selectedStatus}`
+          );
+          const fetchedInvoices = Array.isArray(response.data.data.invoices)
+            ? response.data.data.invoices
+            : Array.isArray(response.data.data.invoices)
+              ? response.data.data.invoices
+              : [];
+
+          setInvoices(fetchedInvoices);
+          setTotalInvoices(response.data.data.total);
+        }
+      } catch (error) {
+        toast.error("Error searching invoices");
+      } finally {
+        setIsSearching(false);
+      }
+    };
+    searchInvoices();
+  }, [debouncedSearchTerm, invoiceOffset, limit, selectedStatus, session?.data?.user?._id]);
   useEffect(() => {
     const fetchInvoices = async () => {
       if (session?.data?.user?._id) {
@@ -190,6 +234,8 @@ const Page = () => {
               className="w-full pl-xl pr-sm py-sm rounded-md bg-surface-container-lowest border border-outline-variant text-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
               placeholder="Search invoices by client or ID..."
               type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex flex-wrap items-center gap-sm w-full md:w-auto">
@@ -249,53 +295,98 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody className="font-body-sm text-body-sm">
-                {invoices.map((invoice) => (
-                  <tr
-                    onClick={() => router.push(`/invoices/${invoice._id}`)}
-                    key={invoice?._id}
-                    className="border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
-                  >
-                    <td className="py-sm px-lg font-medium text-on-surface">
-                      {invoice?.invoiceNumber}
-                    </td>
-                    <td className="py-sm px-lg">
-                      <div className="flex items-center gap-sm">
-                        <div className="p-2 aspect-square rounded-full flex text-label-md items-center justify-center bg-surface-variant overflow-hidden">
-                          {invoice?.client.charAt(0).toUpperCase() +
-                            invoice?.client
-                              .split(" ")
-                              .slice(-1)[0]
-                              .charAt(0)
-                              .toUpperCase()}
+                {isSearching ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr
+                      key={`skeleton-${i}`}
+                      className="border-b border-outline-variant/30 animate-pulse"
+                    >
+                      <td className="py-sm px-lg">
+                        <div className="h-4 w-24 bg-surface-variant rounded" />
+                      </td>
+                      <td className="py-sm px-lg">
+                        <div className="flex items-center gap-sm">
+                          <div className="w-8 h-8 rounded-full bg-surface-variant" />
+                          <div className="h-4 w-32 bg-surface-variant rounded" />
                         </div>
-                        <span className="text-on-surface">
-                          {invoice?.client}
+                      </td>
+                      <td className="py-sm px-lg">
+                        <div className="h-4 w-20 bg-surface-variant rounded" />
+                      </td>
+                      <td className="py-sm px-lg text-right">
+                        <div className="h-4 w-16 bg-surface-variant rounded ml-auto" />
+                      </td>
+                      <td className="py-sm px-lg text-center">
+                        <div className="h-4 w-14 bg-surface-variant rounded mx-auto" />
+                      </td>
+                    </tr>
+                  ))
+                ) : debouncedSearchTerm && invoices.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-2xl px-lg text-center">
+                      <div className="flex flex-col items-center gap-sm">
+                        <span className="material-symbols-outlined text-4xl text-outline">
+                          search_off
                         </span>
+                        <p className="font-body-md text-body-md text-on-surface">
+                          No invoices found for &quot;{debouncedSearchTerm}
+                          &quot;
+                        </p>
+                        <p className="font-body-sm text-body-sm text-on-surface-variant">
+                          Try a different client name or invoice number.
+                        </p>
                       </div>
                     </td>
-                    <td className="py-sm px-lg text-on-surface-variant">
-                      {new Date(invoice?.createdAt).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        }
-                      )}
-                    </td>
-                    <td className="py-sm px-lg text-right font-medium text-on-surface">
-                      {invoice?.amount?.toLocaleString("en-US", {
-                        style: "currency",
-                        currency: session?.data?.user?.currency || "USD",
-                      })}
-                    </td>
-                    <td className="py-sm px-lg text-center">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-container-high text-on-surface-variant">
-                        {invoice?.status}
-                      </span>
-                    </td>
                   </tr>
-                ))}
+                ) : (
+                  invoices.map((invoice) => (
+                    <tr
+                      onClick={() => router.push(`/invoices/${invoice._id}`)}
+                      key={invoice?._id}
+                      className="border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
+                    >
+                      <td className="py-sm px-lg font-medium text-on-surface">
+                        {invoice?.invoiceNumber}
+                      </td>
+                      <td className="py-sm px-lg">
+                        <div className="flex items-center gap-sm">
+                          <div className="p-2 aspect-square rounded-full flex text-label-md items-center justify-center bg-surface-variant overflow-hidden">
+                            {invoice?.client.charAt(0).toUpperCase() +
+                              invoice?.client
+                                .split(" ")
+                                .slice(-1)[0]
+                                .charAt(0)
+                                .toUpperCase()}
+                          </div>
+                          <span className="text-on-surface">
+                            {invoice?.client}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-sm px-lg text-on-surface-variant">
+                        {new Date(invoice?.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
+                      </td>
+                      <td className="py-sm px-lg text-right font-medium text-on-surface">
+                        {invoice?.amount?.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: session?.data?.user?.currency || "USD",
+                        })}
+                      </td>
+                      <td className="py-sm px-lg text-center">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-container-high text-on-surface-variant">
+                          {invoice?.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
