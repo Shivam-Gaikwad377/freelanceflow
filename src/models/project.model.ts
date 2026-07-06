@@ -15,14 +15,9 @@ export interface IProject extends mongoose.Document {
 
 const projectSchema = new mongoose.Schema<IProject>(
   {
-    clientId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Client",
-      required: false,
-    },
-    client: {
-      type: String,
-      required: true,
+      ref: "User",
     },
     title: {
       type: String,
@@ -36,25 +31,27 @@ const projectSchema = new mongoose.Schema<IProject>(
       type: Number,
       required: true,
     },
-    deadline: {
-      type: Date,
-      required: true,
-    },
     status: {
       type: String,
       enum: ["open", "in progress", "completed"],
       default: "open",
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    deadline: {
+      type: Date,
+      required: true,
     },
-    isStarted: {
-      type: Boolean,
-      default: false,
-    },
+    
     StartedAt: {
       type: Date,
+    },
+    clientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Client",
+      required: false,
+    },
+    client: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

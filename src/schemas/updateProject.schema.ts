@@ -7,7 +7,6 @@ export const updateProjectSchema = z.object({
   budget: z.coerce.number().optional(),
   deadline: z.coerce.date().optional(),
   status: z.enum(["open", "in progress", "completed"]).optional(),
-  isStarted: z.boolean().optional(),
   StartedAt: z.coerce.date().optional(),
   client: z.string().optional(),
 });

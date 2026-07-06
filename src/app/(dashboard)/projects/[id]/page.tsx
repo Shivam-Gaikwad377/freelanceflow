@@ -98,7 +98,6 @@ const Page = () => {
   const handleStartProject = async () => {
     try {
       const response = await axios.patch(`/api/projects/${id}`, {
-        isStarted: true,
         StartedAt: new Date(),
         status: "in progress",
       });
@@ -233,7 +232,7 @@ const Page = () => {
                   <p className="text-label-sm text-on-surface-variant uppercase mb-1">
                     Start Date
                   </p>
-                  {project?.isStarted ? (
+                  {(project?.status === "in progress" || project?.status === "completed") ? (
                     <p className="font-body-md font-semibold ">
                       {new Date(project?.StartedAt).toLocaleDateString(
                         "en-US",
