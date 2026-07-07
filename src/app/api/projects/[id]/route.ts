@@ -34,7 +34,9 @@ export async function GET(request: Request, { params }: RouteContext) {
     const project = await Project.findOne({
       _id: id,
       userId: session.user._id,
-    }).lean();
+    })
+      .lean()
+      .populate("clientId", "name email phone company");
 
     if (!project) {
       return NextResponse.json<ApiResponse>(
@@ -115,7 +117,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
     if (!isValidObjectId(id)) {
       return NextResponse.json<ApiResponse>(
-        { success: false, message: "Invalid client ID" },
+        { success: false, message: "Invalid project ID" },
         { status: 400 }
       );
     }

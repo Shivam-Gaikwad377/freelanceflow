@@ -82,9 +82,7 @@ const Page = () => {
   }, [id]);
 
   const router = useRouter();
-  console.log("client:", clientData, clientError);
-  console.log("projects:", projectData, projectError);
-  console.log("invoices:", invoiceData, invoiceError);
+ 
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
       <div>

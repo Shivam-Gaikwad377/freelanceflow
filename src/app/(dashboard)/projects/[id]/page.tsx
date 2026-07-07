@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import EditProjectDrawer from "@/components/EditProject";
 import { toast } from "sonner";
 import { useUiStore } from "@/store/useUiStore";
+import useFetch from "@/app/hooks/useFetch";
 type StatusColor = {
   [key: string]: string;
 };
@@ -44,59 +45,32 @@ const Page = () => {
   const [client, setClient] = useState<any>(null);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
+  const [invoicesLimit, setInvoicesLimit] = useState<number>(1);
   const pathname = usePathname();
-  const id = pathname.split("/").pop();
-
+    const id = pathname.split("/").pop();
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
   const [edit, setEdit] = useState(false);
   const router = useRouter();
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const projectResponse = await axios.get(`/api/projects/${id}`);
-        setProject(projectResponse.data.data);
-        if (projectResponse.data.data.isStarted) {
-          const diffInMs =
-            Date.now() -
-            new Date(projectResponse.data.data.StartedAt).getTime();
-          setTimeElapsed(Math.floor(diffInMs / 86_400_000));
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, [id]);
-  useEffect(() => {
-    console.log("Fetching client");
-    const fetchClient = async () => {
-      try {
-        const clientResponse = await axios.get(
-          `/api/Clients/${project.clientId}`
-        );
-        setClient(clientResponse.data.data);
-      } catch (error) {
-        console.error("Error fetching client data:", error);
-      }
-    };
-    fetchClient();
-  }, [project]);
+  const { data: projectData, error: projectError } = useFetch(
+    `/api/projects/${id}`
+  );
+  const { data: invoicesData, error: invoicesError } = useFetch(
+    `/api/Invoices?projectId=${id}&limit=${invoicesLimit}`
+  );
 
   useEffect(() => {
-    const fetchInvoices = async () => {
-      try {
-        const response = await axios.get(
-          `/api/Invoices?projectId=${id}&searchBy=project`
-        );
-        setInvoices(response.data.data.invoices);
-        setInvoicesTotal(response.data.data.total);
-        console.log("Fetched invoices:", response.data.data.invoices);
-      } catch (error) {
-        console.error("Error fetching invoices:", error);
-      }
-    };
-    fetchInvoices();
-  }, [id]);
+    if(projectData){
+      setProject(projectData);
+      setClient(projectData?.clientId);
+    }
+    if(invoicesData){
+      setInvoices(invoicesData?.invoices);
+      setInvoicesTotal(invoicesData?.total);
+    }
+  }, [projectData, invoicesData]);
+
+
+  
   const handleStartProject = async () => {
     try {
       const response = await axios.patch(`/api/projects/${id}`, {
@@ -106,19 +80,6 @@ const Page = () => {
       setProject(response.data.data);
     } catch (error) {
       console.error("Error starting project:", error);
-    }
-  };
-
-  const handleViewAllInvoices = async () => {
-    try {
-      const response = await axios.get(
-        `/api/Invoices?projectId=${id}&searchBy=project&limit=${invoicesTotal}`
-      );
-      setInvoices(response.data.data.invoices);
-      setInvoicesTotal(response.data.data.total);
-      console.log("Fetched invoices:", response.data.data.invoices);
-    } catch (error) {
-      console.error("Error fetching invoices:", error);
     }
   };
   const handleMarkAsDone = async () => {
@@ -234,7 +195,8 @@ const Page = () => {
                   <p className="text-label-sm text-on-surface-variant uppercase mb-1">
                     Start Date
                   </p>
-                  {(project?.status === "in progress" || project?.status === "completed") ? (
+                  {project?.status === "in progress" ||
+                  project?.status === "completed" ? (
                     <p className="font-body-md font-semibold ">
                       {new Date(project?.StartedAt).toLocaleDateString(
                         "en-US",
@@ -296,9 +258,18 @@ const Page = () => {
                   Associated Invoices
                 </h4>
                 <button
-                  onClick={() => openModal("addInvoice", { prefillProject: { name: project?.title, id: project?._id, clientId: project?.clientId, client: project?.client } })}
-
-                 className="text-primary font-label-md hover:underline flex items-center gap-1">
+                  onClick={() =>
+                    openModal("addInvoice", {
+                      prefillProject: {
+                        name: project?.title,
+                        id: project?._id,
+                        clientId: project?.clientId,
+                        client: project?.client,
+                      },
+                    })
+                  }
+                  className="text-primary font-label-md hover:underline flex items-center gap-1"
+                >
                   <span className="material-symbols-outlined text-[18px]">
                     add
                   </span>
@@ -354,7 +325,7 @@ const Page = () => {
               </div>
               <div className="p-md text-center">
                 <button
-                  onClick={handleViewAllInvoices}
+                  onClick={()=> setInvoicesLimit(invoicesTotal)}
                   className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
                 >
                   View All Invoices
