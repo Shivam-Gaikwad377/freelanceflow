@@ -9,6 +9,7 @@ import { updateInvoiceSchema } from "@/schemas/updateInvoice.schema";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import useFetch from "@/app/hooks/useFetch";
 
 const Page = () => {
   const [invoice, setInvoice] = useState<any>(null);
@@ -29,7 +30,7 @@ const Page = () => {
       description: invoice?.description || "",
     },
   });
-
+  const { data:invoiceData, loading: loadingInvoice, error } = useFetch(`/api/Invoices/${invoiceId}`);
   const {
     register,
     handleSubmit,
@@ -42,50 +43,14 @@ const Page = () => {
   });
 
   useEffect(() => {
-    const fetchInvoice = async () => {
-      try {
-        const response = await axios.get(`/api/Invoices/${invoiceId}`);
-        setInvoice(response.data.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching invoice:", error);
-        setLoading(false);
-      }
-    };
+    if (invoiceData) {
+      setInvoice(invoiceData);
+      setClient(invoiceData.clientId);
+      setProject(invoiceData.projectId);
+     
+    }
+  }, [invoiceData]);
 
-    fetchInvoice();
-  }, [invoiceId]);
-  useEffect(() => {
-    const fetchClient = async () => {
-      if (session && invoice) {
-        try {
-          const response = await axios.get(`/api/Clients/${invoice?.clientId}`);
-          setClient(response.data.data);
-        } catch (error) {
-          console.error("Error fetching client:", error);
-        }
-      }
-    };
-
-    fetchClient();
-  }, [invoice?.clientId]);
-
-  useEffect(() => {
-    const fetchProject = async () => {
-      if (session && invoice) {
-        try {
-          const response = await axios.get(
-            `/api/projects/${invoice?.projectId}`
-          );
-          setProject(response.data.data);
-        } catch (error) {
-          console.error("Error fetching project:", error);
-        }
-      }
-    };
-
-    fetchProject();
-  }, [invoice?.projectId]);
   const handlePaid = async () => {
     try {
       const response = await axios.patch(`/api/Invoices/${invoiceId}`, {

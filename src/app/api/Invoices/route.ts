@@ -150,7 +150,9 @@ export async function GET(request: Request) {
         .sort({ [sortBy]: sort })
         .skip(offset)
         .limit(limit)
-        .lean(),
+        .lean()
+        .populate("clientId", "name email phone status")
+        .populate("projectId", "title deadline status"),
       Invoice.countDocuments(filter),
     ]);
 
