@@ -20,35 +20,7 @@ const page = () => {
   useEffect(() => {
     setOffset(0);
   }, [debouncedSearchTerm]);
-  // useEffect(() => {
-  //   const controller = new AbortController();
-  //   const searchProjects = async () => {
-  //     try {
-  //       const response = await axios.get<ApiResponse>(`api/projects`, {
-  //         params: {
-  //           search: debouncedSearchTerm,
-  //           offset,
-  //           limit,
-  //           searchBy: "title",
-  //         },
-  //         signal: controller.signal,
-  //       });
-  //       if (response.data.success) {
-  //         setProjects(response.data.data.projects);
-  //       }
-  //     } catch (error) {
-  //       if (axios.isCancel(error)) {
-  //         console.log("Request canceled:", error.message);
-  //       } else {
-  //         console.error("Error fetching projects:", error);
-  //       }
-  //     }
-  //   };
-  //   searchProjects();
-  //   return () => {
-  //     controller.abort();
-  //   };
-  // }, [debouncedSearchTerm, offset]);
+  
   const {
     data: projectData,
     loading: projectLoading,

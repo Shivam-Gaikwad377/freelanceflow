@@ -11,6 +11,7 @@ interface PrefillProject {
   name: string;
   id: string;
   clientId?: string;
+  client?: string;
 }
 
 interface ModalContext {

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import EditProjectDrawer from "@/components/EditProject";
 import { toast } from "sonner";
+import { useUiStore } from "@/store/useUiStore";
 type StatusColor = {
   [key: string]: string;
 };
@@ -39,6 +40,7 @@ const Page = () => {
     Z: "bg-zinc-100",
   };
   const [project, setProject] = useState<any>(null);
+  const { openModal } = useUiStore();
   const [client, setClient] = useState<any>(null);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
@@ -293,7 +295,10 @@ const Page = () => {
                 <h4 className="font-headline-sm text-on-surface">
                   Associated Invoices
                 </h4>
-                <button className="text-primary font-label-md hover:underline flex items-center gap-1">
+                <button
+                  onClick={() => openModal("addInvoice", { prefillProject: { name: project?.title, id: project?._id, clientId: project?.clientId, client: project?.client } })}
+
+                 className="text-primary font-label-md hover:underline flex items-center gap-1">
                   <span className="material-symbols-outlined text-[18px]">
                     add
                   </span>

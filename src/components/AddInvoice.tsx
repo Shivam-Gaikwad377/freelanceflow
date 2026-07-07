@@ -131,8 +131,8 @@ const AddInvoice = () => {
   };
   useEffect(() => {
     if (prefillClient || prefillProject) {
-      form.setValue("client", prefillClient?.name || "");
-      form.setValue("clientId", prefillClient?.id || "");
+      form.setValue("client", prefillClient?.name || prefillProject?.client || "");
+      form.setValue("clientId", prefillClient?.id || prefillProject?.clientId || "");
       form.setValue("project", prefillProject?.name || "");
       form.setValue("projectId", prefillProject?.id || "");
     }
