@@ -8,6 +8,8 @@ import ApiResponse from "@/types/ApiResponse";
 import { updateClientSchema } from "@/schemas/updateClient.schema";
 import { clientTotalBilledPipeline } from "@/lib/pipelines/client.pipeline";
 import mongoose from "mongoose";
+import Project from "@/models/project.model";
+import Invoice from "@/models/invoice.model";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -32,15 +34,17 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     await connectToDatabase();
 
-    const [client] = await Client.aggregate([
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(id),
-          userId: new mongoose.Types.ObjectId(session.user._id),
-        },
+    const [client, ] = await 
+      Client.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(id),
+            userId: new mongoose.Types.ObjectId(session.user._id),
+          },
       },
-      ...clientTotalBilledPipeline,
-    ]);
+      ...clientTotalBilledPipeline
+    ])
+     
     if (!client) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Client not found" },

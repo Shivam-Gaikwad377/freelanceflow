@@ -10,7 +10,20 @@ import Link from "next/link";
 import EditClientDrawer from "@/components/EditClient";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
-import ApiResponse from "@/types/ApiResponse";
+
+const statusStyles = (status: string) => {
+  switch (status) {
+    case "Paid":
+      return  "bg-secondary-container/50 text-secondary border-secondary/20";
+    case "overdue":
+      return "bg-tertiary-container/50 text-tertiary border-tertiary/20"
+      
+    case "pending":
+    default:
+      return "bg-error-container/50 text-on-error-container border-error/20"
+       ;
+  }
+};
 
 const Page = () => {
   const { openModal } = useUiStore();
@@ -25,49 +38,53 @@ const Page = () => {
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
   const [projectTotal, setProjectTotal] = useState<number>(0);
   const [invoices, setInvoices] = useState<any[]>([]);
-  const { data: clientData, loading: clientLoading, error: clientError } = useFetch(`/api/Clients/${id}`);
-  useEffect(() => {
-    if (clientData) {
-      setClient(clientData);
-    }
-  }, [clientData]);
+  const {
+    data: clientData,
+    loading: clientLoading,
+    error: clientError,
+  } = useFetch(`/api/Clients/${id}`);
 
   const [projects, setProjects] = useState<any[]>([]);
+  const {
+    data: projectData,
+    loading: projectLoading,
+    error: projectError,
+  } = useFetch(
+    `/api/projects?clientId=${id}&offset=${projectOffset}&limit=${limit}`
+  );
+
+  const {
+    data: invoiceData,
+    loading: invoiceLoading,
+    error: invoiceError,
+  } = useFetch(
+    `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}`
+  );
+
   useEffect(() => {
-    const fetchProjects = async () => {
-      if (session?.data?.user?._id) {
-        try {
-          const response = await axios.get<ApiResponse>(
-            `/api/projects?clientId=${id}&offset=${projectOffset}&limit=${limit}`
-          );
-          setProjects(response.data.data.projects);
-          setProjectTotal(response.data.data.total);
-        } catch (error) {
-          toast.error("Error fetching projects: " + error);
-        }
+    if (clientData || invoiceData || projectData) {
+      if (clientData) {
+        setClient(clientData);
       }
-    };
-    fetchProjects();
-  }, [id, projectOffset, session?.data?.user?._id]);
+      if (invoiceData) {
+        setInvoices(invoiceData?.invoices || []);
+        setInvoiceTotal(invoiceData?.total || 0);
+      }
+      if (projectData) {
+        setProjects(projectData?.projects || []);
+        setProjectTotal(projectData?.total || 0);
+      }
+    }
+  }, [clientData, invoiceData, projectData]);
   useEffect(() => {
-    const fetchInvoices = async () => {
-      // Wait for the session data to actually be populated
-      if (session?.data?.user) {
-        try {
-          const response = await axios.get<ApiResponse>(
-            `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}`
-          );
-          setInvoices(response.data.data.invoices);
-          setInvoiceTotal(response.data.data.total);
-        } catch (error) {
-          console.error("Error fetching invoices:", error);
-        }
-      }
-    };
-    fetchInvoices();
-  }, [id, invoiceOffset, session?.data?.user]); // Add session dependency here
+    setInvoiceOffset(0);
+    setProjectOffset(0);
+  }, [id]);
 
   const router = useRouter();
+  console.log("client:", clientData, clientError);
+  console.log("projects:", projectData, projectError);
+  console.log("invoices:", invoiceData, invoiceError);
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
       <div>
@@ -304,7 +321,7 @@ const Page = () => {
                       Invoice #
                     </th>
                     <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
-                      Date Issued
+                      Due Date
                     </th>
                     <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
                       Status
@@ -316,10 +333,38 @@ const Page = () => {
                   </tr>
                 </thead>
                 <tbody className="font-body-sm text-body-sm text-on-surface">
-                  {/* <!-- Overdue Invoice --> */}
-                  {invoices.map((invoice) => (
+                  {invoiceLoading && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="py-6 px-6 text-on-surface-variant"
+                      >
+                        Loading invoices...
+                      </td>
+                    </tr>
+                  )}
+                  {invoiceError && (
+                    <tr>
+                      <td colSpan={5} className="py-6 px-6 text-error">
+                        Couldn't load invoices.
+                      </td>
+                    </tr>
+                  )}
+                  {!invoiceLoading &&
+                    !invoiceError &&
+                    invoices.length === 0 && (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="py-6 px-6 text-on-surface-variant"
+                        >
+                          No invoices yet.
+                        </td>
+                      </tr>
+                    )}
+                  {invoices.map((invoice: any) => (
                     <tr
-                      onClick={() => router.replace(`/invoices/${invoice._id}`)}
+                      onClick={() => router.push(`/invoices/${invoice._id}`)}
                       key={invoice?._id}
                       className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
                     >
@@ -334,7 +379,11 @@ const Page = () => {
                         })}
                       </td>
                       <td className="py-4 px-6">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container/50 text-on-error-container font-label-sm text-label-sm border border-error/20">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm border ${statusStyles(
+                            invoice.status
+                          )}`}
+                        >
                           {invoice.status}
                         </span>
                       </td>
