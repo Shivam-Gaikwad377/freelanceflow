@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { createInvoiceSchema } from "@/schemas/createInvoice.schema";
 import { useSession } from "next-auth/react";
 import BackButton from "./BackButton";
+import { CreateInvoiceInput, CreateInvoiceOutput } from "@/schemas/createInvoice.schema";
 
 const AddInvoice = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
@@ -27,11 +28,10 @@ const AddInvoice = () => {
   const [client, setClient] = useState<{ _id: string; name: string } | null>(
     null
   );
-  const form = useForm<z.input<typeof createInvoiceSchema>>({
+  const form = useForm<CreateInvoiceInput, unknown, CreateInvoiceOutput>({
     resolver: zodResolver(createInvoiceSchema),
     defaultValues: {
       lineItems: [
-        
       ],
       status: "pending",
       project: "",
@@ -105,7 +105,7 @@ const AddInvoice = () => {
   );
   const tax = subtotal * 0.18;
   const total = subtotal + tax;
-  const onSubmit = async (data: z.input<typeof createInvoiceSchema>) => {
+  const onSubmit = async (data: CreateInvoiceOutput) => {
     try {
       console.log("Submitting invoice data:", data);
       const response = await axios.post("/api/Invoices", data);

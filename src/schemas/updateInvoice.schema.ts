@@ -16,3 +16,6 @@ export const updateInvoiceSchema = z.object({
   ).optional(),
   paidAt: z.coerce.date().optional(),
 });
+
+export type UpdateInvoiceInput = z.input<typeof updateInvoiceSchema>;
+export type UpdateInvoiceOutput = z.output<typeof updateInvoiceSchema>;

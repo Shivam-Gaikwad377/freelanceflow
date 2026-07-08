@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ApiResponse from "@/types/ApiResponse";
 import { createClientSchema } from "@/schemas/createClient.schema";
+import { CreateClientInput, CreateClientOutput } from "@/schemas/createClient.schema";
 interface AddClientProps {
     open: boolean;
     onClose: () => void;
@@ -17,7 +18,7 @@ interface AddClientProps {
 }
 const AddClient = ({ open, onClose }: AddClientProps) => {
   const router = useRouter();
-  const form = useForm<z.infer<typeof createClientSchema>>({
+  const form = useForm<CreateClientInput, unknown, CreateClientOutput>({
     resolver: zodResolver(createClientSchema),
 
     defaultValues: {
@@ -36,7 +37,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
     formState: { errors, isSubmitting },
   } = form;
 
-  const onSubmit = async (data: z.infer<typeof createClientSchema>) => {
+  const onSubmit = async (data: CreateClientOutput) => {
     try {
       const response = await axios.post<ApiResponse>("/api/Clients", data);
 

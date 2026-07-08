@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { projectSchema } from "@/schemas/project.schema";
 import { useSession } from "next-auth/react";
 import BackButton from "./BackButton";
+import { ProjectInput, ProjectOutput } from "@/schemas/project.schema";
 const AddProject = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
   const isOpen = activeModal === "addProject";
@@ -19,7 +20,7 @@ const AddProject = () => {
   const session = useSession();
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof projectSchema>>({
+  const form = useForm<ProjectInput, unknown, ProjectOutput>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       title: "",
@@ -49,7 +50,7 @@ const AddProject = () => {
     formState: { errors, isSubmitting },
   } = form;
 
-  const onSubmit = async (data: z.infer<typeof projectSchema>) => {
+  const onSubmit = async (data: ProjectOutput) => {
     try {
       const response = await axios.post("/api/projects", data);
 

@@ -8,3 +8,6 @@ export const createClientSchema = z.object({
     status: z.enum(["active", "inactive"]),
     description: z.string().optional(),
 });
+
+export type CreateClientInput = z.input<typeof createClientSchema>;
+export type CreateClientOutput = z.output<typeof createClientSchema>;

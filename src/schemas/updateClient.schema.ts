@@ -7,3 +7,6 @@ export const updateClientSchema = z.object({
   company: z.string().optional(),
   status: z.enum(["active", "inactive"]).optional(),
 });
+
+export type UpdateClientInput = z.input<typeof updateClientSchema>;
+export type UpdateClientOutput = z.output<typeof updateClientSchema>;

@@ -11,3 +11,6 @@ export const projectSchema = z.object({
     client: z.string().min(1, "Client name is required"),
     
 })
+
+export type ProjectInput = z.input<typeof projectSchema>;
+export type ProjectOutput = z.output<typeof projectSchema>;

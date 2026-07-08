@@ -18,4 +18,5 @@ export const createInvoiceSchema = z.object({
   client: z.string().min(1, "Client name is required"),
 });
 
-export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>;
+export type CreateInvoiceInput = z.input<typeof createInvoiceSchema>;
+export type CreateInvoiceOutput = z.output<typeof createInvoiceSchema>;

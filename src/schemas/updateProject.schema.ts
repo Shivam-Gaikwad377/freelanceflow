@@ -10,3 +10,6 @@ export const updateProjectSchema = z.object({
   StartedAt: z.coerce.date().optional(),
   client: z.string().optional(),
 });
+
+export type UpdateProjectInput = z.input<typeof updateProjectSchema>;
+export type UpdateProjectOutput = z.output<typeof updateProjectSchema>;
