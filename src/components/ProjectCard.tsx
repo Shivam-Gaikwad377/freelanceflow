@@ -17,7 +17,7 @@ const ProjectCard = ({ title, client, deadline  }: ProjectPageProps) => {
  
     
   return (
-    <div className="bg-surface rounded-lg p-lg border border-outline-variant/40 shadow-sm hover:shadow-[0_8px_24px_rgba(96,99,238,0.04)] hover:border-primary/30 transition-all cursor-grab active:cursor-grabbing group">
+    <div className="bg-surface rounded-lg p-lg border border-outline-variant/40 shadow-sm hover:shadow-[0_8px_24px_rgba(96,99,238,0.04)] hover:border-primary/30 transition-all cursor-pointer active:cursor-pointing group">
       <h4 className="text-body-md font-body-md font-semibold text-on-surface mb-1">
         {title}
       </h4>

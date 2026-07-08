@@ -265,7 +265,10 @@ const Page = () => {
                         )}
                       </td>
                       <td className="py-4 w-0.66/4 px-6  font-label-md text-label-md">
-                        {project.budget}
+                         {project?.budget?.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: session?.data?.user?.currency || "USD",
+                    })}
                       </td>
                     </tr>
                   ))}
@@ -371,7 +374,10 @@ const Page = () => {
                         </span>
                       </td>
                       <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
-                        {invoice.amount}
+                         {invoice.amount?.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: session?.data?.user?.currency || "USD",
+                    })}
                       </td>
                       <td className="py-4 px-6 text-right">
                         <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
