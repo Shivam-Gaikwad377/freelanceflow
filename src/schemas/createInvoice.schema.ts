@@ -1,4 +1,24 @@
 import { z } from "zod";
+import { Document } from "mongoose";
+export interface IInvoice extends Document {
+  invoiceNumber?: number;
+  projectId: string;
+  clientId: string;
+  issueDate: Date ;
+  dueDate: Date ;
+  amount: number;
+  status?: "pending" | "paid" | "overdue";
+  lineItems: {
+    description: string;
+    quantity: number;
+    price: number;
+  }[];
+  project: string;
+  client: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+}
 
 export const createInvoiceSchema = z.object({
   invoiceNumber: z.number().positive("Invoice number must be positive").optional(),

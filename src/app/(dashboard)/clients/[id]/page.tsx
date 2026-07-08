@@ -11,6 +11,9 @@ import EditClientDrawer from "@/components/EditClient";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
+import { IClient } from "@/schemas/createClient.schema";
+import { IInvoice } from "@/schemas/createInvoice.schema";
+import { IProject } from "@/schemas/project.schema";
 
 
 const statusStyles = (status: string) => {
@@ -30,7 +33,7 @@ const statusStyles = (status: string) => {
 const Page = () => {
   const { openModal } = useUiStore();
   const session = useSession();
-  const [client, setClient] = useState<any>(null);
+  const [client, setClient] = useState<IClient | null>(null);
   const pathname = usePathname();
 
   const id = pathname.split("/").pop();
@@ -40,14 +43,14 @@ const Page = () => {
   const limit = 5;
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
   const [projectTotal, setProjectTotal] = useState<number>(0);
-  const [invoices, setInvoices] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<IInvoice[]>([]);
   const {
     data: clientData,
     loading: clientLoading,
     error: clientError,
   } = useFetch(`/api/Clients/${id}`);
 
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<IProject[]>([]);
   const {
     data: projectData,
     loading: projectLoading,
@@ -176,7 +179,7 @@ const Page = () => {
                 <button
                   onClick={() =>
                     openModal("addProject", {
-                      prefillClient: { name: client?.name, id: client?._id },
+                      prefillClient: { name: client?.name.toString(), id: client?._id.toString() },
                     })
                   }
                   className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
@@ -233,8 +236,8 @@ const Page = () => {
                 <tbody className="font-body-sm text-body-sm text-on-surface">
                   {projects.map((project) => (
                     <tr
-                      onClick={() => router.replace(`/projects/${project._id}`)}
-                      key={project._id}
+                      onClick={() => router.replace(`/projects/${project._id.toString()}`)}
+                      key={project._id.toString()}
                       className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
                     >
                       <td className="py-4 px-6 w-2/4">

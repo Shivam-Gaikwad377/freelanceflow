@@ -8,23 +8,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateProjectSchema } from "@/schemas/updateProject.schema";
 import ApiResponse from "@/types/ApiResponse";
-
-interface Project {
-  _id: string;
-  title: string;
-  description: string;
-  client?: string;
-  budget: number;
-  deadline: Date;
-  status: "open" | "in progress" | "completed";
-  isStarted?: boolean;
-  StartedAt?: Date;
-}
+import { IProject } from "@/schemas/project.schema";
 
 interface EditProjectDrawerProps {
   open: boolean;
   onClose: () => void;
-  project: Project | null;
+  project: IProject | null;
 }
 
 const EditProjectDrawer = ({

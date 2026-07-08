@@ -8,21 +8,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import ApiResponse from "@/types/ApiResponse";
-
-interface Client {
-  _id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  company?: string;
-  description?: string;
-  status: "active" | "inactive";
-}
+import { IClient } from "@/schemas/createClient.schema";
 
 interface EditClientDrawerProps {
   open: boolean;
   onClose: () => void;
-  client: Client | null;
+  client: IClient | null;
 }
 
 const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {

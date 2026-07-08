@@ -4,7 +4,7 @@ type ClientCardProps = {
   phone: string;
   email: string;
   status: string;
-  totalBilled?: number;
+  totalBilled?: string | number | null | undefined;
 };
 type StatusColor = {
   [key: string]: string;

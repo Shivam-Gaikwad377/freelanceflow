@@ -10,10 +10,11 @@ import Pagination from "@/components/Pagination";
 import { toast } from "sonner";
 import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
+import { IClient } from "@/schemas/createClient.schema";
 
 const Page = () => {
   const session = useSession();
-  const [clients, setClients] = useState<any[]>([]);
+  const [clients, setClients] = useState<IClient[]>([]);
   const [clientOffset, setClientOffset] = useState<number>(0);
   const [totalClients, setTotalClients] = useState<number>(0);
   const limit = 9;
@@ -116,13 +117,16 @@ const Page = () => {
             </div>
           ) : (
             clients.map((client) => (
-              <div key={client?._id} onClick={() => handleClick(client?._id)}>
+              <div key={client?._id?.toString()} onClick={() => handleClick(client?._id?.toString() || "") }>
                 <ClientCard
                   name={client?.name}
                   status={client?.status}
                   phone={client?.phone}
                   email={client?.email}
-                  totalBilled={client?.totalBilled}
+                  totalBilled={client?.totalBilled?.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: session?.data?.user?.currency || "USD",
+                    })}
                 />
               </div>
             ))

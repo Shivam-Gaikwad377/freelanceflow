@@ -40,7 +40,7 @@ const clientSchema = new mongoose.Schema<IClient>({
   description: {
     type: String,
   },
-});
+},{ timestamps: true,});
 
 clientSchema.index({ email: 1, userId: 1 }, { unique: true });
 clientSchema.index({ phone: 1, userId: 1 }, { unique: true });

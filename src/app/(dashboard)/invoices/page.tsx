@@ -9,6 +9,7 @@ import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
 import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
+import { IInvoice } from "@/schemas/createInvoice.schema";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -23,7 +24,7 @@ const Page = () => {
     { label: "Overdue", value: "overdue" },
   ];
   const session = useSession();
-  const [invoices, setInvoices] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<IInvoice[]>([]);
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [totalInvoices, setTotalInvoices] = useState<number>(0);
   const openModal = useUiStore((state) => state.openModal);
@@ -273,7 +274,7 @@ const Page = () => {
                   invoices.map((invoice) => (
                     <tr
                       onClick={() => router.push(`/invoices/${invoice._id}`)}
-                      key={invoice?._id}
+                      key={invoice?._id.toString()}
                       className="border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
                     >
                       <td className="py-sm px-lg font-medium text-on-surface">

@@ -114,7 +114,7 @@ export async function GET(request: Request) {
           $lookup: {
             from: "invoices",
             localField: "_id",
-            foreignField: "clientID",
+            foreignField: "clientId",
             as: "invoices",
           },
         },

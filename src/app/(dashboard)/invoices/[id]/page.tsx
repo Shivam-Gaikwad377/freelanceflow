@@ -11,24 +11,33 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
+import { IProject } from "@/schemas/project.schema";
+import { IClient } from "@/schemas/createClient.schema";
+import { IInvoice } from "@/schemas/createInvoice.schema";
 
 const Page = () => {
-  const [invoice, setInvoice] = useState<any>(null);
+  const [invoice, setInvoice] = useState<IInvoice | null>(null);
   const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const invoiceId = pathname.split("/").pop();
-  const [client, setClient] = useState<any>(null);
-  const [project, setProject] = useState<any>(null);
+  const [client, setClient] = useState<IClient | null>(null);
+  const [project, setProject] = useState<IProject | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingDueDate, setEditingDueDate] = useState<boolean>(false);
+  function toDateInputValue(date?: Date | string): string {
+    if (!date) return "";
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "";
+    return d.toISOString().split("T")[0]; // "2026-07-08"
+  }
   const lineItemsForm = useForm<z.infer<typeof updateInvoiceSchema>>({
     resolver: zodResolver(updateInvoiceSchema) as any,
     defaultValues: {
       lineItems: invoice?.lineItems || [],
-      dueDate: invoice?.dueDate || "",
-      description: invoice?.description || "",
+      dueDate: invoice?.dueDate,
+      description: invoice?.lineItems[0]?.description || "",
     },
   });
   const {
@@ -97,7 +106,7 @@ const Page = () => {
       reset({
         lineItems: invoice.lineItems,
         dueDate: invoice.dueDate || "",
-        description: invoice.description || "",
+        description: invoice.lineItems[0]?.description || "",
       });
     }
   }, [invoice]);
@@ -124,10 +133,10 @@ const Page = () => {
     <div className="flex-1 px-xl mx-auto w-full">
       <div className="py-md">
         <div className="flex items-center justify-between ">
-        <BackButton
-          onBack={() => router.push("/invoices")}
-          label="Back to Invoices"
-        />
+          <BackButton
+            onBack={() => router.push("/invoices")}
+            label="Back to Invoices"
+          />
           <div className="flex items-center justify-center gap-sm mb-lg">
             <button className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
               <span className="material-symbols-outlined text-[15px]">
@@ -181,11 +190,13 @@ const Page = () => {
                 Issue date
               </p>
               <p className="text-label-md font-medium m-0 text-on-surface">
-                {new Date(invoice?.createdAt).toLocaleDateString("en-IN", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {invoice
+                  ? new Date(invoice.issueDate).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "-"}
               </p>
             </div>
             <div>
@@ -195,7 +206,7 @@ const Page = () => {
               {editingDueDate ? (
                 <input
                   type="date"
-                  defaultValue={invoice?.dueDate}
+                  defaultValue={toDateInputValue(invoice?.dueDate)}
                   onChange={handleDateChange}
                   className="text-label-md font-medium m-0 text-on-surface"
                 />
@@ -236,8 +247,8 @@ const Page = () => {
             </p>
             <div className="flex items-center gap-2.5 mb-sm">
               <div className="aspect-square rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-label-md p-2 font-medium shrink-0">
-                {client?.name.charAt(0).toUpperCase() +
-                  client?.name.split(" ").slice(-1)[0].charAt(0).toUpperCase()}
+                {client ? client?.name.charAt(0).toUpperCase() +
+                  client?.name.split(" ").slice(-1)[0].charAt(0).toUpperCase() : ""}
               </div>
               <div className="flex gap-1">
                 <p

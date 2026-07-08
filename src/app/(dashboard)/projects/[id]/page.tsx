@@ -9,6 +9,9 @@ import { toast } from "sonner";
 import { useUiStore } from "@/store/useUiStore";
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
+import { IInvoice } from "@/schemas/createInvoice.schema";
+import { IProject } from "@/schemas/project.schema";
+import { IClient } from "@/schemas/createClient.schema";
 type StatusColor = {
   [key: string]: string;
 };
@@ -41,10 +44,10 @@ const Page = () => {
     Y: "bg-yellow-100", // Yellow
     Z: "bg-zinc-100",
   };
-  const [project, setProject] = useState<any>(null);
+  const [project, setProject] = useState<IProject | null>(null);
   const { openModal } = useUiStore();
-  const [client, setClient] = useState<any>(null);
-  const [invoices, setInvoices] = useState<any[]>([]);
+  const [client, setClient] = useState<IClient | null>(null);
+  const [invoices, setInvoices] = useState<IInvoice[]>([]);
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
   const [invoicesLimit, setInvoicesLimit] = useState<number>(4);
   const pathname = usePathname();
@@ -106,7 +109,7 @@ const Page = () => {
             onClose={() => {
               setEdit(false);
             }}
-            project={project}
+            project={project }
           />
         </div>
         {/* <!-- Breadcrumbs --> */}
@@ -187,14 +190,14 @@ const Page = () => {
                   {project?.status === "in progress" ||
                   project?.status === "completed" ? (
                     <p className="font-body-md font-semibold ">
-                      {new Date(project?.StartedAt).toLocaleDateString(
+                     {project.StartedAt ? (new Date(project?.StartedAt).toLocaleDateString(
                         "en-US",
                         {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
                         }
-                      )}
+                      )) : ("Not Started Yet")}
                     </p>
                   ) : (
                     <button
@@ -210,11 +213,11 @@ const Page = () => {
                     Deadline
                   </p>
                   <p className="font-body-md font-semibold text-tertiary">
-                    {new Date(project?.deadline).toLocaleDateString("en-US", {
+                    {project?.deadline ? (new Date(project.deadline).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
-                    })}
+                    })) : ("No deadline set")}
                   </p>
                 </div>
                 <div className="flex items-start flex-col gap-2">
@@ -222,7 +225,7 @@ const Page = () => {
                     Time Elapsed
                   </p>
                   <p className="font-body-md font-semibold">
-                    {project?.isStarted
+                    {project?.status === "in progress" || project?.status === "completed"
                       ? `Time Elapsed: ${timeElapsed.toFixed(0)} days`
                       : "Project not started"}
                   </p>
@@ -250,8 +253,8 @@ const Page = () => {
                   onClick={() =>
                     openModal("addInvoice", {
                       prefillProject: {
-                        name: project?.title,
-                        id: project?._id,
+                        name: project?.title.toString(),
+                        id: project?._id.toString(),
                         clientId: project?.clientId,
                         client: project?.client,
                       },
@@ -283,7 +286,7 @@ const Page = () => {
                         onClick={() =>
                           router.replace(`/invoices/${invoice?._id}`)
                         }
-                        key={invoice._id}
+                        key={invoice._id.toString()}
                         className="hover:bg-surface-container/50 transition-colors cursor-pointer group"
                       >
                         <td className="px-lg py-4 font-label-md text-on-surface font-semibold">
@@ -333,14 +336,14 @@ const Page = () => {
                 className=" cursor-pointer flex items-center gap-md mb-lg"
               >
                 <div
-                  className={`${clientInitialsColor[client?.name.charAt(0).toUpperCase()]} w-14 h-14 rounded-full flex items-center font-bold text-xl justify-center object-cover border  border-surface-variant`}
+                  className={`${clientInitialsColor[client?.name?.charAt(0)?.toUpperCase() || ""]} w-14 h-14 rounded-full flex items-center font-bold text-xl justify-center object-cover border  border-surface-variant`}
                 >
-                  {client?.name.charAt(0).toUpperCase() +
-                    client?.name
-                      .split(" ")
-                      .slice(-1)[0]
-                      .charAt(0)
-                      .toUpperCase()}
+                    {client ?  (client?.name?.charAt(0)?.toUpperCase() +
+                      client?.name
+                        .split(" ")
+                        .slice(-1)[0]
+                        .charAt(0)
+                        .toUpperCase()): ("CL")}
                 </div>
                 <div>
                   <p className="font-headline-sm text-on-surface">
