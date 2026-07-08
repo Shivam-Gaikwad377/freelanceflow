@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import axios from "axios";
+
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
@@ -10,17 +10,19 @@ import Link from "next/link";
 import EditClientDrawer from "@/components/EditClient";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
+import BackButton from "@/components/BackButton";
+
 
 const statusStyles = (status: string) => {
   switch (status) {
     case "Paid":
-      return  "bg-secondary-container/50 text-secondary border-secondary/20";
+      return  "bg-secondary-container/50 flex items-center justify-center min-w-[70px] text-secondary border-secondary/20";
     case "overdue":
-      return "bg-tertiary-container/50 text-tertiary border-tertiary/20"
+      return "bg-tertiary-container/50 text-tertiary flex items-center justify-center min-w-[70px] border-tertiary/20"
       
     case "pending":
     default:
-      return "bg-error-container/50 text-on-error-container border-error/20"
+      return "bg-error-container/50 text-on-error-container flex items-center justify-center min-w-[70px] border-error/20"
        ;
   }
 };
@@ -30,6 +32,7 @@ const Page = () => {
   const session = useSession();
   const [client, setClient] = useState<any>(null);
   const pathname = usePathname();
+
   const id = pathname.split("/").pop();
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [projectOffset, setProjectOffset] = useState<number>(0);
@@ -97,29 +100,8 @@ const Page = () => {
         className={`${editOpen ? "blur-sm" : ""} flex-1 overflow-y-auto p-10 md:px-gutter max-w-container-max mx-auto w-full`}
       >
         {/* <!-- Breadcrumbs --> */}
-        <button className="flex items-center gap-1 px-2 py-1 -ml-2 mb-2 text-primary font-label-md text-label-md hover:bg-surface-container-high rounded-lg transition-colors group">
-          <span
-            className="material-symbols-outlined text-[20px]"
-            onClick={() => router.replace("/clients")}
-          >
-            chevron_left
-          </span>
-          <span className="">Back to Clients</span>
-        </button>
-        <nav className="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant mb-6">
-          <Link
-            className="hover:text-primary transition-colors"
-            href="/clients"
-          >
-            Clients
-          </Link>
-          <span className="material-symbols-outlined text-[16px]">
-            chevron_right
-          </span>
-          <span className="text-on-surface font-semibold">
-            {client?.company || "Client Name"}
-          </span>
-        </nav>
+       <BackButton onBack={()=> router.replace("/clients")} label="Back to Clients" />
+        
         {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
         <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg md:p-xl mb-xl shadow-sm relative overflow-hidden">
           {/* Subtle decorative background element */}
@@ -376,7 +358,7 @@ const Page = () => {
                           day: "numeric",
                         })}
                       </td>
-                      <td className="py-4 px-6">
+                      <td className="py-4 flex  px-6">
                         <span
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm border ${statusStyles(
                             invoice.status

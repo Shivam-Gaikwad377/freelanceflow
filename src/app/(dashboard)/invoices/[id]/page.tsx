@@ -10,6 +10,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
+import BackButton from "@/components/BackButton";
 
 const Page = () => {
   const [invoice, setInvoice] = useState<any>(null);
@@ -30,7 +31,11 @@ const Page = () => {
       description: invoice?.description || "",
     },
   });
-  const { data:invoiceData, loading: loadingInvoice, error } = useFetch(`/api/Invoices/${invoiceId}`);
+  const {
+    data: invoiceData,
+    loading: loadingInvoice,
+    error,
+  } = useFetch(`/api/Invoices/${invoiceId}`);
   const {
     register,
     handleSubmit,
@@ -47,7 +52,6 @@ const Page = () => {
       setInvoice(invoiceData);
       setClient(invoiceData.clientId);
       setProject(invoiceData.projectId);
-     
     }
   }, [invoiceData]);
 
@@ -119,17 +123,12 @@ const Page = () => {
   return (
     <div className="flex-1 px-xl mx-auto w-full">
       <div className="py-md">
-        <div className="flex items-center justify-between mb-lg">
-          <a
-            className="inline-flex items-center text-primary font-label-md hover:underline gap-xs transition-colors"
-            href="#"
-          >
-            <span className="material-symbols-outlined text-sm">
-              arrow_back
-            </span>
-            Back to Invoices
-          </a>
-          <div className="flex items-center justify-center gap-sm">
+        <div className="flex items-center justify-between ">
+        <BackButton
+          onBack={() => router.push("/invoices")}
+          label="Back to Invoices"
+        />
+          <div className="flex items-center justify-center gap-sm mb-lg">
             <button className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
               <span className="material-symbols-outlined text-[15px]">
                 edit

@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
 import { useUiStore } from "@/store/useUiStore";
-
 import { Form, useFieldArray, useForm } from "react-hook-form";
 import axios from "axios";
 import { useState } from "react";
@@ -9,9 +8,9 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
 import { createInvoiceSchema } from "@/schemas/createInvoice.schema";
 import { useSession } from "next-auth/react";
+import BackButton from "./BackButton";
 
 const AddInvoice = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
@@ -161,14 +160,19 @@ const AddInvoice = () => {
   if (!isOpen) return null;
 
   return (
-    <main className="py-10  overflow-y-auto flex justify-center">
+    <div className="py-10 w-full overflow-y-auto flex items-center justify-center">
       <Form
         control={form.control}
         onSubmit={({ data }) => onSubmit(data)}
         onError={(errors) => console.log("Validation failed:", errors)}
         className="space-y-lg"
       >
-        <div className="max-w-4xl mx-auto">
+        <div className=" min-w-4xl mx-auto  ">
+            {prefillProject ? (
+              <BackButton onBack={() => closeModal()} label="Back to Project" />
+            ) : (
+              <BackButton onBack={() => closeModal()} label="Back to invoices" />
+            )}
           <div className="flex justify-between items-start mb-6">
             <div>
               <h1 className="font-headline-lg text-headline-lg md:text-headline-lg-mobile text-on-surface">
@@ -521,7 +525,7 @@ const AddInvoice = () => {
           </div>
         </div>
       </Form>
-    </main>
+    </div>
   );
 };
 

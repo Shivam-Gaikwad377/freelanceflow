@@ -8,6 +8,7 @@ import EditProjectDrawer from "@/components/EditProject";
 import { toast } from "sonner";
 import { useUiStore } from "@/store/useUiStore";
 import useFetch from "@/app/hooks/useFetch";
+import BackButton from "@/components/BackButton";
 type StatusColor = {
   [key: string]: string;
 };
@@ -45,9 +46,9 @@ const Page = () => {
   const [client, setClient] = useState<any>(null);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
-  const [invoicesLimit, setInvoicesLimit] = useState<number>(1);
+  const [invoicesLimit, setInvoicesLimit] = useState<number>(4);
   const pathname = usePathname();
-    const id = pathname.split("/").pop();
+  const id = pathname.split("/").pop();
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
   const [edit, setEdit] = useState(false);
   const router = useRouter();
@@ -59,18 +60,16 @@ const Page = () => {
   );
 
   useEffect(() => {
-    if(projectData){
+    if (projectData) {
       setProject(projectData);
       setClient(projectData?.clientId);
     }
-    if(invoicesData){
+    if (invoicesData) {
       setInvoices(invoicesData?.invoices);
       setInvoicesTotal(invoicesData?.total);
     }
   }, [projectData, invoicesData]);
 
-
-  
   const handleStartProject = async () => {
     try {
       const response = await axios.patch(`/api/projects/${id}`, {
@@ -112,21 +111,11 @@ const Page = () => {
         </div>
         {/* <!-- Breadcrumbs --> */}
         <div className="flex justify-between items-center mb-xl">
-          <nav className="flex items-center gap-2 text-on-surface-variant font-label-md">
-            <a
-              className="hover:text-primary transition-colors flex items-center gap-1"
-              href="#"
-            >
-              <span className="material-symbols-outlined text-[18px]">
-                arrow_back_ios
-              </span>
-              Projects
-            </a>
-            <span className="text-outline-variant">/</span>
-            <span className="text-on-surface font-semibold">
-              {project?.title}
-            </span>
-          </nav>
+          <BackButton
+            onBack={() => router.push("/projects")}
+            label="Back to Projects"
+          />
+
           <div className="flex gap-md">
             <button
               className="px-md py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container rounded-lg font-label-md transition-all flex items-center gap-2"
@@ -325,7 +314,7 @@ const Page = () => {
               </div>
               <div className="p-md text-center">
                 <button
-                  onClick={()=> setInvoicesLimit(invoicesTotal)}
+                  onClick={() => setInvoicesLimit(invoicesTotal)}
                   className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
                 >
                   View All Invoices

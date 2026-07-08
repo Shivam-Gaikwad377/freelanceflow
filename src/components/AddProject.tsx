@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
 import { useUiStore } from "@/store/useUiStore";
-
 import { Form, useForm } from "react-hook-form";
 import axios from "axios";
 import { useState } from "react";
@@ -9,9 +8,9 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
 import { projectSchema } from "@/schemas/project.schema";
 import { useSession } from "next-auth/react";
+import BackButton from "./BackButton";
 const AddProject = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
   const isOpen = activeModal === "addProject";
@@ -102,15 +101,7 @@ const AddProject = () => {
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-xl gap-md">
           <div>
-            <a
-              className="inline-flex items-center gap-xs text-primary hover:underline font-label-md mb-xs transition-all"
-              href="#"
-            >
-              <span className="material-symbols-outlined text-[18px]">
-                arrow_back
-              </span>
-              Back to Projects
-            </a>
+            {prefillClient ? <BackButton onBack={() => closeModal()} label="Back to Client" /> : <BackButton onBack={() => closeModal()} label="Back" />}
             <h1 className="font-headline-lg text-headline-lg md:text-headline-lg-mobile text-on-surface">
               Add New Project
             </h1>
