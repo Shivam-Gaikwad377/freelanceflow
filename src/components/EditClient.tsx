@@ -91,7 +91,7 @@ console.log("EditClientDrawer RENDERED, open:", open, "client:", client);
 
       {/* Drawer panel */}
       <div
-        className={`fixed right-0 top-0 h-full w-full max-w-[520px] bg-surface z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 top-0 h-full w-full max-w-130 bg-surface z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >

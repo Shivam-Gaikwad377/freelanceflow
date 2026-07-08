@@ -114,11 +114,18 @@ export async function GET(request: Request) {
     const status = searchParams.get("status") || "";
     const projectId = searchParams.get("projectId") || "";
     const searchBy = searchParams.get("searchBy") || "invoiceNumber";
+    const monthRange = searchParams.get("monthRange") || "all";
+
 
     const filter: any = { userId: ownerID };
 
     if (status && status !== "all") {
       filter.status = status;
+    }
+    if(monthRange && monthRange !== "all") {
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - parseInt(monthRange));
+      filter.issueDates = { $gte: startDate };
     }
     if (projectId) filter.projectId = projectId;
 

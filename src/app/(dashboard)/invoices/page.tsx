@@ -35,6 +35,7 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [monthRange, setMonthRange] = useState<string >("all");
   const isNumeric = (str: string) => /^\d+$/.test(str.trim());
 
   const [stats, setStats] = useState({
@@ -51,13 +52,18 @@ const Page = () => {
       count: 0,
     },
   });
-  const { data: invoiceData, loading: invoiceLoading, error: invoiceError } = useFetch(`/api/Invoices`, {
+  const {
+    data: invoiceData,
+    loading: invoiceLoading,
+    error: invoiceError,
+  } = useFetch(`/api/Invoices`, {
     offset: invoiceOffset,
     limit,
     sort: "asc",
     status: selectedStatus !== "all" ? selectedStatus : undefined,
     search: debouncedSearchTerm || undefined,
     searchBy: isNumeric(debouncedSearchTerm) ? "invoiceNumber" : "clientName",
+    monthRange: monthRange !== "all" ? monthRange : undefined,
   });
   useEffect(() => {
     if (invoiceData) {
@@ -65,13 +71,16 @@ const Page = () => {
       setTotalInvoices(invoiceData?.total || 0);
     }
   }, [invoiceData, session?.data?.user?._id]);
-  const { data: statsData, loading: statsLoading, error: statsError } = useFetch(`/api/Invoices/stats`);
+  const {
+    data: statsData,
+    loading: statsLoading,
+    error: statsError,
+  } = useFetch(`/api/Invoices/stats`);
   useEffect(() => {
     if (statsData) {
       setStats(statsData);
     }
   }, [statsData]);
-
 
   return (
     <div className="flex-1  min-h-screen bg-background">
@@ -192,15 +201,17 @@ const Page = () => {
                 </label>
               ))}
             </div>
-            <button className="flex items-center gap-xs px-sm py-sm border border-outline-variant rounded-md text-body-sm font-body-sm text-on-surface-variant hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
-              <span className="material-symbols-outlined text-[18px]">
-                calendar_today
-              </span>
-              Last 30 Days
-              <span className="material-symbols-outlined text-[18px]">
-                arrow_drop_down
-              </span>
-            </button>
+            <select
+              className="flex items-center gap-xs px-sm py-sm border border-outline-variant rounded-md text-body-sm font-body-sm text-on-surface-variant hover:bg-surface-container-low transition-colors bg-surface-container-lowest"
+              value={monthRange}
+              onChange={(e) => setMonthRange(e.target.value)}
+            >
+              <option selected={monthRange === "all"} value="all">All Time</option>
+              <option value="1">Last 1 Month</option>
+              <option value="3">Last 3 Months</option>
+              <option value="6">Last 6 Months</option>
+              <option value="12">Last 12 Months</option>
+            </select>
           </div>
         </div>
 
@@ -296,7 +307,7 @@ const Page = () => {
                         </div>
                       </td>
                       <td className="py-sm px-lg text-on-surface-variant">
-                        {new Date(invoice?.createdAt).toLocaleDateString(
+                        {new Date(invoice?.issueDate).toLocaleDateString(
                           "en-US",
                           {
                             year: "numeric",
