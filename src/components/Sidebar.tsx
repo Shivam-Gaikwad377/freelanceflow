@@ -12,6 +12,7 @@ const Sidebar = () => {
   const activeItem : any = usePathname().split("/")[1] ;
   const router = useRouter();  
   const openModal = useUiStore((state) => state.openModal);
+  const closeModal = useUiStore((state) => state.closeModal);
   
   return (
     <>
@@ -35,6 +36,7 @@ const Sidebar = () => {
         </button>
         <div className="flex-1 space-y-sm">
           <Link
+            onClick={() => {closeModal()}}
             href="/dashboard"
             className={
               activeItem === "dashboard"
@@ -50,7 +52,7 @@ const Sidebar = () => {
           </Link>
           <Link
             href="/projects"
-            
+            onClick={() => {closeModal()}}
             className={
               activeItem === "projects"
                 ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
@@ -64,7 +66,7 @@ const Sidebar = () => {
           </Link>
           <Link
             href="/invoices"
-            
+            onClick={() => {closeModal()}}
             className={
               activeItem === "invoices"
                 ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
@@ -81,7 +83,7 @@ const Sidebar = () => {
           </Link>
           <Link
             href="/clients"
-            
+            onClick={()=>{closeModal()}}
             className={
               activeItem === "clients"
                 ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
@@ -95,7 +97,7 @@ const Sidebar = () => {
           </Link>
           <Link
             href="/profile"
-            
+            onClick={()=>closeModal()}
             className={
               activeItem === "profile"
                 ? "flex items-center space-x-3 px-4 py-3 bg-primary text-on-primary-container rounded-lg font-label-md transition-transform duration-100 scale-95 opacity-90"
