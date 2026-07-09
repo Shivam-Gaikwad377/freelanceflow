@@ -1,4 +1,6 @@
 import React from "react";
+import statusBadge from "./StatusBadge";
+import StatusBadge from "./StatusBadge";
 type ClientCardProps = {
   name: string;
   phone: string;
@@ -60,11 +62,7 @@ const ClientCard = ({ name, phone, email, status, totalBilled }: ClientCardProps
             
           </div>
         </div>
-        <span
-          className={`inline-flex items-center px-2 py-1 rounded-full font-label-sm text-label-sm uppercase tracking-wide ${statusColor[status] || statusColor.inactive}`}
-        >
-          {status}
-        </span>
+        <StatusBadge color={status === "active" ? "success" : "normal"} label={status} fontSize="small" />
       </div>
       <div className="space-y-sm mb-lg">
         <div className="flex items-center gap-sm text-on-surface-variant font-body-sm text-body-sm">

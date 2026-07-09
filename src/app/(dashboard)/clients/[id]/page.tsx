@@ -16,18 +16,7 @@ import { IInvoice } from "@/schemas/createInvoice.schema";
 import { IProject } from "@/schemas/project.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
-const statusStyles = (status: string) => {
-  switch (status) {
-    case "Paid":
-      return "bg-secondary-container/50 flex items-center justify-center min-w-[70px] text-secondary border-secondary/20";
-    case "overdue":
-      return "bg-tertiary-container/50 text-tertiary flex items-center justify-center min-w-[70px] border-tertiary/20";
-
-    case "pending":
-    default:
-      return "bg-error-container/50 text-on-error-container flex items-center justify-center min-w-[70px] border-error/20";
-  }
-};
+import StatusBadge from "@/components/StatusBadge";
 
 const Page = () => {
   const { openModal } = useUiStore();
@@ -125,9 +114,7 @@ const Page = () => {
                   <h2 className="font-display text-headline-lg font-bold text-on-surface tracking-tight">
                     {client?.company || "Client Name"}
                   </h2>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider">
-                    {client?.status || "Status"}
-                  </span>
+                  <StatusBadge color={client?.status === "active" ? "success" : "normal"} label={client?.status || "normal"} fontSize="small" />
                 </div>
                 <p className="font-body-md text-body-md text-on-surface-variant mb-4">
                   {client?.description || "Company Description"}
@@ -248,10 +235,7 @@ const Page = () => {
                         </div>
                       </td>
                       <td className="py-4 px-6 w-0.66/4 ">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/50 text-secondary font-label-sm text-label-sm border border-secondary/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                          {project.status}
-                        </span>
+                        <StatusBadge color={project.status === "completed" ? "success" : project.status === "in progress" ? "error" : "normal"} label={project.status} fontSize="small" />
                       </td>
                       <td className="py-4 w-0.66/4 px-6    text-on-surface-variant">
                         {new Date(project.createdAt).toLocaleDateString(
@@ -364,13 +348,7 @@ const Page = () => {
                         })}
                       </td>
                       <td className="py-4 flex  px-6">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-label-sm text-label-sm border ${statusStyles(
-                            invoice.status
-                          )}`}
-                        >
-                          {invoice.status}
-                        </span>
+                       <StatusBadge color={invoice.status === "Paid" ? "success" : invoice.status === "pending" ? "normal" : "error"} label={invoice.status} fontSize="small" />
                       </td>
                       <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
                         {invoice.amount?.toLocaleString("en-US", {
