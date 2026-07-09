@@ -350,7 +350,7 @@ const Page = () => {
                         })}
                       </td>
                       <td className="py-4 flex  px-6">
-                       <StatusBadge color={invoice.status === "Paid" ? "success" : invoice.status === "pending" ? "normal" : "normal"} label={invoice.status} fontSize="small" />
+                       <StatusBadge color={invoice.status === "Paid" ? "success" : invoice.status === "pending" ? "normal" : "error"} label={invoice.status} fontSize="small" />
                       </td>
                       <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
                         {invoice.amount?.toLocaleString("en-US", {

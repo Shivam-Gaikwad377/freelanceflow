@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import BackButton from "./BackButton";
 import { ProjectInput, ProjectOutput } from "@/schemas/project.schema";
 import PrimaryButton from "./PrimaryButton";
+import SecondaryButton from "./SecondaryButton";
 const AddProject = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
   const isOpen = activeModal === "addProject";
@@ -266,15 +267,11 @@ const AddProject = () => {
               </div>
 
               <div className="flex items-center justify-end gap-md pt-lg border-t border-outline-variant/30 mt-xl">
-                <button
-                  className="px-xl py-3 text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
-                  type="button"
-                  onClick={() => {
-                    closeModal();
-                  }}
-                >
-                  Cancel
-                </button>
+                <SecondaryButton
+                  label="Cancel"
+                  onClick={() => closeModal()}
+                  icon="close"
+                />
                 <PrimaryButton
                   label="Save Project"
                   onClick={handleSubmit(onSubmit)}

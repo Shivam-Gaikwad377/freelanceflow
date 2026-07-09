@@ -14,6 +14,7 @@ import { IProject } from "@/schemas/project.schema";
 import { IClient } from "@/schemas/createClient.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
+import StatusBadge from "@/components/StatusBadge";
 type StatusColor = {
   [key: string]: string;
 };
@@ -144,9 +145,7 @@ const Page = () => {
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
               <div className="flex justify-between items-start relative z-9">
                 <div>
-                  <span className="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm uppercase tracking-wider mb-sm inline-block">
-                    {project?.status}
-                  </span>
+                  <StatusBadge color={project?.status === "completed" ? "success" : project?.status === "in progress" ? "error" : "normal"} label={project?.status} fontSize="large" />
                   <h2 className="font-display text-headline-lg text-on-surface mt-2">
                     {project?.title}
                   </h2>
@@ -243,7 +242,8 @@ const Page = () => {
                 <h4 className="font-headline-sm text-on-surface">
                   Associated Invoices
                 </h4>
-                <button
+                <SecondaryButton
+                  label="Add Invoice"
                   onClick={() =>
                     openModal("addInvoice", {
                       prefillProject: {
@@ -253,14 +253,11 @@ const Page = () => {
                         client: project?.client,
                       },
                     })
+                    
                   }
-                  className="text-primary font-label-md hover:underline flex items-center gap-1"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    add
-                  </span>
-                  Create Invoice
-                </button>
+                  icon="add"
+                  
+                  />
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -297,9 +294,7 @@ const Page = () => {
                           )}
                         </td>
                         <td className="px-lg py-4">
-                          <span className="bg-secondary-container/20 text-on-secondary-container px-2 py-1 rounded text-[11px] font-bold uppercase">
-                            {invoice?.status}
-                          </span>
+                          <StatusBadge color={invoice.status === "Paid" ? "success" : invoice.status === "pending" ? "normal" : "error"} label={invoice.status} fontSize="small" />
                         </td>
                         <td className="px-lg py-4 text-right font-semibold text-on-surface">
                           {invoice?.amount.toFixed(2)}
@@ -326,7 +321,7 @@ const Page = () => {
                 Client Contact
               </h4>
               <div
-                onClick={() => router.replace(`/clients/${project?.clientId}`)}
+                onClick={() => router.replace(`/clients/${client?._id}`)}
                 className=" cursor-pointer flex items-center gap-md mb-lg"
               >
                 <div

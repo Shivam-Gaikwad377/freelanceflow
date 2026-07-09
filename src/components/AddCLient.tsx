@@ -12,6 +12,8 @@ import ApiResponse from "@/types/ApiResponse";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import { CreateClientInput, CreateClientOutput } from "@/schemas/createClient.schema";
 import PrimaryButton from "./PrimaryButton";
+import SecondaryButton from "./SecondaryButton";
+import BackButton from "./BackButton";
 interface AddClientProps {
     open: boolean;
     onClose: () => void;
@@ -68,14 +70,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
         {/* <!-- Header --> */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-xl gap-3">
           <div>
-            <div className="inline-flex items-center gap-xs text-primary  font-label-md mb-xs transition-all">
-              <span className="material-symbols-outlined  text-[18px]">
-                arrow_back
-              </span>
-              <Link className="hover:underline" href="/clients">
-                Back to Clients
-              </Link>
-            </div>
+            <BackButton onBack={onClose} label="Back to Clients" />
             <h1 className="font-headline-lg  text-headline-lg md:text-headline-lg-mobile text-on-surface">
               Add New Client
             </h1>
@@ -210,13 +205,11 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
               </div>
               {/* <!-- Actions --> */}
               <div className="flex items-center justify-end gap-md pt-lg border-t border-outline-variant/30 mt-xl">
-                <button
-                  className="px-xl py-3 text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
-                  type="button"
+                <SecondaryButton
+                  label="Cancel"
                   onClick={onClose}
-                >
-                  Cancel
-                </button>
+                  icon="close"
+                />
                 <PrimaryButton
                   label="Add Client"
                   onClick={handleSubmit(onSubmit)}

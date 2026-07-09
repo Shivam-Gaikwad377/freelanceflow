@@ -11,6 +11,7 @@ import ApiResponse from "@/types/ApiResponse";
 import { IClient } from "@/schemas/createClient.schema";
 import PrimaryButton from "./PrimaryButton";
 import { is } from "zod/v4/locales";
+import SecondaryButton from "./SecondaryButton";
 
 interface EditClientDrawerProps {
   open: boolean;
@@ -251,13 +252,11 @@ console.log("EditClientDrawer RENDERED, open:", open, "client:", client);
 
           {/* ── Footer (always visible) ── */}
           <div className="flex items-center justify-end gap-md px-xl py-lg border-t border-outline-variant/30 shrink-0">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-xl py-3 text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
-            >
-              Cancel
-            </button>
+           <SecondaryButton
+              label="Cancel"
+              onClick={() => onClose()}
+              icon="close"
+            />
             <PrimaryButton
               label= {isSubmitting ? "Saving..." : "Save Changes"}
               onClick={handleSubmit(onSubmit)}

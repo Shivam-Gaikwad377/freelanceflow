@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { updateProjectSchema } from "@/schemas/updateProject.schema";
 import ApiResponse from "@/types/ApiResponse";
 import { IProject } from "@/schemas/project.schema";
+import PrimaryButton from "./PrimaryButton";
+import SecondaryButton from "./SecondaryButton";
 
 interface EditProjectDrawerProps {
   open: boolean;
@@ -274,34 +276,16 @@ const EditProjectDrawer = ({
 
           {/* ── Footer (always visible) ── */}
           <div className="flex items-center justify-end gap-md px-xl py-lg border-t border-outline-variant/30 shrink-0">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-xl py-3 text-primary font-label-md hover:bg-surface-container transition-colors rounded-lg"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
+            <SecondaryButton
+              label="Cancel"
+              onClick={() => onClose()}
+              icon="close"
+            />
+            <PrimaryButton
+              label={isSubmitting ? "Saving..." : "Save Changes"}
+              onClick={handleSubmit(onSubmit)}
               disabled={isSubmitting}
-              className="bg-primary text-on-primary px-xl py-3 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20 flex items-center gap-sm disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="material-symbols-outlined text-[18px] animate-spin">
-                    progress_activity
-                  </span>
-                  Saving…
-                </>
-              ) : (
-                <>
-                  <span className="material-symbols-outlined text-[18px]">
-                    save
-                  </span>
-                  Save Changes
-                </>
-              )}
-            </button>
+            />
           </div>
         </form>
       </div>

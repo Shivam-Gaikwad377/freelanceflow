@@ -13,6 +13,8 @@ import { useSession } from "next-auth/react";
 import BackButton from "./BackButton";
 import { CreateInvoiceInput, CreateInvoiceOutput } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "./PrimaryButton";
+import SecondaryButton from "./SecondaryButton";
+
 
 const AddInvoice = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
@@ -499,14 +501,11 @@ const AddInvoice = () => {
           </div>
 
           <div className="flex justify-end gap-3 mt-8">
-            <button
-              onClick={() => {
-                closeModal();
-              }}
-              className="cursor-pointer px-md py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container rounded-lg font-label-md transition-all flex items-center gap-2"
-            >
-              Cancel
-            </button>
+           <SecondaryButton
+              label="Cancel"
+              onClick={closeModal}
+              icon="close"
+            />
            <PrimaryButton
               label="Save invoice "
               onClick={handleSubmit(onSubmit)}

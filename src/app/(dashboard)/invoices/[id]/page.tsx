@@ -316,17 +316,16 @@ const Page = () => {
             <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
               Line items
             </p>
-            <button
-              className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
-              onClick={() => {
+            <SecondaryButton
+              label="Add Item"
+              icon="add"
+               onClick={() => {
                 const newIndex = fields.length; // capture before append
                 append({ description: "", quantity: 1, price: 0 });
                 setEditingIndex(newIndex); // opens the new blank row in edit mode
               }}
-            >
-              <span className="material-symbols-outlined text-[15px]">add</span>
-              Add item
-            </button>
+              fontSize="small"
+            />
           </div>
           <table className="w-full table-fixed border-collapse">
             <thead>
@@ -438,15 +437,12 @@ const Page = () => {
                       {field.price * field.quantity}
                     </td>
                     <td className="py-2.75 font-medium text-left w-[10%] text-on-surface">
-                      <button
+                      <SecondaryButton 
                         onClick={() => setEditingIndex(index)}
-                        className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
-                      >
-                        <span className="material-symbols-outlined text-[15px]">
-                          edit
-                        </span>
-                        Edit
-                      </button>
+                        label="Edit"
+                        icon="edit"
+                        fontSize="small"
+                      />
                     </td>
                   </tr>
                 )
