@@ -15,6 +15,7 @@ import { IClient } from "@/schemas/createClient.schema";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import { IProject } from "@/schemas/project.schema";
 import PrimaryButton from "@/components/PrimaryButton";
+import SecondaryButton from "@/components/SecondaryButton";
 const statusStyles = (status: string) => {
   switch (status) {
     case "Paid":
@@ -168,21 +169,17 @@ const Page = () => {
             {/* Right: Quick Actions / Metrics */}
             <div className="flex flex-col items-start md:items-end gap-4 shrink-0">
               <div className="flex gap-3 w-full md:w-auto">
-                <button
+                <SecondaryButton
                   onClick={() => setEditOpen(true)}
-                  className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface border border-outline-variant text-primary font-label-md text-label-md rounded-lg hover:bg-surface-container-high transition-colors shadow-sm"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    edit
-                  </span>
-                  Edit Client
-                </button>
+                  label="Edit Client"
+                  icon="edit"
+                />
                 <PrimaryButton
                   onClick={() =>
                     openModal("addProject", {
                       prefillClient: {
-                        name: client?.name.toString(),
-                        id: client?._id.toString(),
+                        name: client?.name.toString() || "",
+                        id: client?._id.toString() || "",
                       },
                     })
                   }

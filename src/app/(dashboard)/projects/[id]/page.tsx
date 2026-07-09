@@ -13,6 +13,7 @@ import { IInvoice } from "@/schemas/createInvoice.schema";
 import { IProject } from "@/schemas/project.schema";
 import { IClient } from "@/schemas/createClient.schema";
 import PrimaryButton from "@/components/PrimaryButton";
+import SecondaryButton from "@/components/SecondaryButton";
 type StatusColor = {
   [key: string]: string;
 };
@@ -121,15 +122,12 @@ const Page = () => {
           />
 
           <div className="flex gap-md">
-            <button
-              className="px-md py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container rounded-lg font-label-md transition-all flex items-center gap-2"
+            <SecondaryButton
+              label="Edit Project"
+              icon="edit"
               onClick={() => setEdit(true)}
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                edit
-              </span>
-              Edit Project
-            </button>
+            />
+              
             {!(project?.status === "completed") && (
               <PrimaryButton
                 label="Mark as Done"
@@ -197,12 +195,11 @@ const Page = () => {
                       )) : ("Not Started Yet")}
                     </p>
                   ) : (
-                    <button
-                      className="px-md py-2 border -ms-md border-outline-variant text-on-surface-variant hover:bg-surface-container rounded-lg font-label-md transition-all flex items-center gap-2"
+                    <SecondaryButton
+                      label="Start Project"
                       onClick={handleStartProject}
-                    >
-                      Start Project
-                    </button>
+                      icon= ""
+                    />
                   )}
                 </div>
                 <div className="flex items-start flex-col gap-2">

@@ -38,7 +38,7 @@ const Sidebar = () => {
           icon="add"
           
         />
-        <div className="flex-1 space-y-sm">
+        <div className="flex-1 mt-8 space-y-sm">
           <Link
             onClick={() => {closeModal()}}
             href="/dashboard"

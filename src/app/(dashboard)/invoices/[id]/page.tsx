@@ -15,7 +15,7 @@ import { IProject } from "@/schemas/project.schema";
 import { IClient } from "@/schemas/createClient.schema";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "@/components/PrimaryButton";
-
+import SecondaryButton from "@/components/SecondaryButton";
 const Page = () => {
   const [invoice, setInvoice] = useState<IInvoice | null>(null);
   const [loading, setLoading] = useState(true);
@@ -139,18 +139,12 @@ const Page = () => {
             label="Back to Invoices"
           />
           <div className="flex items-center justify-center gap-sm mb-lg">
-            <button className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
-              <span className="material-symbols-outlined text-[15px]">
-                edit
-              </span>
-              Edit
-            </button>
-            <button className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface">
-              <span className="material-symbols-outlined text-[15px]">
-                download
-              </span>
-              Download
-            </button>
+         
+            <SecondaryButton
+              label="Download"
+              icon="download"
+              onClick={()=>{}}
+            />
             {invoice?.status !== "paid" ? (
               <PrimaryButton
                 label="Mark as Paid"
