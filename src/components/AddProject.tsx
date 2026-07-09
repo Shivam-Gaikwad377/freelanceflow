@@ -12,6 +12,7 @@ import { projectSchema } from "@/schemas/project.schema";
 import { useSession } from "next-auth/react";
 import BackButton from "./BackButton";
 import { ProjectInput, ProjectOutput } from "@/schemas/project.schema";
+import PrimaryButton from "./PrimaryButton";
 const AddProject = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
   const isOpen = activeModal === "addProject";
@@ -30,6 +31,7 @@ const AddProject = () => {
       deadline: new Date().toISOString().split("T")[0],
       status: "open", // Default to today's date
       clientId: "", // Default to empty string
+      // Default to empty string
     },
   });
   useEffect(() => {
@@ -102,7 +104,11 @@ const AddProject = () => {
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-xl gap-md">
           <div>
-            {prefillClient ? <BackButton onBack={() => closeModal()} label="Back to Client" /> : <BackButton onBack={() => closeModal()} label="Back" />}
+            {prefillClient ? (
+              <BackButton onBack={() => closeModal()} label="Back to Client" />
+            ) : (
+              <BackButton onBack={() => closeModal()} label="Back" />
+            )}
             <h1 className="font-headline-lg text-headline-lg md:text-headline-lg-mobile text-on-surface">
               Add New Project
             </h1>
@@ -269,12 +275,11 @@ const AddProject = () => {
                 >
                   Cancel
                 </button>
-                <button
-                  className="bg-primary text-on-primary px-xl py-3 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20"
-                  type="submit"
-                >
-                  Create Project
-                </button>
+                <PrimaryButton
+                  label="Save Project"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                />
               </div>
             </Form>
           </div>

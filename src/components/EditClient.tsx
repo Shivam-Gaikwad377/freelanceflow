@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import ApiResponse from "@/types/ApiResponse";
 import { IClient } from "@/schemas/createClient.schema";
+import PrimaryButton from "./PrimaryButton";
+import { is } from "zod/v4/locales";
 
 interface EditClientDrawerProps {
   open: boolean;
@@ -256,27 +258,12 @@ console.log("EditClientDrawer RENDERED, open:", open, "client:", client);
             >
               Cancel
             </button>
-            <button
-              type="submit"
+            <PrimaryButton
+              label= {isSubmitting ? "Saving..." : "Save Changes"}
+              onClick={handleSubmit(onSubmit)}
               disabled={isSubmitting}
-              className="bg-primary text-on-primary px-xl py-3 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20 flex items-center gap-sm disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="material-symbols-outlined text-[18px] animate-spin">
-                    progress_activity
-                  </span>
-                  Saving…
-                </>
-              ) : (
-                <>
-                  <span className="material-symbols-outlined text-[18px]">
-                    save
-                  </span>
-                  Save Changes
-                </>
-              )}
-            </button>
+            />
+            
           </div>
         </form>
       </div>

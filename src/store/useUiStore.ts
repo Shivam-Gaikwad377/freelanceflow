@@ -3,15 +3,15 @@ import { create } from "zustand";
 type ModalType = "addProject" | "addInvoice" | null;
 
 interface PrefillClient {
-  name: string | undefined;
+  name: string ;
   id: string | undefined;
 }
 
 interface PrefillProject {
   name: string | undefined;
   id: string | undefined;
-  clientId?: string;
-  client?: string;
+  clientId?: string | undefined;
+  client?: string | undefined;
 }
 
 interface ModalContext {

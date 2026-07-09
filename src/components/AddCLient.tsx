@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import ApiResponse from "@/types/ApiResponse";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import { CreateClientInput, CreateClientOutput } from "@/schemas/createClient.schema";
+import PrimaryButton from "./PrimaryButton";
 interface AddClientProps {
     open: boolean;
     onClose: () => void;
@@ -216,12 +217,13 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                 >
                   Cancel
                 </button>
-                <button
-                  className="bg-primary text-on-primary px-xl py-3 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20"
-                  type="submit"
-                >
-                  Create Client
-                </button>
+                <PrimaryButton
+                  label="Add Client"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting}
+                />
+              
+           
               </div>
             </Form>
           </div>

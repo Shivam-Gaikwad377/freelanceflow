@@ -12,6 +12,7 @@ import { createInvoiceSchema } from "@/schemas/createInvoice.schema";
 import { useSession } from "next-auth/react";
 import BackButton from "./BackButton";
 import { CreateInvoiceInput, CreateInvoiceOutput } from "@/schemas/createInvoice.schema";
+import PrimaryButton from "./PrimaryButton";
 
 const AddInvoice = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
@@ -182,17 +183,7 @@ const AddInvoice = () => {
                 Draft · not sent
               </p>
             </div>
-            <div className="flex gap-2">
-              <button className="cursor-pointer px-md py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container rounded-lg font-label-md transition-all flex items-center gap-2">
-                Save draft
-              </button>
-              <button className="cursor-pointer px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20">
-                <span className="material-symbols-outlined text-[18px]">
-                  send
-                </span>
-                Save and send
-              </button>
-            </div>
+           
           </div>
 
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg mb-lg shadow-[0_4px_16px_rgba(73,75,214,0.03)] hover:shadow-[0_8px_24px_rgba(73,75,214,0.06)] transition-shadow duration-300">
@@ -516,12 +507,11 @@ const AddInvoice = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="cursor-pointer px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20"
-            >
-              Save invoice
-            </button>
+           <PrimaryButton
+              label="Save invoice "
+              onClick={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+            />
           </div>
         </div>
       </Form>
