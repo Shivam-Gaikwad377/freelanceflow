@@ -11,6 +11,7 @@ import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "@/components/PrimaryButton";
+import StatusBadge from "@/components/StatusBadge";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -322,9 +323,7 @@ const Page = () => {
                         })}
                       </td>
                       <td className="py-sm px-lg text-center">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-surface-container-high text-on-surface-variant">
-                          {invoice?.status}
-                        </span>
+                       <StatusBadge color={invoice.status === "Paid" ? "success" : invoice.status === "pending" ? "normal" : "error"} label={invoice.status} fontSize="small" />
                       </td>
                     </tr>
                   ))

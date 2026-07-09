@@ -16,6 +16,7 @@ import { IClient } from "@/schemas/createClient.schema";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
+import StatusBadge from "@/components/StatusBadge";
 const Page = () => {
   const [invoice, setInvoice] = useState<IInvoice | null>(null);
   const [loading, setLoading] = useState(true);
@@ -145,14 +146,14 @@ const Page = () => {
               icon="download"
               onClick={()=>{}}
             />
-            {invoice?.status !== "paid" ? (
+            {invoice?.status !== "Paid" ? (
               <PrimaryButton
                 label="Mark as Paid"
                 onClick={handlePaid}
                 icon="check_circle"
               />
             ) : (
-              <p className="text-label-lg text-on-surface-variant">Paid</p>
+              <p className="text-label-lg text-on-surface-variant"></p>
             )}
           </div>
         </div>
@@ -169,7 +170,9 @@ const Page = () => {
             <span
               className="text-label-md px-3.5 py-1.25 rounded-lg font-medium"
               id="status-badge"
-            ></span>
+            >
+              <StatusBadge color={invoice?.status === "Paid" ? "success" : invoice?.status === "pending" ? "normal" : "error"} label={invoice?.status || "Status"} fontSize="large" />
+            </span>
           </div>
           <div className="border-t border-outline-variant/30 mt-md pt-md grid grid-cols-3 gap-md">
             <div>
@@ -248,9 +251,7 @@ const Page = () => {
                 >
                   {client?.name}
                 </p>
-                <span className="text-[11px] bg-secondary-container text-on-secondary-container px-[8px] py-0.5 rounded-lg">
-                  Active
-                </span>
+                <StatusBadge color={client?.status === "active" ? "success" : "normal"} label={client?.status || "Status"} fontSize="small" />
               </div>
             </div>
             <div className="border-t border-outline-variant/30 pt-2.5 flex flex-col gap-1.75">
@@ -290,7 +291,7 @@ const Page = () => {
             <div className="border-t border-outline-variant/30 pt-2.5 flex flex-col gap-1.75">
               <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
                 <span className="material-symbols-outlined text-[15px]">
-                  clock_loader_40
+                  {project?.status === "completed" ? "check_circle" : project?.status === "in progress" ? "clock_loader_40" : "pending"}
                 </span>
                 {project?.status}
               </p>

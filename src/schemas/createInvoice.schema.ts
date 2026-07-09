@@ -7,7 +7,7 @@ export interface IInvoice extends Document {
   issueDate: Date ;
   dueDate: Date ;
   amount: number;
-  status?: "pending" | "paid" | "overdue";
+  status?: "pending" | "Paid" | "overdue";
   lineItems: {
     description: string;
     quantity: number;
