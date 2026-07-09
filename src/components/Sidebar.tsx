@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import PrimaryButton from "./PrimaryButton";
 
 
 import {useUiStore} from "@/store/useUiStore";
@@ -31,9 +32,12 @@ const Sidebar = () => {
             </p>
           </div>
         </div>
-        <button onClick={()=> openModal("addProject")} className="w-full cursor-pointer hover:scale-102 acitve: scale-98 transition-all duration-100 bg-primary text-on-primary py-3 rounded-lg mb-8 font-label-md hover:bg-surface-tint  shadow-[0_4px_12px_rgba(70,72,212,0.2)]">
-          + New Project
-        </button>
+        <PrimaryButton
+          label=" New Project"
+          onClick={() => openModal("addProject")}
+          icon="add"
+          
+        />
         <div className="flex-1 space-y-sm">
           <Link
             onClick={() => {closeModal()}}

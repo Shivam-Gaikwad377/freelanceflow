@@ -150,6 +150,8 @@ const Page = () => {
                   alt="User avatar"
                   className="w-full h-full object-cover"
                   src={profile?.avatar.avatarUrl || "/images/avatar.png"}
+                  width={32}
+                  height={32}
                 />
               </div>
             </div>

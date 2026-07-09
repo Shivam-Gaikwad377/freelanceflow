@@ -14,19 +14,17 @@ import BackButton from "@/components/BackButton";
 import { IClient } from "@/schemas/createClient.schema";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import { IProject } from "@/schemas/project.schema";
-
-
+import PrimaryButton from "@/components/PrimaryButton";
 const statusStyles = (status: string) => {
   switch (status) {
     case "Paid":
-      return  "bg-secondary-container/50 flex items-center justify-center min-w-[70px] text-secondary border-secondary/20";
+      return "bg-secondary-container/50 flex items-center justify-center min-w-[70px] text-secondary border-secondary/20";
     case "overdue":
-      return "bg-tertiary-container/50 text-tertiary flex items-center justify-center min-w-[70px] border-tertiary/20"
-      
+      return "bg-tertiary-container/50 text-tertiary flex items-center justify-center min-w-[70px] border-tertiary/20";
+
     case "pending":
     default:
-      return "bg-error-container/50 text-on-error-container flex items-center justify-center min-w-[70px] border-error/20"
-       ;
+      return "bg-error-container/50 text-on-error-container flex items-center justify-center min-w-[70px] border-error/20";
   }
 };
 
@@ -88,7 +86,7 @@ const Page = () => {
   }, [id]);
 
   const router = useRouter();
- 
+
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
       <div>
@@ -103,8 +101,11 @@ const Page = () => {
         className={`${editOpen ? "blur-sm" : ""} flex-1 overflow-y-auto p-10 md:px-gutter max-w-container-max mx-auto w-full`}
       >
         {/* <!-- Breadcrumbs --> */}
-       <BackButton onBack={()=> router.replace("/clients")} label="Back to Clients" />
-        
+        <BackButton
+          onBack={() => router.replace("/clients")}
+          label="Back to Clients"
+        />
+
         {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
         <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg md:p-xl mb-xl shadow-sm relative overflow-hidden">
           {/* Subtle decorative background element */}
@@ -176,19 +177,18 @@ const Page = () => {
                   </span>
                   Edit Client
                 </button>
-                <button
+                <PrimaryButton
                   onClick={() =>
                     openModal("addProject", {
-                      prefillClient: { name: client?.name.toString(), id: client?._id.toString() },
+                      prefillClient: {
+                        name: client?.name.toString(),
+                        id: client?._id.toString(),
+                      },
                     })
                   }
-                  className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    add
-                  </span>
-                  New Project
-                </button>
+                  label=" New Project "
+                  icon="add"
+                />
               </div>
               <div className="flex gap-6 mt-2">
                 <div className="text-left md:text-right">
@@ -236,7 +236,9 @@ const Page = () => {
                 <tbody className="font-body-sm text-body-sm text-on-surface">
                   {projects.map((project) => (
                     <tr
-                      onClick={() => router.replace(`/projects/${project._id.toString()}`)}
+                      onClick={() =>
+                        router.replace(`/projects/${project._id.toString()}`)
+                      }
                       key={project._id.toString()}
                       className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
                     >
@@ -265,10 +267,10 @@ const Page = () => {
                         )}
                       </td>
                       <td className="py-4 w-0.66/4 px-6  font-label-md text-label-md">
-                         {project?.budget?.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: session?.data?.user?.currency || "USD",
-                    })}
+                        {project?.budget?.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: session?.data?.user?.currency || "USD",
+                        })}
                       </td>
                     </tr>
                   ))}
@@ -374,10 +376,10 @@ const Page = () => {
                         </span>
                       </td>
                       <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
-                         {invoice.amount?.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: session?.data?.user?.currency || "USD",
-                    })}
+                        {invoice.amount?.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: session?.data?.user?.currency || "USD",
+                        })}
                       </td>
                       <td className="py-4 px-6 text-right">
                         <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">

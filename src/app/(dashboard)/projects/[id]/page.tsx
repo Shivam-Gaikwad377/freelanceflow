@@ -12,6 +12,7 @@ import BackButton from "@/components/BackButton";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import { IProject } from "@/schemas/project.schema";
 import { IClient } from "@/schemas/createClient.schema";
+import PrimaryButton from "@/components/PrimaryButton";
 type StatusColor = {
   [key: string]: string;
 };
@@ -130,15 +131,11 @@ const Page = () => {
               Edit Project
             </button>
             {!(project?.status === "completed") && (
-              <button
+              <PrimaryButton
+                label="Mark as Done"
                 onClick={handleMarkAsDone}
-                className="px-md py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg font-label-md transition-all flex items-center gap-2 shadow-sm shadow-primary/20"
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  check_circle
-                </span>
-                Mark as Done
-              </button>
+                icon="check_circle"
+              />
             )}
           </div>
         </div>

@@ -10,6 +10,7 @@ import { useUiStore } from "@/store/useUiStore";
 import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
 import { IInvoice } from "@/schemas/createInvoice.schema";
+import PrimaryButton from "@/components/PrimaryButton";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -94,13 +95,11 @@ const Page = () => {
               Manage your billing and track payments.
             </p>
           </div>
-          <button
+          <PrimaryButton
+            label=" New Invoice"
             onClick={() => openModal("addInvoice")}
-            className="flex items-center justify-center gap-sm bg-primary text-on-primary font-label-md text-label-md py-sm px-lg rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm"
-          >
-            <span className="material-symbols-outlined text-sm">add</span>
-            Create New Invoice
-          </button>
+            icon="add"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">

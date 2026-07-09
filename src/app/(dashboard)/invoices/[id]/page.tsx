@@ -14,6 +14,7 @@ import BackButton from "@/components/BackButton";
 import { IProject } from "@/schemas/project.schema";
 import { IClient } from "@/schemas/createClient.schema";
 import { IInvoice } from "@/schemas/createInvoice.schema";
+import PrimaryButton from "@/components/PrimaryButton";
 
 const Page = () => {
   const [invoice, setInvoice] = useState<IInvoice | null>(null);
@@ -151,19 +152,11 @@ const Page = () => {
               Download
             </button>
             {invoice?.status !== "paid" ? (
-              <button
-                className="flex items-center gap-1.25 text-[13px] text-on-primary bg-primary hover:opacity-90 transition-opacity px-md py-xs rounded-lg"
-                id="action-btn"
+              <PrimaryButton
+                label="Mark as Paid"
                 onClick={handlePaid}
-              >
-                <span
-                  className="material-symbols-outlined text-[15px]"
-                  id="action-icon"
-                >
-                  check
-                </span>
-                <span id="action-label">Mark as paid</span>
-              </button>
+                icon="check_circle"
+              />
             ) : (
               <p className="text-label-lg text-on-surface-variant">Paid</p>
             )}
@@ -247,8 +240,10 @@ const Page = () => {
             </p>
             <div className="flex items-center gap-2.5 mb-sm">
               <div className="aspect-square rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-label-md p-2 font-medium shrink-0">
-                {client ? client?.name.charAt(0).toUpperCase() +
-                  client?.name.split(" ").slice(-1)[0].charAt(0).toUpperCase() : ""}
+                {client
+                  ? client?.name.charAt(0).toUpperCase() +
+                    client?.name.split(" ").slice(-1)[0].charAt(0).toUpperCase()
+                  : ""}
               </div>
               <div className="flex gap-1">
                 <p

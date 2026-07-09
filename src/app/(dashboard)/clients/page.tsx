@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
 import { IClient } from "@/schemas/createClient.schema";
+import PrimaryButton from "@/components/PrimaryButton";
 
 const Page = () => {
   const session = useSession();
@@ -63,15 +64,11 @@ const Page = () => {
               Manage your active and archived client relationships.
             </p>
           </div>
-          <button
+          <PrimaryButton
+            label=" New Client"
             onClick={() => setAddClientOpen(true)}
-            className="bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[20px]">
-              person_add
-            </span>
-            Add Client
-          </button>
+            icon="person_add"
+          />
         </div>
         {/* Filters & Search */}
         <div className="flex flex-col sm:flex-row gap-md mb-lg">
