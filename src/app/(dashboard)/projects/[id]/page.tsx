@@ -15,38 +15,10 @@ import { IClient } from "@/schemas/createClient.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/StatusBadge";
-type StatusColor = {
-  [key: string]: string;
-};
+import ClientInitialBadge from "@/components/ClientInitialBadge";
+
 const Page = () => {
-  const clientInitialsColor: StatusColor = {
-    A: "bg-amber-200", // Amber
-    B: "bg-blue-200", // Blue
-    C: "bg-cyan-200", // Cyan
-    D: "bg-slate-200", // Denim / Dark Slate
-    E: "bg-emerald-200", // Emerald
-    F: "bg-fuchsia-200", // Fuchsia
-    G: "bg-green-200", // Green
-    H: "bg-yellow-200", // Honey
-    I: "bg-indigo-200", // Indigo
-    J: "bg-teal-200", // Jade
-    K: "bg-stone-200", // Khaki
-    L: "bg-lime-200", // Lime
-    M: "bg-rose-200", // Magenta / Maroon
-    N: "bg-blue-100", // Navy (Soft tint)
-    O: "bg-orange-200", // Orange
-    P: "bg-purple-200", // Purple
-    Q: "bg-zinc-200", // Quartz
-    R: "bg-red-200", // Red
-    S: "bg-sky-200", // Sky
-    T: "bg-teal-100", // Teal
-    U: "bg-indigo-100", // Ultramarine (Soft tint)
-    V: "bg-violet-200", // Violet
-    W: "bg-rose-100", // Wine (Soft tint)
-    X: "bg-lime-100", // Xanthic
-    Y: "bg-yellow-100", // Yellow
-    Z: "bg-zinc-100",
-  };
+ 
   const [project, setProject] = useState<IProject | null>(null);
   const { openModal } = useUiStore();
   const [client, setClient] = useState<IClient | null>(null);
@@ -324,16 +296,7 @@ const Page = () => {
                 onClick={() => router.replace(`/clients/${client?._id}`)}
                 className=" cursor-pointer flex items-center gap-md mb-lg"
               >
-                <div
-                  className={`${clientInitialsColor[client?.name?.charAt(0)?.toUpperCase() || ""]} w-14 h-14 rounded-full flex items-center font-bold text-xl justify-center object-cover border  border-surface-variant`}
-                >
-                    {client ?  (client?.name?.charAt(0)?.toUpperCase() +
-                      client?.name
-                        .split(" ")
-                        .slice(-1)[0]
-                        .charAt(0)
-                        .toUpperCase()): ("CL")}
-                </div>
+                <ClientInitialBadge name={client?.name || "Client Name"} size="medium" />
                 <div>
                   <p className="font-headline-sm text-on-surface">
                     {client?.name || "Client Name"}

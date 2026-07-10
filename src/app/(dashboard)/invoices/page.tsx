@@ -12,6 +12,7 @@ import useFetch from "@/app/hooks/useFetch";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import StatusBadge from "@/components/StatusBadge";
+import ClientInitialBadge from "@/components/ClientInitialBadge";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -293,14 +294,7 @@ const Page = () => {
                       </td>
                       <td className="py-sm px-lg">
                         <div className="flex items-center gap-sm">
-                          <div className="p-2 aspect-square rounded-full flex text-label-md items-center justify-center bg-surface-variant overflow-hidden">
-                            {invoice?.client.charAt(0).toUpperCase() +
-                              invoice?.client
-                                .split(" ")
-                                .slice(-1)[0]
-                                .charAt(0)
-                                .toUpperCase()}
-                          </div>
+                          <ClientInitialBadge name={invoice?.client || "Client Name"} size="small" />
                           <span className="text-on-surface">
                             {invoice?.client}
                           </span>

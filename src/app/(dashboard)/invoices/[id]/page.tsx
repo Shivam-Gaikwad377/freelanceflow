@@ -17,6 +17,7 @@ import { IInvoice } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/StatusBadge";
+import ClientInitialBadge from "@/components/ClientInitialBadge";
 const Page = () => {
   const [invoice, setInvoice] = useState<IInvoice | null>(null);
   const [loading, setLoading] = useState(true);
@@ -235,19 +236,14 @@ const Page = () => {
             <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
               Bill to
             </p>
-            <div className="flex items-center gap-2.5 mb-sm">
-              <div className="aspect-square rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-label-md p-2 font-medium shrink-0">
-                {client
-                  ? client?.name.charAt(0).toUpperCase() +
-                    client?.name.split(" ").slice(-1)[0].charAt(0).toUpperCase()
-                  : ""}
-              </div>
-              <div className="flex gap-1">
+            <div className="flex items-center gap-3 mb-sm">
+              <ClientInitialBadge name={client?.name || "Client Name"} size="small" />
+              <div className="flex gap-2">
                 <p
                   onClick={() =>
                     router.replace(`/clients/${invoice?.clientId}`)
                   }
-                  className="cursor-pointer text-[14px] font-medium m-0 mb-0.75 text-on-surface"
+                  className="cursor-pointer text-md font-medium m-0 mb-0.75 text-on-surface"
                 >
                   {client?.name}
                 </p>

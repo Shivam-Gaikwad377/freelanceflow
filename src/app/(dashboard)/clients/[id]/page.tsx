@@ -17,6 +17,7 @@ import { IProject } from "@/schemas/project.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/StatusBadge";
+import ClientInitialBadge from "@/components/ClientInitialBadge";
 
 const Page = () => {
   const { openModal } = useUiStore();
@@ -103,12 +104,7 @@ const Page = () => {
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
             {/* Left: Identity */}
             <div className="flex items-start gap-6">
-              <div className="w-20 h-20 rounded-xl bg-surface-container-high flex items-center justify-center border border-outline-variant/50 shrink-0">
-                {/* Placeholder for Client Logo */}
-                <span className="font-display text-headline-lg font-bold text-primary">
-                  A
-                </span>
-              </div>
+              <ClientInitialBadge name={client?.name || "John Doe"} size="large" />
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <h2 className="font-display text-headline-lg font-bold text-on-surface tracking-tight">

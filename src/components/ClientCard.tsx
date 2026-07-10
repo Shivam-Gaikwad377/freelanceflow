@@ -1,6 +1,7 @@
 import React from "react";
-import statusBadge from "./StatusBadge";
+
 import StatusBadge from "./StatusBadge";
+import ClientInitialBadge from "./ClientInitialBadge";
 type ClientCardProps = {
   name: string;
   phone: string;
@@ -8,53 +9,16 @@ type ClientCardProps = {
   status: string;
   totalBilled?: string | number | null | undefined;
 };
-type StatusColor = {
-  [key: string]: string;
-};
+
 
 const ClientCard = ({ name, phone, email, status, totalBilled }: ClientCardProps) => {
-  const statusColor: StatusColor = {
-    active: "bg-secondary-container text-on-secondary-container",
-    inactive: "bg-surface-variant text-on-surface-variant",
-  };
-  const clientInitialsColor: StatusColor = {
-    A: "bg-amber-200", // Amber
-    B: "bg-blue-200", // Blue
-    C: "bg-cyan-200", // Cyan
-    D: "bg-slate-200", // Denim / Dark Slate
-    E: "bg-emerald-200", // Emerald
-    F: "bg-fuchsia-200", // Fuchsia
-    G: "bg-green-200", // Green
-    H: "bg-yellow-200", // Honey
-    I: "bg-indigo-200", // Indigo
-    J: "bg-teal-200", // Jade
-    K: "bg-stone-200", // Khaki
-    L: "bg-lime-200", // Lime
-    M: "bg-rose-200", // Magenta / Maroon
-    N: "bg-blue-100", // Navy (Soft tint)
-    O: "bg-orange-200", // Orange
-    P: "bg-purple-200", // Purple
-    Q: "bg-zinc-200", // Quartz
-    R: "bg-red-200", // Red
-    S: "bg-sky-200", // Sky
-    T: "bg-teal-100", // Teal
-    U: "bg-indigo-100", // Ultramarine (Soft tint)
-    V: "bg-violet-200", // Violet
-    W: "bg-rose-100", // Wine (Soft tint)
-    X: "bg-lime-100", // Xanthic
-    Y: "bg-yellow-100", // Yellow
-    Z: "bg-zinc-100",
-  };
+ 
+ 
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg hover:shadow-[0_8px_24px_-4px_rgba(70,72,212,0.04)] transition-shadow cursor-pointer group">
       <div className="flex justify-between items-center mb-md e-2">
         <div className="flex items-center gap-md">
-          <div
-            className={`${clientInitialsColor[name.charAt(0).toUpperCase()]} w-12 h-12 rounded-full flex items-center font-bold text-xl justify-center object-cover border  border-surface-variant`}
-          >
-            {name.charAt(0).toUpperCase() +
-              name.split(" ").slice(-1)[0].charAt(0).toUpperCase()}
-          </div>
+          <ClientInitialBadge name={name} size="medium" />
           <div>
             <h3 className="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">
               {name}
