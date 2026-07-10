@@ -16,8 +16,8 @@ import { IClient } from "@/schemas/createClient.schema";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
-import StatusBadge from "@/components/StatusBadge";
-import ClientInitialBadge from "@/components/ClientInitialBadge";
+import StatusBadge from "@/components/Invoice/StatusBadge";
+import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 const Page = () => {
   const [invoice, setInvoice] = useState<IInvoice | null>(null);
   const [loading, setLoading] = useState(true);

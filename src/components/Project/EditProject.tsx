@@ -9,8 +9,8 @@ import { toast } from "sonner";
 import { updateProjectSchema } from "@/schemas/updateProject.schema";
 import ApiResponse from "@/types/ApiResponse";
 import { IProject } from "@/schemas/project.schema";
-import PrimaryButton from "./PrimaryButton";
-import SecondaryButton from "./SecondaryButton";
+import PrimaryButton from "../PrimaryButton";
+import SecondaryButton from "../SecondaryButton";
 
 interface EditProjectDrawerProps {
   open: boolean;

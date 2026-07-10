@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import ProjectCard from "@/components/ProjectCard";
+import ProjectCard from "@/components/Project/ProjectCard";
 import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
 import useFetch from "@/app/hooks/useFetch";
 

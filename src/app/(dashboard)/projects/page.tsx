@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
-import ProjectKanbanBoard from "@/components/ProjectKanbanBoard";
+import ProjectKanbanBoard from "@/components/Project/ProjectKanbanBoard";
 import useDebounce from "@/app/hooks/useDebounce";
 import ApiResponse from "@/types/ApiResponse";
 import axios from "axios";
-import ProjectCard from "@/components/ProjectCard";
+import ProjectCard from "@/components/Project/ProjectCard";
 import { useRouter } from "next/navigation";
 import useFetch from "@/app/hooks/useFetch";
 

@@ -10,10 +10,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { projectSchema } from "@/schemas/project.schema";
 import { useSession } from "next-auth/react";
-import BackButton from "./BackButton";
+import BackButton from "../BackButton";
 import { ProjectInput, ProjectOutput } from "@/schemas/project.schema";
-import PrimaryButton from "./PrimaryButton";
-import SecondaryButton from "./SecondaryButton";
+import PrimaryButton from "../PrimaryButton";
+import SecondaryButton from "../SecondaryButton";
 const AddProject = () => {
   const { activeModal, modalContext, closeModal } = useUiStore();
   const isOpen = activeModal === "addProject";

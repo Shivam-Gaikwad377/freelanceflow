@@ -11,9 +11,9 @@ import { toast } from "sonner";
 import ApiResponse from "@/types/ApiResponse";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import { CreateClientInput, CreateClientOutput } from "@/schemas/createClient.schema";
-import PrimaryButton from "./PrimaryButton";
-import SecondaryButton from "./SecondaryButton";
-import BackButton from "./BackButton";
+import PrimaryButton from "../PrimaryButton";
+import SecondaryButton from "../SecondaryButton";
+import BackButton from "../BackButton";
 interface AddClientProps {
     open: boolean;
     onClose: () => void;

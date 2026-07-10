@@ -10,10 +10,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createInvoiceSchema } from "@/schemas/createInvoice.schema";
 import { useSession } from "next-auth/react";
-import BackButton from "./BackButton";
+import BackButton from "../BackButton";
 import { CreateInvoiceInput, CreateInvoiceOutput } from "@/schemas/createInvoice.schema";
-import PrimaryButton from "./PrimaryButton";
-import SecondaryButton from "./SecondaryButton";
+import PrimaryButton from "../PrimaryButton";
+import SecondaryButton from "../SecondaryButton";
 
 
 const AddInvoice = () => {

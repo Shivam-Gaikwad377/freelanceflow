@@ -1,9 +1,9 @@
 "use client";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/TopNavbar";
-import AddProject from "@/components/AddProject";
+import AddProject from "@/components/Project/AddProject";
 import { useUiStore } from "@/store/useUiStore";
-import AddInvoice from "@/components/AddInvoice";
+import AddInvoice from "@/components/Invoice/AddInvoice";
 
 export default function DashboardLayout({
   children,

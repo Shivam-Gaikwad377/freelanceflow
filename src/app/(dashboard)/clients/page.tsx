@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ClientCard from "@/components/ClientCard";
-import AddClient from "@/components/AddCLient";
+import AddClient from "@/components/Client/AddCLient";
 import Pagination from "@/components/Pagination";
 import { toast } from "sonner";
 import useDebounce from "@/app/hooks/useDebounce";

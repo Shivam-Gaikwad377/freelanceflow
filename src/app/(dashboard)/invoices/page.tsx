@@ -11,8 +11,8 @@ import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "@/components/PrimaryButton";
-import StatusBadge from "@/components/StatusBadge";
-import ClientInitialBadge from "@/components/ClientInitialBadge";
+import StatusBadge from "@/components/Invoice/StatusBadge";
+import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";

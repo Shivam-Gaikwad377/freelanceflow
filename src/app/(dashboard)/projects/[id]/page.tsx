@@ -14,8 +14,8 @@ import { IProject } from "@/schemas/project.schema";
 import { IClient } from "@/schemas/createClient.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
-import StatusBadge from "@/components/StatusBadge";
-import ClientInitialBadge from "@/components/ClientInitialBadge";
+import StatusBadge from "@/components/Invoice/StatusBadge";
+import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 
 const Page = () => {
  
