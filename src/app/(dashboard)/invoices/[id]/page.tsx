@@ -52,12 +52,15 @@ const Page = () => {
     register,
     handleSubmit,
     reset,
+    trigger,
+    watch,
     formState: { errors, isSubmitting },
   } = lineItemsForm;
   const { fields, append, remove } = useFieldArray({
     control: lineItemsForm.control,
     name: "lineItems",
   });
+  const watchLineItems = watch("lineItems");
 
   useEffect(() => {
     if (invoiceData) {
@@ -141,11 +144,10 @@ const Page = () => {
             label="Back to Invoices"
           />
           <div className="flex items-center justify-center gap-sm mb-lg">
-         
             <SecondaryButton
               label="Download"
               icon="download"
-              onClick={()=>{}}
+              onClick={() => {}}
             />
             {invoice?.status !== "Paid" ? (
               <PrimaryButton
@@ -172,7 +174,17 @@ const Page = () => {
               className="text-label-md px-3.5 py-1.25 rounded-lg font-medium"
               id="status-badge"
             >
-              <StatusBadge color={invoice?.status === "Paid" ? "success" : invoice?.status === "pending" ? "normal" : "error"} label={invoice?.status || "Status"} fontSize="large" />
+              <StatusBadge
+                color={
+                  invoice?.status === "Paid"
+                    ? "success"
+                    : invoice?.status === "pending"
+                      ? "normal"
+                      : "error"
+                }
+                label={invoice?.status || "Status"}
+                fontSize="large"
+              />
             </span>
           </div>
           <div className="border-t border-outline-variant/30 mt-md pt-md grid grid-cols-3 gap-md">
@@ -237,7 +249,10 @@ const Page = () => {
               Bill to
             </p>
             <div className="flex items-center gap-3 mb-sm">
-              <ClientInitialBadge name={client?.name || "Client Name"} size="small" />
+              <ClientInitialBadge
+                name={client?.name || "Client Name"}
+                size="small"
+              />
               <div className="flex gap-2">
                 <p
                   onClick={() =>
@@ -247,7 +262,11 @@ const Page = () => {
                 >
                   {client?.name}
                 </p>
-                <StatusBadge color={client?.status === "active" ? "success" : "normal"} label={client?.status || "Status"} fontSize="small" />
+                <StatusBadge
+                  color={client?.status === "active" ? "success" : "normal"}
+                  label={client?.status || "Status"}
+                  fontSize="small"
+                />
               </div>
             </div>
             <div className="border-t border-outline-variant/30 pt-2.5 flex flex-col gap-1.75">
@@ -287,7 +306,11 @@ const Page = () => {
             <div className="border-t border-outline-variant/30 pt-2.5 flex flex-col gap-1.75">
               <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
                 <span className="material-symbols-outlined text-[15px]">
-                  {project?.status === "completed" ? "check_circle" : project?.status === "in progress" ? "clock_loader_40" : "pending"}
+                  {project?.status === "completed"
+                    ? "check_circle"
+                    : project?.status === "in progress"
+                      ? "clock_loader_40"
+                      : "pending"}
                 </span>
                 {project?.status}
               </p>
@@ -315,10 +338,25 @@ const Page = () => {
             <SecondaryButton
               label="Add Item"
               icon="add"
-               onClick={() => {
-                const newIndex = fields.length; // capture before append
-                append({ description: "", quantity: 1, price: 0 });
-                setEditingIndex(newIndex); // opens the new blank row in edit mode
+              onClick={async () => {
+                // 1. Validate all existing line items
+                const isValid = await trigger("lineItems");
+                if (!isValid) {
+                  toast.error("please enter all fields.", {
+                    position: "top-right",
+                  });
+                }
+                // 2. Only add a new row if all current rows are valid
+                if (isValid || editingIndex === null) {
+                  const newIndex = fields.length;
+                  append({
+                    description: "",
+                    quantity: 1,
+                    price: 0,
+                  });
+                  // 3. Put the newly added row into edit mode
+                  setEditingIndex(newIndex);
+                }
               }}
               fontSize="small"
             />
@@ -403,15 +441,39 @@ const Page = () => {
                     </td>
                     <td className="p-2.75 flex gap-2 font-medium text-right justify-center items-center w-[15%] text-on-surface">
                       <button
-                        onClick={() => setEditingIndex(null)}
+                        onClick={() => {
+                          const savedCount = invoice?.lineItems?.length ?? 0;
+                          if (index >= savedCount) {
+                            // it's a newly appended, unsaved row — remove it entirely
+                            remove(index);
+                          } else {
+                            // it's an existing row — revert any typed-but-unsaved edits
+                            lineItemsForm.resetField(`lineItems.${index}`, {
+                              defaultValue: invoice!.lineItems[index],
+                            });
+                          }
+                          setEditingIndex(null);
+                        }}
                         className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
                       >
                         Cancel
                       </button>
                       <button
-                        onClick={lineItemsForm.handleSubmit(
-                          handleLineItemsUpdate
-                        )}
+                        onClick={async () => {
+                          // 1. Manually trigger validation for the current row's fields
+                          const isValid = await trigger([
+                            `lineItems.${index}.description`,
+                            `lineItems.${index}.quantity`,
+                            `lineItems.${index}.price`,
+                          ]);
+
+                          // 2. If valid, close the edit mode for this row
+                          if (isValid) {
+                            handleLineItemsUpdate({
+                              lineItems: watchLineItems,
+                            });
+                          }
+                        }}
                         className="flex items-center gap-1.25 text-[13px] text-on-primary bg-primary hover:opacity-90 transition-opacity px-md py-xs rounded-lg"
                       >
                         <span id="action-label">Save</span>
@@ -433,7 +495,7 @@ const Page = () => {
                       {field.price * field.quantity}
                     </td>
                     <td className="py-2.75 font-medium text-left w-[10%] text-on-surface">
-                      <SecondaryButton 
+                      <SecondaryButton
                         onClick={() => setEditingIndex(index)}
                         label="Edit"
                         icon="edit"
