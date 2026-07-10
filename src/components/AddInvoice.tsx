@@ -212,7 +212,7 @@ const AddInvoice = () => {
                     });
                     setClient(selected || null);
                   }}
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all appearance-none"
+                  className="form-input-select"
                 >
                   <option disabled value="">
                     Select a client...
@@ -241,7 +241,7 @@ const AddInvoice = () => {
                       shouldValidate: true,
                     });
                   }}
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all appearance-none"
+                  className="form-input-select"
                 >
                   <option disabled value="">
                     Select a project...
@@ -260,7 +260,7 @@ const AddInvoice = () => {
                   Issue date
                 </label>
                 <input
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all"
+                  className="form-input-text"
                   type="date"
                   {...register("issueDate", { valueAsDate: true })}
                 />
@@ -270,7 +270,7 @@ const AddInvoice = () => {
                   Due date
                 </label>
                 <input
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all"
+                  className="form-input-text"
                   type="date"
                   {...register("dueDate", { valueAsDate: true })}
                 />
@@ -329,7 +329,7 @@ const AddInvoice = () => {
                             })}
                             placeholder="Description"
                             type="text"
-                            className="w-full  bg-surface-container-lowest border border-outline-variant rounded px-md py-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all"
+                            className="form-input-text"
                           />
                         </td>
                         <td className="py-4 px-1">
@@ -339,7 +339,7 @@ const AddInvoice = () => {
                             })}
                             min="1"
                             type="number"
-                            className="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all"
+                            className="form-input-text"
                           />
                         </td>
                         <td className="py-4 px-1">
@@ -349,7 +349,7 @@ const AddInvoice = () => {
                             })}
                             min="1"
                             type="number"
-                            className="w-full bg-surface-container-lowest border border-outline-variant rounded px-md py-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim transition-all"
+                            className="form-input-text"
                           />
                         </td>
                         <td className="py-4 px-1 text-right font-body-md text-body-md text-on-surface">

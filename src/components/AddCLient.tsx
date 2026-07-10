@@ -91,7 +91,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                     Full Name <span className="text-error">*</span>
                   </label>
                   <input
-                    className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                    className="form-input-text"
                     placeholder="e.g. Jonathan Smith"
                     required={true}
                     type="text"
@@ -109,7 +109,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                     Email Address <span className="text-error">*</span>
                   </label>
                   <input
-                    className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                    className="form-input-text"
                     placeholder="jonathan@example.com"
                     required={true}
                     type="email"
@@ -130,7 +130,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                     Phone Number
                   </label>
                   <input
-                    className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                    className="form-input-text"
                     placeholder="+1 (555) 000-0000"
                     type="tel"
                     {...register("phone", {
@@ -143,7 +143,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                     Business / Company Name
                   </label>
                   <input
-                    className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                    className="form-input-text"
                     placeholder="Acme Corp"
                     type="text"
                     {...register("company", {
@@ -159,7 +159,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                   Description
                 </label>
                 <textarea
-                  className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                  className="form-input-text"
                   placeholder="Street Address, Suite, City, ZIP, Country"
                   rows={3}
                     {...register("description")}
@@ -174,8 +174,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                   <label className="flex items-center gap-md cursor-pointer group">
                     <div className="relative flex items-center justify-center">
                       <input
-                        className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
-                       
+                        className="form-input-radio peer"
                         type="radio"
                         value="active"
                         {...register("status", { required: true })}
@@ -189,8 +188,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                   <label className="flex items-center gap-md cursor-pointer group">
                     <div className="relative flex items-center justify-center">
                       <input
-                        className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
-                        
+                        className="form-input-radio peer"
                         type="radio"
                         value="inactive"
                         {...register("status", { required: true })}

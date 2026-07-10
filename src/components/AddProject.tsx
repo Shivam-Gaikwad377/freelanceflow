@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, {  useEffect } from "react";
 import { useUiStore } from "@/store/useUiStore";
 import { Form, useForm } from "react-hook-form";
 import axios from "axios";
@@ -131,7 +131,7 @@ const AddProject = () => {
                     <span className="text-error">*</span>
                   </label>
                   <input
-                    className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                    className="form-input-text"
                     placeholder="e.g., Website Redesign"
                     required={true}
                     type="text"
@@ -144,7 +144,7 @@ const AddProject = () => {
                   </label>
                   <select
                     value={form.watch("clientId")}
-                    className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md appearance-none"
+                    className="form-input-select"
                     onChange={(e) => {
                       const selected = clients.find(
                         (c) => c._id === e.target.value
@@ -175,12 +175,13 @@ const AddProject = () => {
                     Total Budget
                   </label>
                   <div className="flex">
-                    <span className="inline-flex items-center px-md rounded-l-lg border border-r-0 border-outline bg-surface-container-low text-on-surface-variant text-body-sm">
-                      $
-                    </span>
+                    
                     <input
-                      className="flex-1 min-w-0 bg-surface border border-outline rounded-r-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
-                      placeholder="0.00"
+                      className="flex-1 min-w-0 form-input-text"
+                      placeholder={(0.00).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: session.data?.user?.currency || "USD",
+                      })}
                       type="number"
                       {...register("budget", { valueAsNumber: true })}
                     />
@@ -191,7 +192,7 @@ const AddProject = () => {
                     Deadline
                   </label>
                   <input
-                    className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                    className="form-input-text"
                     type="date"
                     {...register("deadline")}
                   />
@@ -203,7 +204,7 @@ const AddProject = () => {
                   Description
                 </label>
                 <textarea
-                  className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                  className="form-input-text resize-none"
                   placeholder="Brief overview of project goals..."
                   rows={4}
                   {...register("description")}
@@ -218,7 +219,7 @@ const AddProject = () => {
                   <label className="flex items-center gap-md cursor-pointer group">
                     <div className="relative flex items-center justify-center">
                       <input
-                        className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
+                        className="form-input-radio peer"
                         value="open"
                         type="radio"
                         {...register("status", {
@@ -234,7 +235,7 @@ const AddProject = () => {
                   <label className="flex items-center gap-md cursor-pointer group">
                     <div className="relative flex items-center justify-center">
                       <input
-                        className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
+                        className="form-input-radio peer"
                         value="in progress"
                         type="radio"
                         {...register("status", {
@@ -250,7 +251,7 @@ const AddProject = () => {
                   <label className="flex items-center gap-md cursor-pointer group">
                     <div className="relative flex items-center justify-center">
                       <input
-                        className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
+                        className="form-input-radio peer"
                         value="completed"
                         type="radio"
                         {...register("status", {

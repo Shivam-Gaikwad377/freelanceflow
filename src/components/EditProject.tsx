@@ -143,7 +143,7 @@ const EditProjectDrawer = ({
                 Title <span className="text-error">*</span>
               </label>
               <input
-                className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                className="form-input-text"
                 placeholder="e.g. Jonathan Smith"
                 type="text"
                 {...register("title")}
@@ -161,7 +161,7 @@ const EditProjectDrawer = ({
                 Client Name <span className="text-error">*</span>
               </label>
               <input
-                className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                className="form-input-text"
                 placeholder="e.g. Jonathan Smith"
                 type="text"
                 {...register("client")}
@@ -180,7 +180,7 @@ const EditProjectDrawer = ({
                   Budget
                 </label>
                 <input
-                  className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                  className="w-full form-input-text"
                   placeholder="e.g. $5000"
                   type="number"
                   {...register("budget", { valueAsNumber: true })}
@@ -196,7 +196,7 @@ const EditProjectDrawer = ({
                   Deadline
                 </label>
                 <input
-                  className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                  className="w-full form-input-text"
                   placeholder="e.g. 2023-12-31"
                   type="date"
                   {...register("deadline")}
@@ -215,7 +215,7 @@ const EditProjectDrawer = ({
                 Description
               </label>
               <textarea
-                className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                className="w-full form-input-text"
                 placeholder="Street Address, Suite, City, ZIP, Country"
                 rows={3}
                 {...register("description")}
@@ -231,7 +231,7 @@ const EditProjectDrawer = ({
                 <label className="flex items-center gap-md cursor-pointer group">
                   <div className="relative flex items-center justify-center">
                     <input
-                      className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
+                      className="peer form-input-radio"
                       type="radio"
                       value="open"
                       {...register("status")}
@@ -245,7 +245,7 @@ const EditProjectDrawer = ({
                 <label className="flex items-center gap-md cursor-pointer group">
                   <div className="relative flex items-center justify-center">
                     <input
-                      className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
+                      className="peer form-input-radio"
                       type="radio"
                       value="in progress"
                       {...register("status")}
@@ -259,7 +259,7 @@ const EditProjectDrawer = ({
                 <label className="flex items-center gap-md cursor-pointer group">
                   <div className="relative flex items-center justify-center">
                     <input
-                      className="peer h-5 w-5 appearance-none rounded-full border border-outline checked:border-primary focus:ring-primary transition-all"
+                      className="peer form-input-radio"
                       type="radio"
                       value="completed"
                       {...register("status")}
