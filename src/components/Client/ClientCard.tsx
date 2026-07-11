@@ -1,6 +1,6 @@
 import React from "react";
 
-import StatusBadge from "./StatusBadge";
+import StatusBadge from "../Invoice/StatusBadge";
 import ClientInitialBadge from "./ClientInitialBadge";
 type ClientCardProps = {
   name: string;

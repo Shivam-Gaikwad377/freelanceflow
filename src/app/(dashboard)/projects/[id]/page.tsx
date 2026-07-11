@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import EditProjectDrawer from "@/components/EditProject";
+import EditProjectDrawer from "@/components/Project/EditProject";
 import { toast } from "sonner";
 import { useUiStore } from "@/store/useUiStore";
 import useFetch from "@/app/hooks/useFetch";

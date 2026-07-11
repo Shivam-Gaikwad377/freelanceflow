@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import ClientCard from "@/components/ClientCard";
+import ClientCard from "@/components/Client/ClientCard";
 import AddClient from "@/components/Client/AddCLient";
 import Pagination from "@/components/Pagination";
 import { toast } from "sonner";

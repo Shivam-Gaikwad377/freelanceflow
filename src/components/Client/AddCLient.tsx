@@ -251,6 +251,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
               invoice.
             </p>
           </div>
+          
         </div>
       </div>
     </div>

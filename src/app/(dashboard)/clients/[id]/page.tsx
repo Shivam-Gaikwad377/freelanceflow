@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
 import Link from "next/link";
-import EditClientDrawer from "@/components/EditClient";
+import EditClientDrawer from "@/components/Client/EditClient";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
