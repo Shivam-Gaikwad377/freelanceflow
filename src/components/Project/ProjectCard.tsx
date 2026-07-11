@@ -1,26 +1,53 @@
-
 import React from "react";
+import { useState } from "react";
+import ConfirmationBox from "../confirmationBox";
 interface ProjectPageProps {
   // Define any props you want to pass to the component here
-    title: string; // Project title
-    client: string; // Client name
-    deadline: string; // Deadline date
-    budget: number; // Project budget
-     // Optional click handler
-    status: "open" | "in progress" | "completed"; // Project status
-     // Optional click handler
+  title: string; // Project title
+  client: string; // Client name
+  deadline: string; // Deadline date
+  budget: number; // Project budget
+  // Optional click handler
+  status: "open" | "in progress" | "completed"; // Project status
+  // Optional click handler
+  onClick?: () => void; // Optional click handler
+  onDelete?: () => Promise<void>; // Optional delete handler
 }
 type style = {
   [key: string]: string;
 };
-const ProjectCard = ({ title, client, deadline  }: ProjectPageProps) => {
- 
-    
+const ProjectCard = ({
+  title,
+  client,
+  deadline,
+  onClick,
+  onDelete,
+}: ProjectPageProps) => {
+  const [showConfirmCard, setShowConfirmCard] = useState(false);
+  const handleConfirm = async () => {
+    await onDelete?.();
+    setShowConfirmCard(false);
+  };
+
   return (
-    <div className="bg-surface rounded-lg p-lg border border-outline-variant/40 shadow-sm hover:shadow-[0_8px_24px_rgba(96,99,238,0.04)] hover:border-primary/30 transition-all cursor-pointer active:cursor-pointing group">
-      <h4 className="text-body-md font-body-md font-semibold text-on-surface mb-1">
-        {title}
-      </h4>
+    <div
+      onClick={onClick}
+      className="group bg-surface rounded-lg p-lg border border-outline-variant/40 shadow-sm hover:shadow-[0_8px_24px_rgba(96,99,238,0.04)] hover:border-primary/30 transition-all cursor-pointer active:cursor-pointing group"
+    >
+      <div className=" flex justify-between items-center mb-sm">
+        <h4 className="text-body-md font-body-md font-semibold text-on-surface mb-1">
+          {title}
+        </h4>
+        <span
+          onClick={(e) => {
+            e.stopPropagation(); // stops it from reaching the card's onClick
+            setShowConfirmCard(true);
+          }}
+          className="hover:text-primary  duration-200 material-symbols-outlined text-[20px] group-hover:opacity-100 opacity-0 transition-all"
+        >
+          delete
+        </span>
+      </div>
       <p className="text-body-sm font-body-sm text-on-surface-variant mb-md flex items-center gap-xs">
         <span className="material-symbols-outlined text-[16px]">domain</span>{" "}
         {client}
@@ -36,9 +63,14 @@ const ProjectCard = ({ title, client, deadline  }: ProjectPageProps) => {
             day: "numeric",
           })}
         </div>
-        {/* <div className={`${clientInitialsColor[client.charAt(0).toUpperCase()]} w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-[10px] font-bold text-primary`}>
-        
-        </div> */}
+        {showConfirmCard && (
+          <ConfirmationBox
+            message="Are you sure you want to delete this project? "
+            message2="Deleting this project will also delete all associated invoices."
+            onConfirm={handleConfirm}
+            onCancel={() => setShowConfirmCard(false)}
+          />
+        )}
       </div>
     </div>
   );

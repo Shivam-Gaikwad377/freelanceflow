@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ProjectCard from "@/components/Project/ProjectCard";
 import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
 import useFetch from "@/app/hooks/useFetch";
+import { toast } from "sonner";
 
 type Status = "open" | "in progress" | "completed";
 
@@ -25,6 +26,23 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
   const [loadingMore, setLoadingMore] = useState(false); // bottom spinner
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  const handleDelete = async (projectId: string) => {
+    try {
+      const response = await axios.delete(`/api/projects/${projectId}`);
+      if (response.data.success) {
+        toast.success("Project deleted successfully");
+        setProjects((prevProjects) =>
+          prevProjects.filter((project) => project._id !== projectId)
+        );
+        setTotal((prevTotal) => prevTotal - 1);
+      } else {
+        console.error("Failed to delete project:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
+  }
 
   // ── Core fetch — page 1 replaces, page 2+ appends ──────────────────────
   const fetchProjects = useCallback(
@@ -120,10 +138,7 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
         {!loading &&
           !error &&
           projects.map((project) => (
-            <div
-              key={project?._id}
-              onClick={() => router.push(`/projects/${project._id}`)}
-            >
+            
               <ProjectCard
                 key={project?._id}
                 title={project.title}
@@ -131,8 +146,10 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
                 deadline={project.deadline}
                 budget={project.budget}
                 status={project.status}
+                onClick={() => router.push(`/projects/${project._id}`)}
+                onDelete={() => handleDelete(project._id)}
               />
-            </div>
+            
           ))}
 
         {/* ✅ Sentinel — hook watches this div */}

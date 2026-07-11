@@ -2,7 +2,7 @@ import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 import { NextResponse } from "next/server";
 import Project from "@/models/project.model";
-
+import Invoice from "@/models/invoice.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { isValidObjectId } from "mongoose";
@@ -78,6 +78,13 @@ export async function DELETE(request: Request, { params }: RouteContext) {
       );
     }
     await connectToDatabase();
+    const deletedInvoices = await Invoice.deleteMany({
+      projectId: id,
+      userId: session.user._id,
+    });
+    if(deletedInvoices.deletedCount === 0) {
+      console.warn(`No invoices found for project ${id} or not owned by user`);
+    }
     const deleted = await Project.findOneAndDelete({
       _id: id,
       userId: session.user._id,
