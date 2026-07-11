@@ -13,6 +13,8 @@ import { IInvoice } from "@/schemas/createInvoice.schema";
 import PrimaryButton from "@/components/PrimaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
+import ConfirmationBox from "@/components/confirmationBox";
+import { set } from "mongoose";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -38,8 +40,10 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [monthRange, setMonthRange] = useState<string >("all");
+  const [monthRange, setMonthRange] = useState<string>("all");
   const isNumeric = (str: string) => /^\d+$/.test(str.trim());
+  const [showConfirmBox, setShowConfirmBox] = useState(false);
+  const [invoiceToDelete, setInvoiceToDelete] = useState<string >("");
 
   const [stats, setStats] = useState({
     outstanding: {
@@ -84,6 +88,18 @@ const Page = () => {
       setStats(statsData);
     }
   }, [statsData]);
+  const handleDeleteInvoice = async (invoiceId: string) => {
+    try {
+      const response = await axios.delete(`/api/Invoices/${invoiceId}`);
+      if (response.data.success) {
+        toast.success("Invoice deleted successfully");
+        setInvoices((prevInvoices) => prevInvoices.filter((invoice) => invoice._id.toString() !== invoiceId));
+      }
+    } catch (error) {
+      toast.error("Failed to delete invoice");
+    }
+  };
+
 
   return (
     <div className="flex-1  min-h-screen bg-background">
@@ -207,7 +223,9 @@ const Page = () => {
               value={monthRange}
               onChange={(e) => setMonthRange(e.target.value)}
             >
-              <option selected={monthRange === "all"} value="all">All Time</option>
+              <option selected={monthRange === "all"} value="all">
+                All Time
+              </option>
               <option value="1">Last 1 Month</option>
               <option value="3">Last 3 Months</option>
               <option value="6">Last 6 Months</option>
@@ -236,6 +254,7 @@ const Page = () => {
                   <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold text-center">
                     Status
                   </th>
+                  <th className=" font-label-sm text-label-lg text-on-surface-variant font-semibold"></th>
                 </tr>
               </thead>
               <tbody className="font-body-sm text-body-sm">
@@ -287,14 +306,17 @@ const Page = () => {
                     <tr
                       onClick={() => router.push(`/invoices/${invoice._id}`)}
                       key={invoice?._id.toString()}
-                      className="border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
+                      className="group border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
                     >
                       <td className="py-sm px-lg font-medium text-on-surface">
                         {invoice?.invoiceNumber}
                       </td>
                       <td className="py-sm px-lg">
                         <div className="flex items-center gap-sm">
-                          <ClientInitialBadge name={invoice?.client || "Client Name"} size="small" />
+                          <ClientInitialBadge
+                            name={invoice?.client || "Client Name"}
+                            size="small"
+                          />
                           <span className="text-on-surface">
                             {invoice?.client}
                           </span>
@@ -317,7 +339,29 @@ const Page = () => {
                         })}
                       </td>
                       <td className="py-sm px-lg text-center">
-                       <StatusBadge color={invoice.status === "Paid" ? "success" : invoice.status === "pending" ? "normal" : "error"} label={invoice.status} fontSize="small" />
+                        <StatusBadge
+                          color={
+                            invoice.status === "Paid"
+                              ? "success"
+                              : invoice.status === "pending"
+                                ? "normal"
+                                : "error"
+                          }
+                          label={invoice.status}
+                          fontSize="small"
+                        />
+                      </td>
+                      <td className=" pr-lg text-right">
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowConfirmBox(true);
+                            setInvoiceToDelete(invoice._id.toString());
+                          }}
+                          className="group-hover:opacity-100 opacity-0 transition-all duration-200 hover:text-primary  material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors"
+                        >
+                          delete
+                        </span>
                       </td>
                     </tr>
                   ))
@@ -337,6 +381,17 @@ const Page = () => {
           </div>
         </div>
       </div>
+      {showConfirmBox && (
+        <ConfirmationBox
+          message="Are you sure you want to delete this invoice?"
+          message2="This action can't be undone and will permanently remove the invoice from your records."
+          onConfirm={async () => {
+            handleDeleteInvoice(invoiceToDelete);
+            setShowConfirmBox(false);
+          }}
+          onCancel={() => setShowConfirmBox(false)}
+        />
+      )}
     </div>
   );
 };

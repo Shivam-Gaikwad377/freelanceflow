@@ -20,8 +20,8 @@ const ConfirmationBox = ({
       className=" inset-0 flex items-center justify-center h-screen fixed bg-black/40 rounded-xl z-50"
     >
       <div className="bg-surface  border border-outline-variant/40 rounded-xl p-lg flex flex-col items-center gap-sm w-auto h-auto">
-        <p className="text-on-surface ">{message}</p>
-        {message2 && <p className="text-on-surface-variant font-bold">{message2}</p>}
+        <p className="w-100 text-center text-on-surface ">{message}</p>
+        {message2 && <p className="w-100 text-center text-on-surface-variant font-bold">{message2}</p>}
         <div className="flex items-center gap-4 mt-md">
             <PrimaryButton label="Confirm" onClick={onConfirm} />
             <SecondaryButton
