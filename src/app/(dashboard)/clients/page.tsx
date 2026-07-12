@@ -43,6 +43,23 @@ const Page = () => {
   const handleClick = (id: string) => {
     router.replace(`/clients/${id}`);
   };
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await axios.delete(`/api/Clients/${id}`);
+      if (response.data.success) {
+        toast.success("Client deleted successfully");
+        // Remove the deleted client from the local state
+        setClients((prevClients) =>
+          prevClients.filter((client) => client._id.toString() !== id)
+        );
+        // Update the total clients count
+        setTotalClients((prevTotal) => prevTotal - 1);
+      }
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      toast.error("Failed to delete client");
+    }
+  };
   const [AddClientOpen, setAddClientOpen] = useState<boolean>(false);
 
   return (
@@ -114,8 +131,9 @@ const Page = () => {
             </div>
           ) : (
             clients.map((client) => (
-              <div key={client?._id?.toString()} onClick={() => handleClick(client?._id?.toString() || "") }>
+             
                 <ClientCard
+                  key={client?._id.toString()}
                   name={client?.name}
                   status={client?.status}
                   phone={client?.phone}
@@ -124,8 +142,10 @@ const Page = () => {
                       style: "currency",
                       currency: session?.data?.user?.currency || "USD",
                     })}
+                    onClick={() => handleClick(client._id.toString())}
+                    onDelete={() => handleDelete(client._id.toString())}
                 />
-              </div>
+              
             ))
           )}
         </div>

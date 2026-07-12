@@ -210,6 +210,15 @@ export async function DELETE(request: Request, { params }: RouteContext) {
       );
     }
     await connectToDatabase();
+    const projectDeleted = await Project.deleteMany({
+      clientId: id,
+      userId: session.user._id,
+    });
+    const invoiceDeleted = await Invoice.deleteMany({
+      clientId: id,
+      userId: session.user._id,
+    });
+    
     const deleted = await Client.findOneAndDelete({
       _id: id,
       userId: session.user._id,

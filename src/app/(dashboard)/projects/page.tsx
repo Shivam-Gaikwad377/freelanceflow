@@ -8,13 +8,14 @@ import axios from "axios";
 import ProjectCard from "@/components/Project/ProjectCard";
 import { useRouter } from "next/navigation";
 import useFetch from "@/app/hooks/useFetch";
+import {IProject} from "@/schemas/project.schema";
 
 const page = () => {
   const status = ["open", "in progress", "completed"] as const;
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 400);
   const limit = 10;
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<IProject[]>([]);
   const [offset, setOffset] = useState(0);
   const router = useRouter();
   useEffect(() => {
@@ -68,14 +69,18 @@ const page = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
                 {projects.map((project) => (
                   <div
-                    key={project?._id}
+                    key={project?._id.toString()}
                     onClick={() => router.push(`/projects/${project._id}`)}
                   >
                     <ProjectCard
-                      key={project?._id}
+                      key={project?._id.toString()}
                       title={project.title}
                       client={project.client}
-                      deadline={project.deadline}
+                      deadline={project.deadline.toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
                       budget={project.budget}
                       status={project.status}
                     />
