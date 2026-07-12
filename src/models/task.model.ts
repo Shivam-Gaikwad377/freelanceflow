@@ -45,7 +45,7 @@ export const taskSchema = new mongoose.Schema<ITask>({
   },
 },{timestamps: true});
 
-taskSchema.index({ userId: 1, projectId: 1, title: 1 }, { unique: true });
+taskSchema.index({ userId: 1, projectId: 1, title: 1 });
 taskSchema.index({ userId: 1, projectId: 1, dueDate: 1 });
 taskSchema.index({ userId: 1, projectId: 1, status: 1 });
 taskSchema.index({ userId: 1, projectId: 1, priority: 1 });
