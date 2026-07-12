@@ -5,13 +5,16 @@ import useFetch from "@/app/hooks/useFetch";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import { Check } from "lucide-react";
 import axios from "axios";
+import AddTask from "./AddTask";
 import SecondaryButton from "../SecondaryButton";
+import { set } from "mongoose";
 
 const TasksTable = ({ projectId }: { projectId: string }) => {
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [tasksTotal, setTasksTotal] = useState<number>(0);
   const [tasksLimit, setTasksLimit] = useState<number>(4);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [showAddTaskModal, setShowAddTaskModal] = useState<boolean>(false);
   const {
     data: tasksData,
     loading,
@@ -72,7 +75,7 @@ const TasksTable = ({ projectId }: { projectId: string }) => {
         <h3 className="text-headline-md text-on-surface">Tasks</h3>
         <SecondaryButton
           label="Add Task"
-          onClick={() => {}}
+          onClick={() => {setShowAddTaskModal(true)}}
           icon="add"
           fontSize="medium"
         />
@@ -143,7 +146,14 @@ const TasksTable = ({ projectId }: { projectId: string }) => {
           )}
         </div>
       </div>
+      {showAddTaskModal && (
+        <AddTask
+          projectId={projectId}
+          onClose={() => setShowAddTaskModal(false)}
+        />
+      )}
     </div>
+
   );
 };
 

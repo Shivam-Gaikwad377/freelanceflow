@@ -16,8 +16,8 @@ import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
-import { ITask } from "@/schemas/createTask.schema";
-import TasksTable from "@/components/Project/TasksTable";
+
+import TasksTable from "@/components/Tasks/TasksTable";
 
 const Page = () => {
   const [project, setProject] = useState<IProject | null>(null);
