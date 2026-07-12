@@ -16,15 +16,17 @@ import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
+import { ITask } from "@/schemas/createTask.schema";
+import TasksTable from "@/components/Project/TasksTable";
 
 const Page = () => {
- 
   const [project, setProject] = useState<IProject | null>(null);
   const { openModal } = useUiStore();
   const [client, setClient] = useState<IClient | null>(null);
   const [invoices, setInvoices] = useState<IInvoice[]>([]);
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
   const [invoicesLimit, setInvoicesLimit] = useState<number>(4);
+
   const pathname = usePathname();
   const id = pathname.split("/").pop();
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
@@ -36,6 +38,7 @@ const Page = () => {
   const { data: invoicesData, error: invoicesError } = useFetch(
     `/api/Invoices?projectId=${id}&limit=${invoicesLimit}`
   );
+
 
   useEffect(() => {
     if (projectData) {
@@ -84,7 +87,7 @@ const Page = () => {
             onClose={() => {
               setEdit(false);
             }}
-            project={project }
+            project={project}
           />
         </div>
         {/* <!-- Breadcrumbs --> */}
@@ -100,7 +103,7 @@ const Page = () => {
               icon="edit"
               onClick={() => setEdit(true)}
             />
-              
+
             {!(project?.status === "completed") && (
               <PrimaryButton
                 label="Mark as Done"
@@ -117,7 +120,17 @@ const Page = () => {
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
               <div className="flex justify-between items-start relative z-9">
                 <div>
-                  <StatusBadge color={project?.status === "completed" ? "success" : project?.status === "in progress" ? "error" : "normal"} label={project?.status} fontSize="large" />
+                  <StatusBadge
+                    color={
+                      project?.status === "completed"
+                        ? "success"
+                        : project?.status === "in progress"
+                          ? "error"
+                          : "normal"
+                    }
+                    label={project?.status}
+                    fontSize="large"
+                  />
                   <h2 className="font-display text-headline-lg text-on-surface mt-2">
                     {project?.title}
                   </h2>
@@ -156,20 +169,22 @@ const Page = () => {
                   {project?.status === "in progress" ||
                   project?.status === "completed" ? (
                     <p className="font-body-md font-semibold ">
-                     {project.StartedAt ? (new Date(project?.StartedAt).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        }
-                      )) : ("Not Started Yet")}
+                      {project.StartedAt
+                        ? new Date(project?.StartedAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )
+                        : "Not Started Yet"}
                     </p>
                   ) : (
                     <SecondaryButton
                       label="Start Project"
                       onClick={handleStartProject}
-                      icon= ""
+                      icon=""
                     />
                   )}
                 </div>
@@ -178,11 +193,13 @@ const Page = () => {
                     Deadline
                   </p>
                   <p className="font-body-md font-semibold text-tertiary">
-                    {project?.deadline ? (new Date(project.deadline).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })) : ("No deadline set")}
+                    {project?.deadline
+                      ? new Date(project.deadline).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : "No deadline set"}
                   </p>
                 </div>
                 <div className="flex items-start flex-col gap-2">
@@ -190,7 +207,8 @@ const Page = () => {
                     Time Elapsed
                   </p>
                   <p className="font-body-md font-semibold">
-                    {project?.status === "in progress" || project?.status === "completed"
+                    {project?.status === "in progress" ||
+                    project?.status === "completed"
                       ? `Time Elapsed: ${timeElapsed.toFixed(0)} days`
                       : "Project not started"}
                   </p>
@@ -208,83 +226,9 @@ const Page = () => {
                 </p>
               </div>
             </div>
+              <TasksTable projectId={id || ""} />
 
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
-              <div className="p-lg flex justify-between items-center border-b border-outline-variant">
-                <h4 className="font-headline-sm text-on-surface">
-                  Associated Invoices
-                </h4>
-                <SecondaryButton
-                  label="Add Invoice"
-                  onClick={() =>
-                    openModal("addInvoice", {
-                      prefillProject: {
-                        name: project?.title.toString(),
-                        id: project?._id.toString(),
-                        clientId: project?.clientId,
-                        client: project?.client,
-                      },
-                    })
-                    
-                  }
-                  icon="add"
-                  
-                  />
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead className="bg-surface-container-low text-on-surface-variant text-label-sm uppercase">
-                    <tr>
-                      <th className="px-lg py-4 font-semibold">Invoice #</th>
-                      <th className="px-lg py-4 font-semibold">Date</th>
-                      <th className="px-lg py-4 font-semibold">Status</th>
-                      <th className="px-lg py-4 font-semibold text-right">
-                        Amount
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-outline-variant/30">
-                    {invoices?.map((invoice) => (
-                      <tr
-                        onClick={() =>
-                          router.replace(`/invoices/${invoice?._id}`)
-                        }
-                        key={invoice._id.toString()}
-                        className="hover:bg-surface-container/50 transition-colors cursor-pointer group"
-                      >
-                        <td className="px-lg py-4 font-label-md text-on-surface font-semibold">
-                          {invoice?.invoiceNumber}
-                        </td>
-                        <td className="px-lg py-4 text-on-surface-variant font-body-sm">
-                          {new Date(invoice?.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            }
-                          )}
-                        </td>
-                        <td className="px-lg py-4">
-                          <StatusBadge color={invoice.status === "Paid" ? "success" : invoice.status === "pending" ? "normal" : "error"} label={invoice.status} fontSize="small" />
-                        </td>
-                        <td className="px-lg py-4 text-right font-semibold text-on-surface">
-                          {invoice?.amount.toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="p-md text-center">
-                <button
-                  onClick={() => setInvoicesLimit(invoicesTotal)}
-                  className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
-                >
-                  View All Invoices
-                </button>
-              </div>
-            </div>
+            
           </div>
 
           <div className="col-span-4 space-y-gutter">
@@ -296,7 +240,10 @@ const Page = () => {
                 onClick={() => router.replace(`/clients/${client?._id}`)}
                 className=" cursor-pointer flex items-center gap-md mb-lg"
               >
-                <ClientInitialBadge name={client?.name || "Client Name"} size="medium" />
+                <ClientInitialBadge
+                  name={client?.name || "Client Name"}
+                  size="medium"
+                />
                 <div>
                   <p className="font-headline-sm text-on-surface">
                     {client?.name || "Client Name"}
@@ -322,6 +269,87 @@ const Page = () => {
                   <span className="font-body-sm">
                     {client?.phone || "+1 (555) 012-3456"}
                   </span>
+                </button>
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest rounded-lg border border-outline-variant overflow-hidden card-shadow">
+              <div className="p-md flex justify-between items-center border-b border-outline-variant/30">
+                <h3 className="font-label-md text-on-surface font-semibold">
+                  Invoices Summary
+                </h3>
+                <SecondaryButton
+                  label="Add Invoice"
+                  onClick={() =>
+                    openModal("addInvoice", {
+                      prefillProject: {
+                        name: project?.title.toString(),
+                        id: project?._id.toString(),
+                        clientId: project?.clientId,
+                        client: project?.client,
+                      },
+                    })
+                  }
+                  icon="add"
+                  fontSize="small"
+                />
+              </div>
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-surface-container-low text-on-surface-variant text-label-sm border-b border-outline-variant/30">
+                  <tr>
+                    <th className="p-3 font-semibold">Invoice #</th>
+                    <th className="p-3 font-semibold">Status</th>
+                    <th className="p-3 font-semibold">Due Date</th>
+                    <th className="p-3 font-semibold text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody className="text-body-sm text-on-surface">
+                  {invoices?.map((invoice) => (
+                    <tr
+                      onClick={() =>
+                        router.replace(`/invoices/${invoice?._id}`)
+                      }
+                      key={invoice._id.toString()}
+                      className="border-b  hover:bg-surface-container/50 border-outline-variant/10  transition-colors"
+                    >
+                      <td className="p-3  font-label-md text-on-surface font-medium">
+                        {invoice?.invoiceNumber}
+                      </td>
+                      <td className="p-3  text-on-surface-variant font-body-sm">
+                        {new Date(invoice?.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
+                      </td>
+                      <td className="p-3 ">
+                        <StatusBadge
+                          color={
+                            invoice.status === "Paid"
+                              ? "success"
+                              : invoice.status === "pending"
+                                ? "normal"
+                                : "error"
+                          }
+                          label={invoice.status}
+                          fontSize="small"
+                        />
+                      </td>
+                      <td className="p-3 text-right font-medium text-on-surface">
+                        {invoice?.amount.toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="p-md text-center">
+                <button
+                  onClick={() => setInvoicesLimit(invoicesTotal)}
+                  className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                >
+                  View All Invoices
                 </button>
               </div>
             </div>
