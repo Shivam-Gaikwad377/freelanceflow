@@ -9,9 +9,9 @@ import { toast } from "sonner";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import ApiResponse from "@/types/ApiResponse";
 import { IClient } from "@/schemas/createClient.schema";
-import PrimaryButton from "./PrimaryButton";
-import { is } from "zod/v4/locales";
-import SecondaryButton from "./SecondaryButton";
+import PrimaryButton from "../PrimaryButton";
+
+import SecondaryButton from "../SecondaryButton";
 
 interface EditClientDrawerProps {
   open: boolean;

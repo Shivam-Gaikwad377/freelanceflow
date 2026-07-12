@@ -18,13 +18,15 @@ import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
+import ConfirmationBox from "@/components/confirmationBox";
+import axios from "axios";
+import { set } from "mongoose";
 
 const Page = () => {
   const { openModal } = useUiStore();
   const session = useSession();
   const [client, setClient] = useState<IClient | null>(null);
   const pathname = usePathname();
-
   const id = pathname.split("/").pop();
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [projectOffset, setProjectOffset] = useState<number>(0);
@@ -33,6 +35,16 @@ const Page = () => {
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
   const [projectTotal, setProjectTotal] = useState<number>(0);
   const [invoices, setInvoices] = useState<IInvoice[]>([]);
+  const [projectToBeDeleted, setProjectToBeDeleted] = useState<string | null>(
+    null
+  );
+  const [invoiceToBeDeleted, setInvoiceToBeDeleted] = useState<string | null>(
+    null
+  );
+  const [showProjectDeleteConfirmation, setShowProjectDeleteConfirmation] =
+    useState(false);
+  const [showInvoiceDeleteConfirmation, setShowInvoiceDeleteConfirmation] =
+    useState(false);
   const {
     data: clientData,
     loading: clientLoading,
@@ -76,6 +88,49 @@ const Page = () => {
     setProjectOffset(0);
   }, [id]);
 
+  const handleDeleteProject = async (projectId: string) => {
+    try {
+      const response = await axios.delete(`/api/projects/${projectId}`);
+      if (response.data.success) {
+        toast.success("Project deleted successfully");
+        setProjects((prevProjects) =>
+          prevProjects.filter((project) => project._id.toString() !== projectId)
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      toast.error("Failed to delete project");
+    }
+  };
+
+  const handleDeleteInvoice = async (invoiceId: string) => {
+    try {
+      const response = await axios.delete(`/api/Invoices/${invoiceId}`);
+
+      if (response.data.success) {
+        toast.success("Invoice deleted successfully");
+        setInvoices((prevInvoices) =>
+          prevInvoices.filter((invoice) => invoice._id.toString() !== invoiceId)
+        );
+        setInvoiceTotal((prevTotal) => prevTotal - 1);
+      }
+    } catch (error) {
+      console.error("Error deleting invoice:", error);
+      toast.error("Failed to delete invoice");
+    }
+  };
+  const handleConfirm = async () => {
+    if (projectToBeDeleted) {
+      await handleDeleteProject(projectToBeDeleted);
+      setShowProjectDeleteConfirmation(false);
+      setProjectToBeDeleted(null);
+    }
+    if (invoiceToBeDeleted) {
+      await handleDeleteInvoice(invoiceToBeDeleted);
+      setShowInvoiceDeleteConfirmation(false);
+      setInvoiceToBeDeleted(null);
+    }
+  };
   const router = useRouter();
 
   return (
@@ -104,7 +159,10 @@ const Page = () => {
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
             {/* Left: Identity */}
             <div className="flex items-start gap-6">
-              <ClientInitialBadge name={client?.name || "John Doe"} size="large" />
+              <ClientInitialBadge
+                name={client?.name || "John Doe"}
+                size="large"
+              />
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <h2 className="font-display text-headline-lg font-bold text-on-surface tracking-tight">
@@ -213,6 +271,7 @@ const Page = () => {
                     <th className="py-3 w-0.66/4 px-6  font-label-sm  text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold ">
                       Value
                     </th>
+                    <th className="px-4 "></th>
                   </tr>
                 </thead>
                 <tbody className="font-body-sm text-body-sm text-on-surface">
@@ -233,7 +292,17 @@ const Page = () => {
                         </div>
                       </td>
                       <td className="py-4 px-6 w-0.66/4 ">
-                        <StatusBadge color={project.status === "completed" ? "success" : project.status === "in progress" ? "error" : "normal"} label={project.status} fontSize="small" />
+                        <StatusBadge
+                          color={
+                            project.status === "completed"
+                              ? "success"
+                              : project.status === "in progress"
+                                ? "error"
+                                : "normal"
+                          }
+                          label={project.status}
+                          fontSize="small"
+                        />
                       </td>
                       <td className="py-4 w-0.66/4 px-6    text-on-surface-variant">
                         {new Date(project.createdAt).toLocaleDateString(
@@ -250,6 +319,19 @@ const Page = () => {
                           style: "currency",
                           currency: session?.data?.user?.currency || "USD",
                         })}
+                      </td>
+                      <td className="px-4 text-right">
+                        <span
+                          onClick={(e) =>{
+                            e.stopPropagation();
+                            setProjectToBeDeleted(project._id.toString())
+                            setShowProjectDeleteConfirmation(true);
+                          }
+                          }
+                          className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          delete
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -346,7 +428,17 @@ const Page = () => {
                         })}
                       </td>
                       <td className="py-4 flex  px-6">
-                       <StatusBadge color={invoice.status === "Paid" ? "success" : invoice.status === "pending" ? "normal" : "error"} label={invoice.status} fontSize="small" />
+                        <StatusBadge
+                          color={
+                            invoice.status === "Paid"
+                              ? "success"
+                              : invoice.status === "pending"
+                                ? "normal"
+                                : "error"
+                          }
+                          label={invoice.status}
+                          fontSize="small"
+                        />
                       </td>
                       <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
                         {invoice.amount?.toLocaleString("en-US", {
@@ -354,12 +446,22 @@ const Page = () => {
                           currency: session?.data?.user?.currency || "USD",
                         })}
                       </td>
-                      <td className="py-4 px-6 text-right">
+                      <td className="py-4 px-6 text-right flex gap-md">
                         <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
                           <span className="material-symbols-outlined">
                             download
                           </span>
                         </button>
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInvoiceToBeDeleted(invoice._id.toString());
+                            setShowInvoiceDeleteConfirmation(true);
+                          }}
+                          className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          delete
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -377,6 +479,26 @@ const Page = () => {
           </div>
         </section>
       </div>
+      {showProjectDeleteConfirmation && projectToBeDeleted && (
+        <ConfirmationBox
+          message="Are you sure you want to delete this project? This action cannot be undone."
+          onConfirm={handleConfirm}
+          onCancel={() => {
+            setShowProjectDeleteConfirmation(false);
+            setProjectToBeDeleted(null);
+          }}
+        />
+      )}
+      {showInvoiceDeleteConfirmation && invoiceToBeDeleted && (
+        <ConfirmationBox
+          message="Are you sure you want to delete this invoice? This action cannot be undone."
+          onConfirm={handleConfirm}
+          onCancel={() => {
+            setShowInvoiceDeleteConfirmation(false);
+            setInvoiceToBeDeleted(null);
+          }}
+        />
+      )}
     </div>
   );
 };
