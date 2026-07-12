@@ -345,12 +345,21 @@ const Page = () => {
                 </tbody>
               </table>
               <div className="p-md text-center">
-                <button
-                  onClick={() => setInvoicesLimit(invoicesTotal)}
-                  className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
-                >
-                  View All Invoices
-                </button>
+                {invoices.length === invoicesTotal ? (
+                  <button
+                    onClick={() => setInvoicesLimit(invoicesTotal-2)}
+                    className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                  >
+                    View Less
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setInvoicesLimit(invoicesTotal)}
+                    className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                  >
+                    View All Invoices
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import useFetch from "@/app/hooks/useFetch";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import { Check } from "lucide-react";
 import axios from "axios";
+import SecondaryButton from "../SecondaryButton";
 
 const TasksTable = ({ projectId }: { projectId: string }) => {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -58,17 +59,23 @@ const TasksTable = ({ projectId }: { projectId: string }) => {
       setLoadingId(null);
     }
   };
+  console.log({
+    tasksLength: tasks.length,
+    tasksLengthType: typeof tasks.length,
+    tasksTotal,
+    tasksTotalType: typeof tasksTotal,
+  });
 
   return (
     <div className="bg-surface-container-lowest rounded-lg border border-outline-variant p-lg card-shadow">
       <div className="flex justify-between items-center mb-md pb-md border-b border-outline-variant/30">
         <h3 className="text-headline-md text-on-surface">Tasks</h3>
-        <button className="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-sm hover:bg-surface-tint transition-colors flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm" data-icon="add">
-            add
-          </span>
-          Add Task
-        </button>
+        <SecondaryButton
+          label="Add Task"
+          onClick={() => {}}
+          icon="add"
+          fontSize="medium"
+        />
       </div>
       <div className="flex flex-col gap-0">
         <div className="flex items-center justify-between py-3 border-b border-outline-variant/10">
@@ -117,6 +124,23 @@ const TasksTable = ({ projectId }: { projectId: string }) => {
               </div>
             ))}
           </div>
+        </div>
+        <div className=" text-center">
+          {tasks.length === tasksTotal ? (
+            <button
+              onClick={() => setTasksLimit(4)}
+              className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+            >
+              View Less
+            </button>
+          ) : (
+            <button
+              onClick={() => setTasksLimit(tasksTotal)}
+              className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+            >
+              View All Tasks
+            </button>
+          )}
         </div>
       </div>
     </div>

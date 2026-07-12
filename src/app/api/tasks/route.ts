@@ -137,7 +137,7 @@ export async function GET(request: Request) {
       { $set: { status: "overdue" } }
     );
 
-    const [tasks, totalCount] = await Promise.all([
+    const [tasks, total] = await Promise.all([
       Task.find(filter)
         .sort({ [sortBy]: sort })
         .skip(offset)
@@ -152,7 +152,7 @@ export async function GET(request: Request) {
         message: "Tasks fetched successfully",
         data: {
           tasks,
-          totalCount,
+          total,
           offset,
           limit,
         },
