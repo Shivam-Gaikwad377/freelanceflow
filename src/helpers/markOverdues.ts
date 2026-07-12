@@ -5,7 +5,7 @@ export const markOverdueInvoices = async (userId: string) => {
     {
       userId,
       dueDate: { $lt: new Date() },
-      status: { $nin: ["paid", "overdue"] },
+      status: { $nin: ["Paid", "overdue"] },
     },
     { $set: { status: "overdue" } }
   );

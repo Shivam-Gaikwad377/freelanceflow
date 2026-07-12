@@ -7,6 +7,7 @@ export interface ITask extends mongoose.Document {
   priority: "low" | "medium" | "high";
   dueDate: Date;
   status: "pending" | "completed" | "overdue";
+  completedAt?: Date;
 }
 
 export const taskSchema = new mongoose.Schema<ITask>({
@@ -38,7 +39,11 @@ export const taskSchema = new mongoose.Schema<ITask>({
     enum: ["pending", "completed", "overdue"],
     default: "pending",
   },
-});
+  completedAt: {
+    type: Date,
+    default: null,
+  },
+},{timestamps: true});
 
 taskSchema.index({ userId: 1, projectId: 1, title: 1 }, { unique: true });
 taskSchema.index({ userId: 1, projectId: 1, dueDate: 1 });

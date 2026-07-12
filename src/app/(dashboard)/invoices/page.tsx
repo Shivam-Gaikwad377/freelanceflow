@@ -358,7 +358,7 @@ const Page = () => {
                             setShowConfirmBox(true);
                             setInvoiceToDelete(invoice._id.toString());
                           }}
-                          className="group-hover:opacity-100 opacity-0 transition-all duration-200 hover:text-primary  material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors"
+                          className="group-hover:opacity-100 opacity-0 transition-all duration-200 hover:text-primary  material-symbols-outlined text-on-surface-variant group-hover:text-on-surface"
                         >
                           delete
                         </span>
