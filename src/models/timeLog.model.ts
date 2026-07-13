@@ -8,7 +8,7 @@ export interface ITimeLog extends mongoose.Document {
     endTime: Date;
     duration: number; // in seconds
     
-    source: "manual" | "automatic";
+    source: "manual" | "stopwatch";
     status: "active"  | "completed";
 }
 
@@ -37,7 +37,7 @@ const timeLogSchema = new mongoose.Schema<ITimeLog>({
     },
     source: {
         type: String,
-        enum: ["manual", "automatic"],
+        enum: ["manual", "stopwatch"],
         default: "manual",
     },
     status: {
@@ -50,4 +50,6 @@ timeLogSchema.index({ userId: 1, projectId: 1, startTime: 1 });
 timeLogSchema.index({ userId: 1, projectId: 1, duration: 1 });
 timeLogSchema.index({ userId: 1, projectId: 1, source: 1 });
 
-export const TimeLog = mongoose.model<ITimeLog>("TimeLog", timeLogSchema);
+ const TimeLog = mongoose.model<ITimeLog>("TimeLog", timeLogSchema);
+
+export default TimeLog;
