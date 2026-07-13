@@ -76,7 +76,7 @@ const page = () => {
                       key={project?._id.toString()}
                       title={project.title}
                       client={project.client}
-                      deadline={project.deadline.toLocaleDateString(undefined, {
+                      deadline={new Date(project.deadline).toLocaleDateString(undefined, {
                         year: "numeric",
                         month: "short",
                         day: "numeric",

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const { projectId, title, priority, dueDate, status } =
       await request.json();
     const parseResult = createTaskSchema.safeParse({
-      userId: ownerID,
+      
       projectId,
       title,
       priority,
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const newTask = new Task({ ...parseResult.data });
+    const newTask = new Task({ ...parseResult.data, userId: new mongoose.Types.ObjectId(ownerID) });
     await newTask.save();
 
     return NextResponse.json<ApiResponse>(

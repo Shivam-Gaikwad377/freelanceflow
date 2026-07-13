@@ -121,7 +121,7 @@ const AddProject = () => {
             <Form
               control={form.control}
               onSubmit={({ data }) => onSubmit(data)}
-              onError={(errors) => console.log("Validation failed:", errors)}
+              
               className="space-y-lg"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">

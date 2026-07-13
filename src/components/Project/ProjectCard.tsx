@@ -57,11 +57,7 @@ const ProjectCard = ({
           <span className="material-symbols-outlined text-[14px]">
             calendar_today
           </span>
-          {new Date(deadline).toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
+          {deadline}
         </div>
         {showConfirmCard && (
           <ConfirmationBox

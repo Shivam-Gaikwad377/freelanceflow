@@ -2,7 +2,7 @@ import {z} from "zod";
 import { Document } from "mongoose";
 
 export interface ITask extends Document {
-    userId: string;
+    
     projectId: string;
     title: string;
     priority: "low" | "medium" | "high";
@@ -12,7 +12,7 @@ export interface ITask extends Document {
 }
 
 export const createTaskSchema = z.object({
-    userId: z.string().min(1, "User ID is required"),
+ 
     projectId: z.string().min(1, "Project ID is required"),
     title: z.string().min(1, "Title is required"),
     priority: z.enum(["low", "medium", "high"]),

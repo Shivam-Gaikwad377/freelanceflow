@@ -143,7 +143,11 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
                 key={project?._id}
                 title={project.title}
                 client={project.client}
-                deadline={project.deadline}
+                deadline={new Date(project.deadline).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
                 budget={project.budget}
                 status={project.status}
                 onClick={() => router.push(`/projects/${project._id}`)}
