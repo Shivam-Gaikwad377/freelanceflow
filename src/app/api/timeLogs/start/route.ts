@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     const existingActiveTimeLog = await TimeLog.findOne({
       userId: new mongoose.Types.ObjectId(session.user._id),
       status: "active",
-    });
+    }).populate("projectId", "title");
 
     let autoStoppedTimeLog = false;
     if (existingActiveTimeLog) {
