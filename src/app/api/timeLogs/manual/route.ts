@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import TimeLog from "@/models/timeLog.model";
 import { connectToDatabase } from "@/lib/dbConfig";
-import { manualTimeLogSchema } from "@/schemas/manualTimeLog.schema";
+import { manualTimeLogApiSchema } from "@/schemas/manualTimeLog.schema";
 import ApiResponse from "@/types/ApiResponse";
 import mongoose from "mongoose";
 import Project from "@/models/project.model";
@@ -30,20 +30,21 @@ export async function POST(request: Request) {
         { status: 404 }
       );
     }
+    const userId = session.user._id;
 
-    const validatedData = manualTimeLogSchema.parse({
-      userId: session.user._id,
+    const validatedData = manualTimeLogApiSchema.parse({
+
       projectId,
       startTime,
       endTime,
     });
 
-    const durationInSeconds = Math.floor(
+    const durationInSeconds = Math.round(
       (validatedData.endTime.getTime() - validatedData.startTime.getTime()) / 1000
     );
 
     const newTimeLog = await TimeLog.create({
-      userId: new mongoose.Types.ObjectId(validatedData.userId),
+      userId: new mongoose.Types.ObjectId(userId),
       projectId: new mongoose.Types.ObjectId(validatedData.projectId),
       startTime: validatedData.startTime,
       endTime: validatedData.endTime,

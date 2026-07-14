@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import SecondaryButton from "./SecondaryButton";
 import useFetch from "@/app/hooks/useFetch";
+import AddTimeLog from "./AddTimeLog";
 
 const TimeLogTable = ({ projectId }: { projectId: string }) => {
   const [timeLogs, setTimeLogs] = useState<any[]>([]);
   const [timeLogsLimit, setTimeLogsLimit] = useState<number>(5);
   const [timeLogsTotal, setTimeLogsTotal] = useState<number>(0);
+  const [showAddTimeLog, setShowAddTimeLog] = useState<boolean>(false);
 
   const { data: data, error, loading } = useFetch(
     `/api/timeLogs?offset=0&limit=${timeLogsLimit}&projectId=${projectId}`
@@ -26,7 +28,7 @@ const TimeLogTable = ({ projectId }: { projectId: string }) => {
         </h3>
         <SecondaryButton
           label="Add Time Log"
-          onClick={() => {}}
+          onClick={() => setShowAddTimeLog(true)}
           icon="add"
           fontSize="small"
         />
@@ -54,7 +56,7 @@ const TimeLogTable = ({ projectId }: { projectId: string }) => {
               </td>
 
               <td className="p-3 ">
-                {(Math.floor(timeLog?.duration % 3600) / 60).toFixed(2)} minutes
+                {(Math.floor(timeLog?.duration ) / 3600).toFixed(2)} hours
               </td>
               <td className="p-3 text-right font-medium text-on-surface">
                 {timeLog?.source}
@@ -80,6 +82,12 @@ const TimeLogTable = ({ projectId }: { projectId: string }) => {
           </button>
         )}
       </div>
+        {showAddTimeLog && (
+            <AddTimeLog
+                projectId={projectId}
+                onClose={() => setShowAddTimeLog(false)}
+            />
+        )}
     </div>
   );
 };
