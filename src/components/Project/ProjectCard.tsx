@@ -1,8 +1,10 @@
 import React from "react";
 import { useState } from "react";
 import ConfirmationBox from "../confirmationBox";
+import ProjectTimer from "../ProjectTImer";
 interface ProjectPageProps {
   // Define any props you want to pass to the component here
+  projectId: string; // Unique identifier for the project
   title: string; // Project title
   client: string; // Client name
   deadline: string; // Deadline date
@@ -22,6 +24,7 @@ const ProjectCard = ({
   deadline,
   onClick,
   onDelete,
+  projectId,
 }: ProjectPageProps) => {
   const [showConfirmCard, setShowConfirmCard] = useState(false);
   const handleConfirm = async () => {
@@ -34,19 +37,22 @@ const ProjectCard = ({
       onClick={onClick}
       className="group bg-surface rounded-lg p-lg border border-outline-variant/40 shadow-sm hover:shadow-[0_8px_24px_rgba(96,99,238,0.04)] hover:border-primary/30 transition-all cursor-pointer active:cursor-pointing group"
     >
-      <div className=" flex justify-between items-center mb-sm">
-        <h4 className="text-body-md font-body-md font-semibold text-on-surface mb-1">
-          {title}
-        </h4>
-        <span
-          onClick={(e) => {
-            e.stopPropagation(); // stops it from reaching the card's onClick
-            setShowConfirmCard(true);
-          }}
-          className="hover:text-primary  duration-200 material-symbols-outlined text-[20px] group-hover:opacity-100 opacity-0 transition-all"
-        >
-          delete
-        </span>
+      
+        <div className=" flex justify-between items-center mb-sm">
+          <h4 className="text-body-md font-body-md font-semibold text-on-surface mb-1">
+            {title}
+          </h4>
+          <span
+            onClick={(e) => {
+              e.stopPropagation(); // stops it from reaching the card's onClick
+              setShowConfirmCard(true);
+            }}
+            className="hover:text-primary  duration-200 material-symbols-outlined text-[20px] group-hover:opacity-100 opacity-0 transition-all"
+          >
+            delete
+          </span>
+        
+        
       </div>
       <p className="text-body-sm font-body-sm text-on-surface-variant mb-md flex items-center gap-xs">
         <span className="material-symbols-outlined text-[16px]">domain</span>{" "}
@@ -59,6 +65,7 @@ const ProjectCard = ({
           </span>
           {deadline}
         </div>
+         <ProjectTimer projectId={projectId} />
         {showConfirmCard && (
           <ConfirmationBox
             message="Are you sure you want to delete this project? "

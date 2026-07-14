@@ -152,6 +152,7 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
                 status={project.status}
                 onClick={() => router.push(`/projects/${project._id}`)}
                 onDelete={() => handleDelete(project._id)}
+                projectId={project._id}
               />
             
           ))}

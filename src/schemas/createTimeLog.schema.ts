@@ -13,8 +13,8 @@ export interface ITimeLog extends Document {
 
 export const createTimeLogSchema = z
   .object({
-    userId: z.string().uuid("Invalid User ID"),
-    projectId: z.string().uuid("Invalid Project ID"),
+    userId: z.string().min(1, "User ID is required"),
+    projectId: z.string().min(1, "Project ID is required"),
     startTime: z.coerce.date(),
     endTime: z.date().optional(),
     duration: z.number().optional(),

@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import axios from "axios";
 import Image from "next/image";
+import GlobalTimer from "./GlobalTimer";
 
 const TopNavbar = () => {
   const { data: session } = useSession();
@@ -29,6 +30,7 @@ const TopNavbar = () => {
       </div>
 
       <div className="flex items-center gap-md ml-auto">
+        <GlobalTimer />
         <button className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full cursor-pointer active:scale-95 flex items-center justify-center">
           <span className="material-symbols-outlined">notifications</span>
         </button>

@@ -1,55 +1,59 @@
 import { time } from "console";
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 export interface ITimeLog extends mongoose.Document {
-    userId: mongoose.Types.ObjectId;
-    projectId: mongoose.Types.ObjectId;
-    startTime: Date;
-    endTime: Date;
-    duration: number; // in seconds
-    
-    source: "manual" | "stopwatch";
-    status: "active"  | "completed";
+  userId: mongoose.Types.ObjectId;
+  projectId: mongoose.Types.ObjectId;
+  startTime: Date;
+  endTime: Date;
+  duration: number; // in seconds
+
+  source: "manual" | "stopwatch";
+  status: "active" | "completed";
 }
 
-const timeLogSchema = new mongoose.Schema<ITimeLog>({
+const timeLogSchema = new mongoose.Schema<ITimeLog>(
+  {
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     projectId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Project",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+      required: true,
     },
     startTime: {
-        type: Date,
-        required: true,
+      type: Date,
+      required: true,
     },
     endTime: {
-        type: Date,
-        default: null,
+      type: Date,
+      default: null,
     },
-    duration: { 
-        type: Number,
-        default: 0,
+    duration: {
+      type: Number,
+      default: 0,
     },
     source: {
-        type: String,
-        enum: ["manual", "stopwatch"],
-        default: "manual",
+      type: String,
+      enum: ["manual", "stopwatch"],
+      default: "manual",
     },
     status: {
-        type: String,
-        enum: ["active", "completed"],
-        default: "active",
+      type: String,
+      enum: ["active", "completed"],
+      default: "active",
     },
-},{timestamps: true});
+  },
+  { timestamps: true }
+);
 timeLogSchema.index({ userId: 1, projectId: 1, startTime: 1 });
 timeLogSchema.index({ userId: 1, projectId: 1, duration: 1 });
 timeLogSchema.index({ userId: 1, projectId: 1, source: 1 });
 
- const TimeLog = mongoose.model<ITimeLog>("TimeLog", timeLogSchema);
+const TimeLog =
+  mongoose.models.TimeLog || mongoose.model<ITimeLog>("TimeLog", timeLogSchema);
 
 export default TimeLog;
