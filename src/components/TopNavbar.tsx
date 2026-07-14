@@ -1,19 +1,20 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 import axios from "axios";
 import Image from "next/image";
+import { UserRound } from "lucide-react";
 import GlobalTimer from "./GlobalTimer";
 
 const TopNavbar = () => {
   const { data: session } = useSession();
-  const [profileImage, setProfileImage] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
         const response = await axios.get("/api/user/Profile");
-        setProfileImage(response.data?.data.avatar?.avatarUrl);
+        setProfileImage(response.data?.data?.avatar?.avatarUrl ?? null);
       } catch (error) {
         console.error("Error fetching profile image:", error);
       }
@@ -41,14 +42,18 @@ const TopNavbar = () => {
         <button className="text-on-surface-variant font-medium text-label-md font-label-md hidden sm:block hover:text-primary transition-colors">
           Support
         </button>
-        <div className="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant cursor-pointer ml-sm">
-          <Image
-            alt="User avatar"
-            className="w-full h-full object-cover"
-            src={profileImage}
-            width={32}
-            height={32}
-          />
+        <div className="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant cursor-pointer ml-sm flex items-center justify-center">
+          {profileImage ? (
+            <Image
+              alt="User avatar"
+              className="w-full h-full object-cover"
+              src={profileImage}
+              width={32}
+              height={32}
+            />
+          ) : (
+            <UserRound className="w-5 h-5 text-on-surface-variant" />
+          )}
         </div>
       </div>
     </header>

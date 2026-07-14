@@ -18,6 +18,8 @@ import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 
 import TasksTable from "@/components/Tasks/TasksTable";
+import TimeLog from "@/models/timeLog.model";
+import TimeLogTable from "@/components/TimeLogTable";
 
 const Page = () => {
   const [project, setProject] = useState<IProject | null>(null);
@@ -362,6 +364,7 @@ const Page = () => {
                 )}
               </div>
             </div>
+            <TimeLogTable projectId={id?.toString() || ""} />
           </div>
         </div>
       </div>

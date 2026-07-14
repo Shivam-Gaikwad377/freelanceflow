@@ -25,6 +25,13 @@ export async function GET(request: Request) {
     const filter: any = {
       userId: new mongoose.Types.ObjectId(session.user._id),
     };
+    if (!projectId) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, message: "projectId is required" },
+        { status: 400 }
+      );
+    }
+    //
     if (projectId) {
       filter.projectId = new mongoose.Types.ObjectId(projectId);
     }
@@ -48,7 +55,7 @@ export async function GET(request: Request) {
         );
       }
 
-      const [timeLog, totalDuration] = await Promise.all([
+      const [timeLog, totalDuration, total] = await Promise.all([
         TimeLog.find(filter).sort({ startTime: -1 }).skip(offset).limit(limit),
         TimeLog.aggregate([
           {
@@ -64,6 +71,7 @@ export async function GET(request: Request) {
             },
           },
         ]),
+        TimeLog.countDocuments(filter),
       ]);
 
       return NextResponse.json<ApiResponse>(
@@ -73,6 +81,7 @@ export async function GET(request: Request) {
           data: {
             timeLogs: timeLog,
             totalDuration: totalDuration[0]?.totalDuration || 0,
+            total: total,
           },
         },
         { status: 200 }
