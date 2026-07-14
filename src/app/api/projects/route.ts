@@ -5,7 +5,7 @@ import Project from "@/models/project.model";
 import { projectSchema } from "@/schemas/project.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-
+import  { BurnRateCalculationPipeline } from "@/lib/pipelines/project.pipeline";
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
@@ -109,10 +109,13 @@ export async function GET(request: Request) {
     }
 
     const [projects, total] = await Promise.all([
-      Project.find(filter)
-        .sort({ [sortBy]: sort === "asc" ? 1 : -1 })
-        .skip(offset)
-        .limit(limit),
+      Project.aggregate([
+        { $match: filter },
+        ...BurnRateCalculationPipeline,
+        { $sort: { [sortBy]: sort === "asc" ? 1 : -1 } },
+        { $skip: offset },
+        { $limit: limit },
+      ]),
       Project.countDocuments(filter),
     ]);
 

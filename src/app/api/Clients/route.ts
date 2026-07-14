@@ -5,7 +5,7 @@ import Client from "@/models/client.model";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-
+import { clientTotalBilledPipeline } from "@/lib/pipelines/client.pipeline";
 import mongoose from "mongoose";
 export async function POST(request: Request) {
   try {
@@ -110,20 +110,8 @@ export async function GET(request: Request) {
     const [Clients, total] = await Promise.all([
       Client.aggregate([
         { $match: filter },
-        {
-          $lookup: {
-            from: "invoices",
-            localField: "_id",
-            foreignField: "clientId",
-            as: "invoices",
-          },
-        },
-        {
-          $addFields: {
-            totalBilled: { $sum: "$invoices.amount" },
-          },
-        },
-        { $project: { invoices: 0 } },
+        ...clientTotalBilledPipeline,
+        
         { $sort: { [sortBy]: sort } },
         { $skip: offset },
         { $limit: limit },

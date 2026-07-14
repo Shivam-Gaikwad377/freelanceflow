@@ -4,9 +4,11 @@ import { NextResponse } from "next/server";
 import Project from "@/models/project.model";
 import Invoice from "@/models/invoice.model";
 import { getServerSession } from "next-auth";
+import mongoose from "mongoose";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { isValidObjectId } from "mongoose";
 import { updateProjectSchema } from "@/schemas/updateProject.schema";
+import { BurnRateCalculationPipeline, PopulateClientPipeline } from "@/lib/pipelines/project.pipeline";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -31,12 +33,12 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     await connectToDatabase();
 
-    const project = await Project.findOne({
-      _id: id,
-      userId: session.user._id,
-    })
-      .lean()
-      .populate("clientId", "name email phone company");
+    const project = Project.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id), userId: session.user._id } },
+      ...BurnRateCalculationPipeline,
+      ...PopulateClientPipeline,
+
+    ]).exec();
 
     if (!project) {
       return NextResponse.json<ApiResponse>(
