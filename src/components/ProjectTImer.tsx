@@ -21,6 +21,7 @@ const ProjectTImer = ({ projectId }: { projectId: string }) => {
             e.stopPropagation();
             startTimer(projectId);
           }}
+          className="cursor-pointer w-auto h-auto  flex items-center justify-center gap-2 px-4  bg-surface border border-outline-variant text-on-surface-variant hover:text-primary transition-colors  rounded-lg  text-label-md py-3 shadow-sm"
         >
           Start Timer
         </button>

@@ -1,10 +1,8 @@
 import { startTimer, stopTimer, formatDuration } from "@/helpers/timerHelper";
 import { useTimerStore } from "@/store/useTimerStore";
 import { useRouter } from "next/navigation";
-import  {useElapsedSeconds}  from "@/app/hooks/useElapsedSeconds";
-
-
-
+import { useElapsedSeconds } from "@/app/hooks/useElapsedSeconds";
+import SecondaryButton from "./SecondaryButton";
 
 const GlobalTimer = () => {
   const router = useRouter();
@@ -20,11 +18,12 @@ const GlobalTimer = () => {
 
   return (
     <div className="flex items-center gap-2">
+      <span onClick={onStop} className="cursor-pointer material-symbols-outlined">
+        stop
+      </span>
       <span>{formatDuration(elapsed)}</span>
-      <button onClick={onStop}>Stop</button>
     </div>
   );
-}
+};
 
-export default GlobalTimer
-
+export default GlobalTimer;
