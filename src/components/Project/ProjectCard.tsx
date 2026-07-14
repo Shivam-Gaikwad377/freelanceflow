@@ -13,6 +13,7 @@ interface ProjectPageProps {
   status: "open" | "in progress" | "completed"; // Project status
   // Optional click handler
   onClick?: () => void; // Optional click handler
+  
   onDelete?: () => Promise<void>; // Optional delete handler
 }
 type style = {
@@ -25,6 +26,7 @@ const ProjectCard = ({
   onClick,
   onDelete,
   projectId,
+  status
 }: ProjectPageProps) => {
   const [showConfirmCard, setShowConfirmCard] = useState(false);
   const handleConfirm = async () => {
@@ -65,7 +67,7 @@ const ProjectCard = ({
           </span>
           {deadline}
         </div>
-         <ProjectTimer projectId={projectId} />
+         {(status === "in progress" || status === "open") && <ProjectTimer projectId={projectId} />}
         {showConfirmCard && (
           <ConfirmationBox
             message="Are you sure you want to delete this project? "

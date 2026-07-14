@@ -4,6 +4,7 @@ import Topbar from "@/components/TopNavbar";
 import AddProject from "@/components/Project/AddProject";
 import { useUiStore } from "@/store/useUiStore";
 import AddInvoice from "@/components/Invoice/AddInvoice";
+import TimerHydrator from "@/components/TimeHydrator";
 
 export default function DashboardLayout({
   children,
@@ -11,10 +12,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const isAnyModalOpen = useUiStore((state) => state.activeModal !== null);
+
   return (
     <div className="flex h-full">
-      {" "}
-      {/* structure only */}
       <Sidebar />
       <div className="flex flex-col flex-1 md:ml-64">
         <Topbar />
@@ -23,6 +23,7 @@ export default function DashboardLayout({
         </main>
         <AddInvoice />
         <AddProject />
+        <TimerHydrator />
       </div>
     </div>
   );

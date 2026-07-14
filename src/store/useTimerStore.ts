@@ -1,7 +1,7 @@
 // store/useTimerStore.ts
 import { create } from 'zustand';
 
-interface ActiveTimer {
+export interface ActiveTimer {
   id: string;
   projectId: string;
   startTime: string; // ISO string, straight from the server

@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
-import TimeLog  from "@/models/timeLog.model";
+import TimeLog from "@/models/timeLog.model";
 import { connectToDatabase } from "@/lib/dbConfig";
 import { createTimeLogSchema } from "@/schemas/createTimeLog.schema";
 import ApiResponse from "@/types/ApiResponse";
 import mongoose from "mongoose";
 
-import  Project  from "@/models/project.model";
+import Project from "@/models/project.model";
 
 export async function POST(request: Request) {
   try {
@@ -49,14 +49,16 @@ export async function POST(request: Request) {
       existingActiveTimeLog.endTime = new Date();
       existingActiveTimeLog.duration = Math.floor(
         (existingActiveTimeLog.endTime.getTime() -
-          existingActiveTimeLog.startTime.getTime()) / 1000
+          existingActiveTimeLog.startTime.getTime()) /
+          1000
       );
       existingActiveTimeLog.status = "completed";
       await existingActiveTimeLog.save(); // ✅ actually persist the stop
       autoStoppedTimeLog = true;
     }
 
-    const newTimeLog = await TimeLog.create({ // ✅ await it
+    const newTimeLog = await TimeLog.create({
+      // ✅ await it
       userId: new mongoose.Types.ObjectId(validatedData.userId),
       projectId: new mongoose.Types.ObjectId(validatedData.projectId),
       startTime: validatedData.startTime,
@@ -79,4 +81,28 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?._id) {
+    return NextResponse.json({ activeTimer: null }, { status: 200 });
+  }
+
+  const running = await TimeLog.findOne({
+    userId: session.user._id,
+    status: "active",
+  }).lean();
+
+  if (!running) {
+    return NextResponse.json({ activeTimer: null });
+  }
+
+  return NextResponse.json({
+    activeTimer: {
+      id: running._id.toString(),
+      projectId: running.projectId.toString(),
+      startTime: running.startTime,
+    },
+  });
 }
