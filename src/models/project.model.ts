@@ -11,6 +11,7 @@ export interface IProject extends mongoose.Document {
   client?: string;
   isStarted?: boolean;
   StartedAt?: Date;
+  hourlyRate?: number;
 }
 
 const projectSchema = new mongoose.Schema<IProject>(
@@ -51,6 +52,10 @@ const projectSchema = new mongoose.Schema<IProject>(
     },
     client: {
       type: String,
+      required: true,
+    },
+    hourlyRate: {
+      type: Number,
       required: true,
     },
   },

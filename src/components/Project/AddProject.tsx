@@ -33,6 +33,7 @@ const AddProject = () => {
       status: "open", // Default to today's date
       clientId: "", // Default to empty string
       // Default to empty string
+      hourlyRate: 0,
     },
   });
   useEffect(() => {
@@ -43,6 +44,7 @@ const AddProject = () => {
         clientId: prefillClient?.id ?? "",
         status: "open",
         deadline: undefined,
+        hourlyRate: 0,
       });
     }
   }, [isOpen, prefillClient]);
@@ -198,6 +200,17 @@ const AddProject = () => {
                   />
                 </div>
               </div>
+              <div className="space-y-xs">
+                  <label className="font-label-md text-label-md text-on-surface-variant block">
+                    Hourly Rate
+                  </label>
+                  <input
+                    className="form-input-text"
+                    type="number"
+                    {...register("hourlyRate")}
+                  />
+                </div>
+              
 
               <div className="space-y-xs">
                 <label className="font-label-md text-label-md text-on-surface-variant block">

@@ -9,6 +9,7 @@ export const updateProjectSchema = z.object({
   status: z.enum(["open", "in progress", "completed"]).optional(),
   StartedAt: z.coerce.date().optional(),
   client: z.string().optional(),
+  hourlyRate: z.coerce.number().optional(),
 });
 
 export type UpdateProjectInput = z.input<typeof updateProjectSchema>;

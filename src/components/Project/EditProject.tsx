@@ -33,6 +33,7 @@ const EditProjectDrawer = ({
       budget: 0,
       status: "open",
       client: "",
+      hourlyRate: 0,
     },
   });
 
@@ -60,6 +61,7 @@ const EditProjectDrawer = ({
         deadline: toDateInputValue(project.deadline) as any,
         status: project.status,
         client: project.client || "",
+        hourlyRate: project.hourlyRate || 0,
       });
     }
   }, [project, reset]);
@@ -114,7 +116,7 @@ const EditProjectDrawer = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-sm rounded-full hover:bg-surface-container transition-colors text-on-surface-variant"
+            className="p-sm aspect-square flex items-center justify-center rounded-full  hover:bg-surface-container transition-colors text-on-surface-variant"
             aria-label="Close drawer"
           >
             <span className="material-symbols-outlined text-[20px]">close</span>
@@ -169,6 +171,22 @@ const EditProjectDrawer = ({
               {errors.client && (
                 <p className="text-error text-body-sm">
                   {errors.client.message}
+                </p>
+              )}
+            </div>
+             <div className="space-y-xs">
+              <label className="font-label-md text-label-md text-on-surface-variant block">
+                Hourly Rate
+              </label>
+              <input
+                className="form-input-text"
+                placeholder="e.g. 50"
+                type="number"
+                {...register("hourlyRate", { valueAsNumber: true })}
+              />
+              {errors.hourlyRate && (
+                <p className="text-error text-body-sm">
+                  {errors.hourlyRate.message}
                 </p>
               )}
             </div>

@@ -12,6 +12,7 @@ export interface IProject extends Document {
     updatedAt: Date;
     userId: string; 
     StartedAt?: Date;
+    hourlyRate?: number;
 }
 
 export const projectSchema = z.object({
@@ -22,6 +23,7 @@ export const projectSchema = z.object({
     status: z.enum(["open", "in progress", "completed"]),
     clientId: z.string().min(1, "Client ID is required").optional(),
     client: z.string().min(1, "Client name is required"),
+    hourlyRate: z.number().positive("Hourly rate must be a positive number"),
     
 })
 
