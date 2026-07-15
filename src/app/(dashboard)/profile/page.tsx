@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -12,16 +11,7 @@ const Page = () => {
 
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
-  const currencys = [
-    { code: "USD", symbol: "$" },
-    { code: "EUR", symbol: "€" },
-    { code: "GBP", symbol: "£" },
-    { code: "JPY", symbol: "¥" },
-    { code: "CAD", symbol: "C$" },
-    { code: "INR", symbol: "₹" },
-    { code: "AUD", symbol: "A$" },
-    { code: "CHF", symbol: "CHF" },
-  ];
+ 
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -98,13 +88,12 @@ const Page = () => {
     name: string,
     email: string,
     businessName: string,
-    currency: string
   ) => {
     try {
       const response = await axios.patch("/api/user/Profile", {
         name,
         businessName,
-        currency,
+  
       });
       if (email && email !== profile?.email) {
         const responseEmail = await axios.put("/api/user/email/email-change", {
@@ -115,12 +104,12 @@ const Page = () => {
           toast.success(
             "Email change request sent. Please verify your new email."
           );
-          await update({ name, businessName, currency, email });
+          await update({ name, businessName, email });
         }
       }
       const updatedProfile = await axios.get("/api/user/Profile");
       setProfile(updatedProfile.data.data);
-      await update({ name, businessName, currency });
+      await update({ name, businessName });
       toast.success("Profile updated successfully!");
       setEditing(false);
     } catch (error: any) {
@@ -264,33 +253,7 @@ const Page = () => {
                   <p className="block font-label-md text-label-md text-on-surface mb-xs">
                     Currency
                   </p>
-                  <div className="relative">
-                    {editing ? (
-                      <select
-                        className="w-full px-4 py-2 rounded-lg bg-surface-container-lowest input-border border font-body-md text-body-md text-on-surface appearance-none pr-10"
-                        value={currency}
-                        onChange={(e) => setCurrency(e.target.value)}
-                      >
-                        {currencys.map((currency) => (
-                          <option
-                            key={currency.code}
-                            value={currency.code}
-                            selected={profile?.currency === currency.code}
-                          >
-                            {currency.code} - {currency.symbol}
-                          </option>
-                        ))}
-                        <option value="other">Other</option>
-                        <span className="material-symbols-outlined text-on-surface absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                          expand_more
-                        </span>
-                      </select>
-                    ) : (
-                      <p className="font-body-md text-body-md text-on-surface">
-                        {profile?.currency || "No currency set"}
-                      </p>
-                    )}
-                  </div>
+                  
                 </div>
               </div>
 
@@ -313,7 +276,7 @@ const Page = () => {
                     className="px-lg py-3 bg-primary text-on-primary font-label-md text-label-md rounded shadow-level-2 hover:bg-surface-tint transition-colors"
                     type="button"
                     onClick={() =>
-                      handleProfileUpdate(name, email, businessName, currency)
+                      handleProfileUpdate(name, email, businessName)
                     }
                   >
                     Save Changes

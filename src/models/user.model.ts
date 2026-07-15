@@ -63,11 +63,6 @@ const userSchema = new Schema<IUser>(
       type: String,
       minlength: [3, "Business name must be at least 3 characters long"],
     },
-    currency: {
-      type: String,
-      default: "INR" ,
-      required:false, 
-    },
     isVerified: {
       type: Boolean,
       default: false,
