@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ConfirmationBox from "../confirmationBox";
 import ProjectTimer from "../ProjectTImer";
 interface ProjectPageProps {
@@ -38,10 +38,14 @@ const ProjectCard = ({
   const [burnRatePercentage, setBurnRatePercentage] = useState<number | null>(
     null
   );
-  if (burnRate !== undefined && burnRate > 0) {
-    const burnRatePercentage = (burnRate / budget) * 100;
-    setBurnRatePercentage(burnRatePercentage);
-  }
+  useEffect(() => {
+    if (burnRate !== undefined && budget > 0) {
+      setBurnRatePercentage((burnRate / budget) * 100);
+    } else {
+      setBurnRatePercentage(null);
+    }
+  }, [burnRate, budget]);
+
   return (
     <div
       onClick={onClick}

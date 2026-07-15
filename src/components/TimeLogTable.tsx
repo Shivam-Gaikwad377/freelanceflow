@@ -39,6 +39,7 @@ const TimeLogTable = ({ projectId }: { projectId: string }) => {
             <th className="p-3 font-semibold">Start Time</th>
             <th className="p-3 font-semibold">Duration</th>
             <th className="p-3 font-semibold">Source</th>
+            <th className="p-3 font-semibold"></th>
           </tr>
         </thead>
         <tbody className="text-body-sm text-on-surface">
@@ -58,8 +59,16 @@ const TimeLogTable = ({ projectId }: { projectId: string }) => {
               <td className="p-3 ">
                 {(Math.floor(timeLog?.duration ) / 3600).toFixed(2)} hours
               </td>
-              <td className="p-3 text-right font-medium text-on-surface">
+              <td className="p-3 capitalize font-medium text-on-surface">
                 {timeLog?.source}
+              </td>
+              <td className="p-3">
+                <button
+                  onClick={() => {}}
+                  className="text-error hover:text-error-hover transition-colors"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

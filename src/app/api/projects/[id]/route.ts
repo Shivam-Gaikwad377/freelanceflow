@@ -8,7 +8,10 @@ import mongoose from "mongoose";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { isValidObjectId } from "mongoose";
 import { updateProjectSchema } from "@/schemas/updateProject.schema";
-import { BurnRateCalculationPipeline, PopulateClientPipeline } from "@/lib/pipelines/project.pipeline";
+import {
+  BurnRateCalculationPipeline,
+  PopulateClientPipeline,
+} from "@/lib/pipelines/project.pipeline";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -33,12 +36,16 @@ export async function GET(request: Request, { params }: RouteContext) {
 
     await connectToDatabase();
 
-    const project = Project.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(id), userId: session.user._id } },
+    const [project,] = await Project.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id),
+          userId: new mongoose.Types.ObjectId(session.user._id), 
+        },
+      },
       ...BurnRateCalculationPipeline,
       ...PopulateClientPipeline,
-
-    ]).exec();
+    ]);
 
     if (!project) {
       return NextResponse.json<ApiResponse>(
@@ -84,7 +91,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
       projectId: id,
       userId: session.user._id,
     });
-    if(deletedInvoices.deletedCount === 0) {
+    if (deletedInvoices.deletedCount === 0) {
       console.warn(`No invoices found for project ${id} or not owned by user`);
     }
     const deleted = await Project.findOneAndDelete({
