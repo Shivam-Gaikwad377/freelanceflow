@@ -50,10 +50,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const amount = parseResult.data.lineItems.reduce(
+    const subtotal = parseResult.data.lineItems.reduce(
       (sum, item) => sum + item.quantity * item.price,
       0
     );
+
+    const amount = subtotal * (18 / 100);
 
     const count = await Invoice.countDocuments({ userId: ownerID });
     const invoiceNumber = count + 1;
@@ -116,13 +118,12 @@ export async function GET(request: Request) {
     const searchBy = searchParams.get("searchBy") || "invoiceNumber";
     const monthRange = searchParams.get("monthRange") || "all";
 
-
     const filter: any = { userId: ownerID };
 
     if (status && status !== "all") {
       filter.status = status;
     }
-    if(monthRange && monthRange !== "all") {
+    if (monthRange && monthRange !== "all") {
       const startDate = new Date();
       startDate.setMonth(startDate.getMonth() - parseInt(monthRange));
       filter.issueDates = { $gte: startDate };

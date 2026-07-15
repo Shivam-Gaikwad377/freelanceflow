@@ -83,6 +83,8 @@ const page = () => {
                       })}
                       budget={project.budget}
                       status={project.status}
+                      projectId={project._id.toString()}
+                      burnRate={project?.burnRate}
                     />
                   </div>
                 ))}

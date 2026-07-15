@@ -13,7 +13,7 @@ interface ProjectPageProps {
   status: "open" | "in progress" | "completed"; // Project status
   // Optional click handler
   onClick?: () => void; // Optional click handler
-  
+  burnRate?: number; // Optional burn rate for the project
   onDelete?: () => Promise<void>; // Optional delete handler
 }
 type style = {
@@ -26,7 +26,8 @@ const ProjectCard = ({
   onClick,
   onDelete,
   projectId,
-  status
+  status,
+  burnRate,
 }: ProjectPageProps) => {
   const [showConfirmCard, setShowConfirmCard] = useState(false);
   const handleConfirm = async () => {

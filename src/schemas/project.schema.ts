@@ -13,6 +13,7 @@ export interface IProject extends Document {
     userId: string; 
     StartedAt?: Date;
     hourlyRate?: number;
+    burnRate?: number;
 }
 
 export const projectSchema = z.object({
