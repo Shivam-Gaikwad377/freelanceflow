@@ -52,7 +52,7 @@ const ProjectCard = ({
       className="group bg-surface rounded-lg p-lg border border-outline-variant/40 shadow-sm hover:shadow-[0_8px_24px_rgba(96,99,238,0.04)] hover:border-primary/30 transition-all cursor-pointer active:cursor-pointing group"
     >
       <div className=" flex justify-between items-center mb-sm">
-        <h4 className="text-body-md font-body-md font-semibold text-on-surface mb-1">
+        <h4 className="text-body-md line-clamp-1 w-full font-body-md font-semibold text-on-surface mb-1">
           {title}
         </h4>
         <span

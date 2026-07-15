@@ -66,7 +66,7 @@ const page = () => {
         <div className="flex gap-gutter w-full h-full items-center">
           {debouncedSearchTerm ? (
             projects.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
+              <div className="grid grid-cols-1 w-full sm:grid-cols-2 lg:grid-cols-3 gap-md">
                 {projects.map((project) => (
                   <div
                     key={project?._id.toString()}
@@ -84,6 +84,7 @@ const page = () => {
                       budget={project.budget}
                       status={project.status}
                       projectId={project._id.toString()}
+                      burnRate={project.burnRate}
 
                     />
                   </div>

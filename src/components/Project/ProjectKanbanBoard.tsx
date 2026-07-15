@@ -42,7 +42,8 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
     } catch (error) {
       console.error("Error deleting project:", error);
     }
-  }
+  };
+
 
   // ── Core fetch — page 1 replaces, page 2+ appends ──────────────────────
   const fetchProjects = useCallback(
@@ -52,21 +53,27 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
       setError(null);
 
       try {
-        // Calculate the offset based on the current page
         const offset = (pageNum - 1) * LIMIT;
 
-        // Send 'offset' instead of 'page'
         const res = await axios.get(
           `/api/projects?status=${status}&offset=${offset}&limit=${LIMIT}`
         );
 
-        // Map 'projects' to 'incoming', and calculate 'totalPages' manually
         const { projects: incoming, total } = res.data.data;
         const totalPages = Math.ceil(total / LIMIT);
 
-        setProjects((prev) =>
-          pageNum === 1 ? incoming : [...prev, ...incoming]
-        );
+        setProjects((prev) => {
+          if (pageNum === 1) return incoming;
+
+          // Defensively remove any duplicates from incoming before appending
+          const existingIds = new Set(prev.map((p) => p._id));
+          const newProjects = incoming.filter(
+            (p: any) => !existingIds.has(p._id)
+          );
+
+          return [...prev, ...newProjects];
+        });
+
         setTotal(total);
         setPage(pageNum);
         setHasMore(pageNum < totalPages);
@@ -97,7 +104,6 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
 
   const setSentinel = useInfiniteScroll(loadMore); // ← returns a ref setter
 
-  // ── Render ──────────────────────────────────────────────────────────────
   return (
     <div className="flex-1 flex flex-col gap-md kanban-col bg-surface-container-low/50 max-h-screen rounded-xl p-md border border-outline-variant/20">
       {/* Header */}
@@ -138,25 +144,25 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
         {!loading &&
           !error &&
           projects.map((project) => (
-            
-              <ProjectCard
-                key={project?._id}
-                title={project.title}
-                client={project.client}
-                deadline={new Date(project.deadline).toLocaleDateString(undefined, {
+            <ProjectCard
+              key={project?._id}
+              title={project.title}
+              client={project.client}
+              deadline={new Date(project.deadline).toLocaleDateString(
+                undefined,
+                {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
-                })}
-                budget={project.budget}
-                status={project.status}
-                onClick={() => router.push(`/projects/${project._id}`)}
-                onDelete={() => handleDelete(project._id)}
-                projectId={project._id}
-                burnRate={project.burnRate}
-                
-              />
-            
+                }
+              )}
+              budget={project.budget}
+              status={project.status}
+              onClick={() => router.push(`/projects/${project._id}`)}
+              onDelete={() => handleDelete(project._id)}
+              projectId={project._id}
+              burnRate={project.burnRate}
+            />
           ))}
 
         {/* ✅ Sentinel — hook watches this div */}
