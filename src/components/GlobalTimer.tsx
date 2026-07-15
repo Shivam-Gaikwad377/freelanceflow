@@ -18,10 +18,10 @@ const GlobalTimer = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <span onClick={onStop} className="cursor-pointer material-symbols-outlined">
+      <span onClick={onStop} className="text-label-md cursor-pointer material-symbols-outlined">
         stop
       </span>
-      <span>{formatDuration(elapsed)}</span>
+      <span className="text-label-md text-on-surface-variant font-semibold flex items-center gap-1">{formatDuration(elapsed)}</span>
     </div>
   );
 };

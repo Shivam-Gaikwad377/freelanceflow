@@ -238,7 +238,7 @@ const Page = () => {
                   <p className="font-display text-headline-md font-bold text-on-surface">
                     {client?.totalBilled?.toLocaleString("en-US", {
                       style: "currency",
-                      currency: session?.data?.user?.currency || "USD",
+                      currency:  "USD",
                     })}
                   </p>
                 </div>
@@ -317,7 +317,7 @@ const Page = () => {
                       <td className="py-4 w-0.66/4 px-6  font-label-md text-label-md">
                         {project?.budget?.toLocaleString("en-US", {
                           style: "currency",
-                          currency: session?.data?.user?.currency || "USD",
+                          currency:  "USD",
                         })}
                       </td>
                       <td className="px-4 text-right">

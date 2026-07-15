@@ -159,7 +159,10 @@ const Page = () => {
                     Total Budget
                   </p>
                   <h3 className="font-display text-headline-md text-primary">
-                    {project?.budget}
+                    {project?.budget.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    })}
                   </h3>
                 </div>
               </div>
@@ -340,7 +343,12 @@ const Page = () => {
                         />
                       </td>
                       <td className="p-3 text-right font-medium text-on-surface">
-                        {invoice?.amount.toFixed(2)}
+                        {invoice?.amount.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </td>
                     </tr>
                   ))}

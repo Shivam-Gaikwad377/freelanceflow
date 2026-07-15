@@ -14,14 +14,16 @@ const ProjectTImer = ({ projectId }: { projectId: string }) => {
   return (
     <div>
       {isRunningHere ? (
-        <span>{formatDuration(elapsed)} · running</span>
+        <span className="text-label-sm text-on-surface-variant font-semibold flex items-center gap-1">
+          {formatDuration(elapsed)} · running
+        </span>
       ) : (
         <button
           onClick={(e) => {
             e.stopPropagation();
             startTimer(projectId);
           }}
-          className="cursor-pointer w-auto h-auto  flex items-center justify-center gap-2 px-4  bg-surface border border-outline-variant text-on-surface-variant hover:text-primary transition-colors  rounded-lg  text-label-md py-3 shadow-sm"
+          className="cursor-pointer w-auto h-auto text-label-sm flex items-center justify-center gap-2 px-3  bg-surface border border-outline-variant text-on-surface-variant hover:text-primary transition-colors  rounded-lg  text-label-md py-2 shadow-sm"
         >
           Start Timer
         </button>

@@ -28,39 +28,60 @@ const ProjectCard = ({
   projectId,
   status,
   burnRate,
+  budget,
 }: ProjectPageProps) => {
   const [showConfirmCard, setShowConfirmCard] = useState(false);
   const handleConfirm = async () => {
     await onDelete?.();
     setShowConfirmCard(false);
   };
-
+  const [burnRatePercentage, setBurnRatePercentage] = useState<number | null>(
+    null
+  );
+  if (burnRate !== undefined && burnRate > 0) {
+    const burnRatePercentage = (burnRate / budget) * 100;
+    setBurnRatePercentage(burnRatePercentage);
+  }
   return (
     <div
       onClick={onClick}
       className="group bg-surface rounded-lg p-lg border border-outline-variant/40 shadow-sm hover:shadow-[0_8px_24px_rgba(96,99,238,0.04)] hover:border-primary/30 transition-all cursor-pointer active:cursor-pointing group"
     >
-      
-        <div className=" flex justify-between items-center mb-sm">
-          <h4 className="text-body-md font-body-md font-semibold text-on-surface mb-1">
-            {title}
-          </h4>
-          <span
-            onClick={(e) => {
-              e.stopPropagation(); // stops it from reaching the card's onClick
-              setShowConfirmCard(true);
-            }}
-            className="hover:text-primary  duration-200 material-symbols-outlined text-[20px] group-hover:opacity-100 opacity-0 transition-all"
-          >
-            delete
-          </span>
-        
-        
+      <div className=" flex justify-between items-center mb-sm">
+        <h4 className="text-body-md font-body-md font-semibold text-on-surface mb-1">
+          {title}
+        </h4>
+        <span
+          onClick={(e) => {
+            e.stopPropagation(); // stops it from reaching the card's onClick
+            setShowConfirmCard(true);
+          }}
+          className="hover:text-primary  duration-200 material-symbols-outlined text-[20px] group-hover:opacity-100 opacity-0 transition-all"
+        >
+          delete
+        </span>
       </div>
-      <p className="text-body-sm font-body-sm text-on-surface-variant mb-md flex items-center gap-xs">
-        <span className="material-symbols-outlined text-[16px]">domain</span>{" "}
-        {client}
-      </p>
+
+      <div className="flex flex-col gap-sm mb-sm">
+        <p className="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-xs">
+          <span className="material-symbols-outlined text-[16px]">domain</span>{" "}
+          {client}
+        </p>
+        <div className="flex flex-col ">
+          <p className="text-body-sm font-body-sm text-on-surface-variant  flex items-center gap-xs">
+            <span className="material-symbols-outlined text-[16px]">
+              account_balance_wallet{" "}
+            </span>{" "}
+            ${budget.toFixed(2)}
+          </p>
+          {burnRate !== undefined && (
+            <p className="text-body-sm pl-[24px] font-body-sm text-on-surface-variant mb-sm flex items-center gap-xs">
+              {burnRate?.toFixed(2)} ({burnRatePercentage?.toFixed(2)}%) of
+              budget spent
+            </p>
+          )}
+        </div>
+      </div>
       <div className="flex justify-between items-center border-t border-outline-variant/20 pt-md mt-sm">
         <div className="flex items-center gap-xs text-on-surface-variant text-label-sm font-label-sm">
           <span className="material-symbols-outlined text-[14px]">
@@ -68,7 +89,9 @@ const ProjectCard = ({
           </span>
           {deadline}
         </div>
-         {(status === "in progress" || status === "open") && <ProjectTimer projectId={projectId} />}
+        {(status === "in progress" || status === "open") && (
+          <ProjectTimer projectId={projectId} />
+        )}
         {showConfirmCard && (
           <ConfirmationBox
             message="Are you sure you want to delete this project? "

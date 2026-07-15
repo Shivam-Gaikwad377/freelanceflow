@@ -134,7 +134,7 @@ const Page = () => {
               <span className="font-display text-display text-on-surface">
                 {stats?.outstanding?.total?.toLocaleString("en-US", {
                   style: "currency",
-                  currency: session?.data?.user?.currency || "USD",
+                  currency:  "USD",
                 })}
               </span>
             </div>
@@ -152,7 +152,7 @@ const Page = () => {
               <span className="font-display text-display text-on-surface">
                 {stats?.paidThisMonth?.total?.toLocaleString("en-US", {
                   style: "currency",
-                  currency: session?.data?.user?.currency || "USD",
+                  currency:  "USD",
                 })}
               </span>
               <div className="w-full bg-surface-variant h-unit rounded-full mt-sm overflow-hidden">
@@ -173,7 +173,7 @@ const Page = () => {
               <span className="font-display text-accent text-display text-error">
                 {stats?.overdue?.total?.toLocaleString("en-US", {
                   style: "currency",
-                  currency: session?.data?.user?.currency || "USD",
+                  currency:  "USD",
                 })}
               </span>
               <p className="font-label-sm text-label-sm text-accent mt-xs">
@@ -335,7 +335,7 @@ const Page = () => {
                       <td className="py-sm px-lg text-right font-medium text-on-surface">
                         {invoice?.amount?.toLocaleString("en-US", {
                           style: "currency",
-                          currency: session?.data?.user?.currency || "USD",
+                          currency:  "USD",
                         })}
                       </td>
                       <td className="py-sm px-lg text-center">

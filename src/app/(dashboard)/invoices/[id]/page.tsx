@@ -520,9 +520,9 @@ const Page = () => {
                         total + field.price * field.quantity,
                       0
                     )
-                    .toLocaleString("en-IN", {
+                    .toLocaleString("en-US", {
                       style: "currency",
-                      currency: "INR",
+                      currency: "USD",
                     })}
                 </span>
               </div>
@@ -537,9 +537,9 @@ const Page = () => {
                         total + field.price * field.quantity,
                       0
                     )
-                    .toLocaleString("en-IN", {
+                    .toLocaleString("en-US", {
                       style: "currency",
-                      currency: "INR",
+                      currency: "USD",
                     })}
                 </span>
               </div>

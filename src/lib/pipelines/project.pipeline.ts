@@ -4,8 +4,8 @@ export const BurnRateCalculationPipeline: PipelineStage[] = [
   {
     $lookup: {
       from: "timeLogs",
-      localField: "projectId",
-      foreignField: "_id",
+      localField: "_id",
+      foreignField: "projectId",
       as: "timeLogs",
     },
   },
@@ -26,8 +26,8 @@ export const PopulateClientPipeline: PipelineStage[] = [
   {
     $lookup: {
       from: "clients", // the actual collection name (usually lowercase, plural)
-      localField: "clientId",
-      foreignField: "_id",
+      localField: "_id",
+      foreignField: "projectId",
       as: "clientId",
     },
   },

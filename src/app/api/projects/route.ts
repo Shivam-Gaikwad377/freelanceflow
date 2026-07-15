@@ -6,6 +6,7 @@ import { projectSchema } from "@/schemas/project.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import  { BurnRateCalculationPipeline } from "@/lib/pipelines/project.pipeline";
+import { Types } from "mongoose";
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
@@ -100,7 +101,7 @@ export async function GET(request: Request) {
     const clientId = searchParams.get("clientId") || "";
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const sort = searchParams.get("sort") || "desc";
-    const filter: any = { userId: ownerID };
+    const filter: any = { userId: new Types.ObjectId(ownerID) };
     if (status) filter.status = status;
     if (clientId) filter.clientId = clientId;
 

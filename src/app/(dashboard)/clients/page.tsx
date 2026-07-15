@@ -140,7 +140,7 @@ const Page = () => {
                   email={client?.email}
                   totalBilled={client?.totalBilled?.toLocaleString("en-US", {
                       style: "currency",
-                      currency: session?.data?.user?.currency || "USD",
+                      currency:  "USD",
                     })}
                     onClick={() => handleClick(client._id.toString())}
                     onDelete={() => handleDelete(client._id.toString())}
