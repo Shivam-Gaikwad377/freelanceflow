@@ -60,14 +60,15 @@ export const authOptions: NextAuthOptions = {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.email = user.email;
-        token.currency = user.currency;
+        
         token.name = user.name;
       }
 
       // Runs when update() is called from client
       if (trigger === "update" && session) {
         token.name = session.name;
-        token.currency = session.currency;
+        token.email = session.email;
+        token.businessName = session.businessName;
 
         token.isVerified = session.isVerified;
       }
@@ -79,7 +80,7 @@ export const authOptions: NextAuthOptions = {
         session.user._id = token._id;
         session.user.isVerified = token.isVerified;
         session.user.email = token.email;
-        session.user.currency = token.currency;
+
         session.user.name = token.name;
         session.user.businessName = token.businessName;
       }

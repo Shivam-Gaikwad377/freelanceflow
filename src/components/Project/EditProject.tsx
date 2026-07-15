@@ -174,21 +174,21 @@ const EditProjectDrawer = ({
                 </p>
               )}
             </div>
-             <div className="space-y-xs">
+            <div className="space-y-xs">
               <label className="font-label-md text-label-md text-on-surface-variant block">
                 Hourly Rate
               </label>
-              <input
-                className="form-input-text"
-                placeholder="e.g. 50"
-                type="number"
-                {...register("hourlyRate", { valueAsNumber: true })}
-              />
-              {errors.hourlyRate && (
-                <p className="text-error text-body-sm">
-                  {errors.hourlyRate.message}
-                </p>
-              )}
+              <div className="flex">
+                <span className="inline-flex items-center px-md rounded-l-lg border border-r-0 border-outline bg-surface-container-low text-on-surface-variant text-body-sm">
+                  ${" "}
+                </span>
+                <input
+                  className="form-input-rate"
+                  placeholder="0.00"
+                  type="number"
+                  {...register("hourlyRate", { valueAsNumber: true })}
+                />
+              </div>
             </div>
 
             {/* Phone + Company */}
@@ -197,17 +197,17 @@ const EditProjectDrawer = ({
                 <label className="font-label-md text-label-md text-on-surface-variant block">
                   Budget
                 </label>
-                <input
-                  className="w-full form-input-text"
-                  placeholder="e.g. $5000"
-                  type="number"
-                  {...register("budget", { valueAsNumber: true })}
-                />
-                {errors.budget && (
-                  <p className="text-error text-body-sm">
-                    {errors.budget.message}
-                  </p>
-                )}
+                <div className="flex">
+                  <span className="inline-flex items-center px-md rounded-l-lg border border-r-0 border-outline bg-surface-container-low text-on-surface-variant text-body-sm">
+                    ${" "}
+                  </span>
+                  <input
+                    className="form-input-rate"
+                    placeholder="0.00"
+                    type="number"
+                    {...register("budget", { valueAsNumber: true })}
+                  />
+                </div>
               </div>
               <div className="space-y-xs">
                 <label className="font-label-md text-label-md text-on-surface-variant block">

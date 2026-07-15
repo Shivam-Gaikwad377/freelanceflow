@@ -1,5 +1,5 @@
 "use client";
-import React, {  useEffect } from "react";
+import React, { useEffect } from "react";
 import { useUiStore } from "@/store/useUiStore";
 import { Form, useForm } from "react-hook-form";
 import axios from "axios";
@@ -123,7 +123,6 @@ const AddProject = () => {
             <Form
               control={form.control}
               onSubmit={({ data }) => onSubmit(data)}
-              
               className="space-y-lg"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
@@ -177,15 +176,14 @@ const AddProject = () => {
                     Total Budget
                   </label>
                   <div className="flex">
-                    
+                    <span className="inline-flex items-center px-md rounded-l-lg border border-r-0 border-outline bg-surface-container-low text-on-surface-variant text-body-sm">
+                      ${" "}
+                    </span>
                     <input
-                      className="flex-1 min-w-0 form-input-text"
-                      placeholder={(0.00).toLocaleString("en-US", {
-                        style: "currency",
-                        currency: session.data?.user?.currency || "USD",
-                      })}
+                      className="form-input-rate"
+                      placeholder="0.00"
                       type="number"
-                      {...register("budget", { valueAsNumber: true })}
+                      {...register("hourlyRate", { valueAsNumber: true })}
                     />
                   </div>
                 </div>
@@ -201,16 +199,21 @@ const AddProject = () => {
                 </div>
               </div>
               <div className="space-y-xs">
-                  <label className="font-label-md text-label-md text-on-surface-variant block">
-                    Hourly Rate
-                  </label>
+                <label className="font-label-md text-label-md text-on-surface-variant block">
+                  Hourly Rate
+                </label>
+                <div className="flex">
+                  <span className="inline-flex items-center px-md rounded-l-lg border border-r-0 border-outline bg-surface-container-low text-on-surface-variant text-body-sm">
+                    ${" "}
+                  </span>
                   <input
-                    className="form-input-text"
+                    className="form-input-rate"
+                    placeholder="0.00"
                     type="number"
-                    {...register("hourlyRate")}
+                    {...register("hourlyRate", { valueAsNumber: true })}
                   />
                 </div>
-              
+              </div>
 
               <div className="space-y-xs">
                 <label className="font-label-md text-label-md text-on-surface-variant block">
