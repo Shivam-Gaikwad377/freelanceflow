@@ -135,6 +135,29 @@ const Page = () => {
       toast.error("Error updating due date");
     }
   };
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!invoice || !client || !project) return;
+    setIsDownloading(true);
+    try {
+      const { pdf } = await import("@react-pdf/renderer");
+      const { InvoicePDF } = await import("@/components/Invoice/InvoicePDF");
+      const blob = await pdf(
+        // invoice may have optional fields, assert to any for PDF generation
+        <InvoicePDF invoice={invoice as any} client={client} project={project} />
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `invoice-${invoice.invoiceNumber}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <div className="flex-1 px-xl mx-auto w-full">
       <div className="py-md">
@@ -147,7 +170,7 @@ const Page = () => {
             <SecondaryButton
               label="Download"
               icon="download"
-              onClick={() => {}}
+              onClick={handleDownload}
             />
             {invoice?.status !== "Paid" ? (
               <PrimaryButton
@@ -531,16 +554,10 @@ const Page = () => {
                   Total
                 </span>
                 <span className="text-[15px] font-medium text-on-surface">
-                  {fields
-                    .reduce(
-                      (total: number, field: any) =>
-                        total + field.price * field.quantity,
-                      0
-                    )
-                    .toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}
+                  {invoice?.amount?.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
                 </span>
               </div>
             </div>
