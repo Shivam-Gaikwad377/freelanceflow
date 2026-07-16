@@ -18,6 +18,7 @@ export interface IInvoice extends Document {
   createdAt: Date;
   updatedAt: Date;
   userId: string;
+  taxRate: number;
 }
 
 export const createInvoiceSchema = z.object({
@@ -36,6 +37,7 @@ export const createInvoiceSchema = z.object({
   ).min(1, "At least one line item is required"),
   project: z.string().min(1, "Project name is required"),
   client: z.string().min(1, "Client name is required"),
+  taxRate: z.number().min(0, "Tax rate must be non-negative"),
 });
 
 export type CreateInvoiceInput = z.input<typeof createInvoiceSchema>;

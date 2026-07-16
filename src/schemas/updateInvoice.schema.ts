@@ -15,6 +15,7 @@ export const updateInvoiceSchema = z.object({
     })
   ).optional(),
   paidAt: z.coerce.date().optional(),
+  taxRate: z.number().min(0, "Tax rate must be non-negative").optional(),
 });
 
 export type UpdateInvoiceInput = z.input<typeof updateInvoiceSchema>;

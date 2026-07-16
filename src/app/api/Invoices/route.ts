@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       client,
       issueDate,
       project,
+      taxRate,
     } = await request.json();
 
     const parseResult = createInvoiceSchema.safeParse({
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
       projectId,
       project,
       issueDate,
+      taxRate,
     });
 
     if (!parseResult.success) {
@@ -55,7 +57,9 @@ export async function POST(request: Request) {
       0
     );
 
-    const amount = subtotal * (18 / 100);
+    const tax = parseResult.data.taxRate; // per-invoice, not hardcoded
+    const taxAmount = Math.round(subtotal * (tax / 100) * 100) / 100;
+    const total = Math.round((subtotal + taxAmount) * 100) / 100; 
 
     const count = await Invoice.countDocuments({ userId: ownerID });
     const invoiceNumber = count + 1;
@@ -63,7 +67,7 @@ export async function POST(request: Request) {
     const newInvoice = new Invoice({
       ...parseResult.data,
       userId: ownerID,
-      amount,
+      amount: total,
       invoiceNumber,
     });
 
