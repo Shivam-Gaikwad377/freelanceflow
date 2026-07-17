@@ -9,7 +9,7 @@ import ProjectCard from "@/components/Project/ProjectCard";
 import { useRouter } from "next/navigation";
 import useFetch from "@/app/hooks/useFetch";
 import {IProject} from "@/schemas/project.schema";
-
+ 
 const page = () => {
   const status = ["open", "in progress", "completed"] as const;
   const [searchTerm, setSearchTerm] = useState("");

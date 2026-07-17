@@ -4,8 +4,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import ProjectCard from "@/components/Project/ProjectCard";
 import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
-import useFetch from "@/app/hooks/useFetch";
+import { useDelete } from "@/app/hooks/useDelete";
 import { toast } from "sonner";
+import { IProject } from "@/schemas/project.schema";
 
 type Status = "open" | "in progress" | "completed";
 
@@ -27,23 +28,12 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleDelete = async (projectId: string) => {
-    try {
-      const response = await axios.delete(`/api/projects/${projectId}`);
-      if (response.data.success) {
-        toast.success("Project deleted successfully");
-        setProjects((prevProjects) =>
-          prevProjects.filter((project) => project._id !== projectId)
-        );
-        setTotal((prevTotal) => prevTotal - 1);
-      } else {
-        console.error("Failed to delete project:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting project:", error);
-    }
-  };
-
+  const { deleteItem: deleteProject, isDeleting: isDeletingProject } = useDelete<IProject>({
+    resource: "projects",
+    setItems: setProjects,
+    successMessage: "Project deleted successfully",
+    errorMessage: "Failed to delete project",
+  });
 
   // ── Core fetch — page 1 replaces, page 2+ appends ──────────────────────
   const fetchProjects = useCallback(
@@ -159,7 +149,7 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
               budget={project.budget}
               status={project.status}
               onClick={() => router.push(`/projects/${project._id}`)}
-              onDelete={() => handleDelete(project._id)}
+              onDelete={() => deleteProject(project._id)}
               projectId={project._id}
               burnRate={project.burnRate}
             />

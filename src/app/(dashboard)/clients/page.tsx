@@ -12,7 +12,7 @@ import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
 import { IClient } from "@/schemas/createClient.schema";
 import PrimaryButton from "@/components/PrimaryButton";
-
+import { useDelete } from "@/app/hooks/useDelete";
 const Page = () => {
   const session = useSession();
   const [clients, setClients] = useState<IClient[]>([]);
@@ -30,6 +30,12 @@ const Page = () => {
     status: selectedStatus !== "all" ? selectedStatus : undefined,
     search: debouncedSearchTerm || undefined,
   });
+    const {deleteItem: deleteClient, isDeleting: isDeletingClient} = useDelete<IClient>({
+      resource: "Clients",
+      setItems: setClients,
+      successMessage: "Client deleted successfully",
+      errorMessage: "Failed to delete client",
+    });
 
   // Use another useEffect ONLY to sync the fetched data to your local state
   useEffect(() => {
@@ -43,23 +49,7 @@ const Page = () => {
   const handleClick = (id: string) => {
     router.replace(`/clients/${id}`);
   };
-  const handleDelete = async (id: string) => {
-    try {
-      const response = await axios.delete(`/api/Clients/${id}`);
-      if (response.data.success) {
-        toast.success("Client deleted successfully");
-        // Remove the deleted client from the local state
-        setClients((prevClients) =>
-          prevClients.filter((client) => client._id.toString() !== id)
-        );
-        // Update the total clients count
-        setTotalClients((prevTotal) => prevTotal - 1);
-      }
-    } catch (error) {
-      console.error("Error deleting client:", error);
-      toast.error("Failed to delete client");
-    }
-  };
+  
   const [AddClientOpen, setAddClientOpen] = useState<boolean>(false);
 
   return (
@@ -143,7 +133,7 @@ const Page = () => {
                       currency:  "USD",
                     })}
                     onClick={() => handleClick(client._id.toString())}
-                    onDelete={() => handleDelete(client._id.toString())}
+                    onDelete={() => deleteClient(client._id.toString())}
                 />
               
             ))

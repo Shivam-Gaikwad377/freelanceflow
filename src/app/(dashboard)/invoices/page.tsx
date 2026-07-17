@@ -3,7 +3,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
@@ -14,7 +14,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 import ConfirmationBox from "@/components/confirmationBox";
-import { set } from "mongoose";
+import { useDelete } from "@/app/hooks/useDelete";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -72,6 +72,13 @@ const Page = () => {
     searchBy: isNumeric(debouncedSearchTerm) ? "invoiceNumber" : "clientName",
     monthRange: monthRange !== "all" ? monthRange : undefined,
   });
+
+  const { deleteItem: deleteInvoice, isDeleting: isDeletingInvoice } = useDelete<IInvoice>({
+    resource: "Invoices",
+    setItems: setInvoices,
+    successMessage: "Invoice deleted successfully",
+    errorMessage: "Failed to delete invoice",
+  });
   useEffect(() => {
     if (invoiceData) {
       setInvoices(invoiceData?.invoices || []);
@@ -88,17 +95,7 @@ const Page = () => {
       setStats(statsData);
     }
   }, [statsData]);
-  const handleDeleteInvoice = async (invoiceId: string) => {
-    try {
-      const response = await axios.delete(`/api/Invoices/${invoiceId}`);
-      if (response.data.success) {
-        toast.success("Invoice deleted successfully");
-        setInvoices((prevInvoices) => prevInvoices.filter((invoice) => invoice._id.toString() !== invoiceId));
-      }
-    } catch (error) {
-      toast.error("Failed to delete invoice");
-    }
-  };
+  
 
 
   return (
@@ -386,7 +383,7 @@ const Page = () => {
           message="Are you sure you want to delete this invoice?"
           message2="This action can't be undone and will permanently remove the invoice from your records."
           onConfirm={async () => {
-            handleDeleteInvoice(invoiceToDelete);
+            deleteInvoice(invoiceToDelete);
             setShowConfirmBox(false);
           }}
           onCancel={() => setShowConfirmBox(false)}
