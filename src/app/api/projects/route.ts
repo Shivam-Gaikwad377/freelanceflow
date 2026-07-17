@@ -7,6 +7,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { BurnRateCalculationPipeline } from "@/lib/pipelines/project.pipeline";
 import { Types } from "mongoose";
+import { IProject } from "@/schemas/project.schema";
+import {  isValidObjectId } from "mongoose";
+import { QueryFilter  } from "mongoose";
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
@@ -86,24 +89,53 @@ export async function GET(request: Request) {
 
     await connectToDatabase();
 
+    const ALLOWED_SORT_FIELDS = [
+      "createdAt",
+      "updatedAt",
+      "title",
+      "budget",
+      "deadline",
+    ] as const;
+    type SortField = (typeof ALLOWED_SORT_FIELDS)[number];
+
     const { searchParams } = new URL(request.url);
+
     const offset = Math.max(
       0,
       parseInt(searchParams.get("offset") ?? "0", 10) || 0
     );
     const limit = Math.min(
       50,
-      parseInt(searchParams.get("limit") ?? "10", 10) || 10
+      Math.max(1, parseInt(searchParams.get("limit") ?? "10", 10) || 10)
     );
 
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
     const clientId = searchParams.get("clientId") || "";
-    const sortBy = searchParams.get("sortBy") || "createdAt";
-    const sort = searchParams.get("sort") || "desc";
-    const filter: any = { userId: new Types.ObjectId(ownerID) };
+    const sort = searchParams.get("sort") === "asc" ? 1 : -1;
+
+    const rawSortBy = searchParams.get("sortBy") || "createdAt";
+    const sortBy: SortField = ALLOWED_SORT_FIELDS.includes(
+      rawSortBy as SortField
+    )
+      ? (rawSortBy as SortField)
+      : "createdAt";
+
+    const filter: any = {
+      userId: new Types.ObjectId(ownerID),
+    };
+
     if (status) filter.status = status;
-    if (clientId) filter.clientId = new Types.ObjectId(clientId);
+
+    if (clientId) {
+      if (!isValidObjectId(clientId)) {
+        return NextResponse.json<ApiResponse>(
+          { success: false, message: "Invalid clientId" },
+          { status: 400 }
+        );
+      }
+      filter.clientId = new Types.ObjectId(clientId);
+    }
 
     if (search) {
       filter.title = { $regex: search, $options: "i" };
@@ -113,7 +145,7 @@ export async function GET(request: Request) {
       Project.aggregate([
         { $match: filter },
         ...BurnRateCalculationPipeline,
-        { $sort: { [sortBy]: sort === "asc" ? 1 : -1 } },
+        { $sort: { [sortBy]: sort  } },
         { $skip: offset },
         { $limit: limit },
       ]),

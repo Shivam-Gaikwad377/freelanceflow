@@ -1,22 +1,25 @@
-import useFetch from "@/app/hooks/useFetch";
+// services/dashboard.ts
+import axios from "axios";
 import { IProject } from "@/schemas/project.schema";
+import ApiResponse from "@/types/ApiResponse";
 
-export const getActiveProjects = async () => {
-  const { data, error } = useFetch<IProject[]>(`/api/projects`, {
-    status: "in progress",
+export async function getActiveProjects(signal?: AbortSignal) {
+  const { data } = await axios.get<ApiResponse>("/api/projects", {
+    params: { status: "in progress" },
+    signal,
   });
-  return {data, error};
+  return data;
 }
 
-export const getTotalClients = async () => {
-  const { data, error } = useFetch<{ total: number }>(`/api/Clients`, {
-    status: "active",
+export async function getTotalClients(signal?: AbortSignal) {
+  const { data } = await axios.get<ApiResponse>("/api/Clients", {
+    params: { status: "active" },
+    signal,
   });
-  return { total: data.total, error };
-};
+  return data;
+}
 
-
-export const getInvoiceStats = async () => {
-  const { data, error } = useFetch(`/api/invoices/stats`);
-  return { data, error };
+export async function getInvoiceStats(signal?: AbortSignal) {
+  const { data } = await axios.get<ApiResponse>("/api/Invoices/stats", { signal });
+  return data;
 }
