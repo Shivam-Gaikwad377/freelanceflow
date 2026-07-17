@@ -1,6 +1,47 @@
-import React from "react";
+"use client"
+import React, {useEffect, useState} from "react";
+import { getActiveProjects, getInvoiceStats, getTotalClients } from "@/helpers/dashboardServices";
+
 
 const page = () => {
+    const [activeProjects, setActiveProjects] = useState([]);
+    const [invoiceStats, setInvoiceStats] = useState({});
+    const [totalClients, setTotalClients] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const[totalProjects, setTotalProjects] = useState(0);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { data: activeProjectsData, error: activeProjectsError } = await getActiveProjects();
+                const { data: invoiceStatsData, error: invoiceStatsError } = await getInvoiceStats();
+                const { total: totalClientsData, error: totalClientsError } = await getTotalClients();
+                if(activeProjectsError || invoiceStatsError || totalClientsError) {
+                    throw new Error("Failed to fetch data");
+                }
+                
+                if(activeProjectsData.success || invoiceStatsData.success || totalClientsData.success ) {
+                    if(activeProjectsData.success ) {
+                        setActiveProjects(activeProjectsData.data.projects);
+                        setTotalProjects(activeProjectsData.data.total);
+                    }
+                    if(invoiceStatsData.success ) {
+                        setInvoiceStats(invoiceStatsData.data);
+                    }
+                    if(totalClientsData.success ) {
+                        setTotalClients(totalClientsData);
+                    }
+                }
+            } catch (err  : any) {
+                setError(err.message);
+            }
+            finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -88,7 +129,7 @@ const page = () => {
             Active projects
           </div>
           <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
-            8
+            {totalProjects}
           </div>
           <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
             2 due this week
@@ -106,7 +147,7 @@ const page = () => {
             Total clients
           </div>
           <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
-            24
+            {totalClients}
           </div>
           <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
             3 new this month
