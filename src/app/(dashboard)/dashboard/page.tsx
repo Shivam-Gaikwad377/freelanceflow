@@ -28,21 +28,22 @@ const page = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(" ");
   const [totalProjects, setTotalProjects] = useState(0);
+  const [limit, setLimit] = useState<number>(5);
   const {
     data: projectsData,
     error: projectsError,
     isLoading: isProjectsLoading,
-  } = useAsync(getActiveProjects, []);
+  } = useAsync((signal) => getActiveProjects(limit, signal), [limit]);
   const {
     data: clientsData,
     error: clientsError,
     isLoading: isClientsLoading,
-  } = useAsync(getTotalClients, []);
+  } = useAsync((signal) => getTotalClients(signal), []);
   const {
     data: invoiceStatsData,
     error: invoiceStatsError,
     isLoading: isInvoiceStatsLoading,
-  } = useAsync(getInvoiceStats, []);
+  } = useAsync((signal) => getInvoiceStats(signal), []);
   useEffect(() => {
     if (projectsData) {
       setActiveProjects(projectsData.data.projects);
@@ -344,7 +345,7 @@ const page = () => {
         </div>
       </div>
 
-       <div className="grid grid-cols-1 lg:grid-cols-2 gap-md md:gap-lg mb-xl">
+       <div className="grid grid-cols-1 h-auto lg:grid-cols-2 gap-md md:gap-lg mb-xl">
         <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
@@ -356,28 +357,58 @@ const page = () => {
           </div>
           <div className="flex flex-col gap-5">
             <div>
-              <div className="flex flex-col justify-center items-start  mb-2">
+              <div className="flex flex-col gap-md justify-center items-start  mb-2">
                 {activeProjects.map((project) => (
                   <div
                     key={project._id.toString()}
-                    className="flex flex-col justify-between  mb-2"
+                    className="flex gap-2 items-center justify-between  mb-2"
                   >
-                    <p className="font-headline-sm text-label-md text-on-surface">
-                      {project.title}
-                    </p>
-                    <p className="font-label-sm text-label-sm text-on-surface-variant">
-                      {project.client}
-                    </p>
+                    <div
+                    className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors"
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: "20px" }}
+                    >
+                      receipt
+                    </span>
+                  </div>
+                    <div>
+                        <p className="font-headline-sm text-label-md text-on-surface">
+                          {project.title}
+                        </p>
+                        <p className="font-label-sm text-label-sm text-on-surface-variant">
+                          {project.client}
+                        </p>
+                    </div>
                   </div>
                 ))}
               </div>
+
             </div>
           </div>
+          <div className=" text-center">
+                {activeProjects.length === totalProjects ? (
+                  <button
+                    onClick={() => setLimit(5)}
+                    className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                  >
+                    View Less
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setLimit(totalProjects)}
+                    className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                  >
+                    View All Projects
+                  </button>
+                )}
+              </div>
         </div>
       
 
 
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+      <div className="bg-surface-container-lowest h-auto border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
         <div className="flex justify-between items-center mb-6">
           <h3 className="font-headline-sm text-headline-sm text-on-surface">
             Recent activity

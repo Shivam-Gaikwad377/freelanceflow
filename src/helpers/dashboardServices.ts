@@ -3,9 +3,9 @@ import axios from "axios";
 import { IProject } from "@/schemas/project.schema";
 import ApiResponse from "@/types/ApiResponse";
 
-export async function getActiveProjects(signal?: AbortSignal) {
+export async function getActiveProjects(limit: number, signal?: AbortSignal) {
   const { data } = await axios.get<ApiResponse>("/api/projects", {
-    params: { status: "in progress" },
+    params: { status: "in progress" , limit },
     signal,
   });
   return data;
