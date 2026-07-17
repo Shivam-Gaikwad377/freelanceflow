@@ -187,7 +187,7 @@ const page = () => {
             </button>
           </div>
 
-          <div className="flex-1 min-h-[200px] flex flex-col justify-end mt-4">
+          <div className="flex-1 min-h-50 flex flex-col justify-end mt-4">
             <div className="flex items-end justify-between gap-2 md:gap-4 h-48 border-b border-outline-variant pb-2">
               <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[40%] group relative">
                 <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
@@ -344,7 +344,7 @@ const page = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-md md:gap-lg mb-xl">
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-md md:gap-lg mb-xl">
         <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
@@ -356,140 +356,92 @@ const page = () => {
           </div>
           <div className="flex flex-col gap-5">
             <div>
-              <div className="flex justify-between items-end mb-2">
-                <div>
-                  <p className="font-label-md text-label-md text-on-surface">
-                    Portfolio redesign
-                  </p>
-                  <p className="font-label-sm text-label-sm text-on-surface-variant">
-                    Acme Studio
-                  </p>
-                </div>
-                <span className="font-label-sm text-label-sm text-on-surface-variant">
-                  70%
-                </span>
-              </div>
-              <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all duration-500"
-                  style={{ width: "70%" }}
-                ></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between items-end mb-2">
-                <div>
-                  <p className="font-label-md text-label-md text-on-surface">
-                    Checkout flow
-                  </p>
-                  <p className="font-label-sm text-label-sm text-on-surface-variant">
-                    Nova Retail
-                  </p>
-                </div>
-                <span className="font-label-sm text-label-sm text-on-surface-variant">
-                  40%
-                </span>
-              </div>
-              <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all duration-500"
-                  style={{ width: "40%" }}
-                ></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between items-end mb-2">
-                <div>
-                  <p className="font-label-md text-label-md text-on-surface">
-                    Brand refresh
-                  </p>
-                  <p className="font-label-sm text-label-sm text-on-surface-variant">
-                    Bloom Agency
-                  </p>
-                </div>
-                <span className="font-label-sm text-label-sm text-on-surface-variant">
-                  90%
-                </span>
-              </div>
-              <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-secondary rounded-full transition-all duration-500"
-                  style={{ width: "90%" }}
-                ></div>
+              <div className="flex flex-col justify-center items-start  mb-2">
+                {activeProjects.map((project) => (
+                  <div
+                    key={project._id.toString()}
+                    className="flex flex-col justify-between  mb-2"
+                  >
+                    <p className="font-headline-sm text-label-md text-on-surface">
+                      {project.title}
+                    </p>
+                    <p className="font-label-sm text-label-sm text-on-surface-variant">
+                      {project.client}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
+      
 
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-headline-sm text-headline-sm text-on-surface">
-              Recent activity
-            </h3>
-            <button className="text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined">filter_list</span>
-            </button>
+
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="font-headline-sm text-headline-sm text-on-surface">
+            Recent activity
+          </h3>
+          <button className="text-on-surface-variant hover:text-primary transition-colors">
+            <span className="material-symbols-outlined">filter_list</span>
+          </button>
+        </div>
+        <div className="flex flex-col gap-5 relative">
+          <div className="absolute left-3.75 top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
+
+          <div className="flex gap-4 relative z-10">
+            <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+              NR
+            </div>
+            <div>
+              <p className="font-body-sm text-body-sm text-on-surface">
+                <span className="font-semibold text-on-surface">
+                  Nova Retail
+                </span>
+                added a new project
+              </p>
+              <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                2 hours ago
+              </p>
+            </div>
           </div>
-          <div className="flex flex-col gap-5 relative">
-            <div className="absolute left-[15px] top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
 
-            <div className="flex gap-4 relative z-10">
-              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-                NR
-              </div>
-              <div>
-                <p className="font-body-sm text-body-sm text-on-surface">
-                  <span className="font-semibold text-on-surface">
-                    Nova Retail
-                  </span>
-                  added a new project
-                </p>
-                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                  2 hours ago
-                </p>
-              </div>
+          <div className="flex gap-4 relative z-10">
+            <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+              KL
             </div>
-
-            <div className="flex gap-4 relative z-10">
-              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-                KL
-              </div>
-              <div>
-                <p className="font-body-sm text-body-sm text-on-surface">
-                  <span className="font-semibold text-on-surface">
-                    Kite Labs
-                  </span>
-                  paid invoice
-                  <a className="text-primary hover:underline" href="#">
-                    INV-0228
-                  </a>
-                </p>
-                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                  Yesterday, 4:30 PM
-                </p>
-              </div>
+            <div>
+              <p className="font-body-sm text-body-sm text-on-surface">
+                <span className="font-semibold text-on-surface">Kite Labs</span>
+                paid invoice
+                <a className="text-primary hover:underline" href="#">
+                  INV-0228
+                </a>
+              </p>
+              <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                Yesterday, 4:30 PM
+              </p>
             </div>
+          </div>
 
-            <div className="flex gap-4 relative z-10">
-              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-                BA
-              </div>
-              <div>
-                <p className="font-body-sm text-body-sm text-on-surface">
-                  <span className="font-semibold text-on-surface">
-                    Bloom Agency
-                  </span>
-                  added as a client
-                </p>
-                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                  3 days ago
-                </p>
-              </div>
+          <div className="flex gap-4 relative z-10">
+            <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+              BA
+            </div>
+            <div>
+              <p className="font-body-sm text-body-sm text-on-surface">
+                <span className="font-semibold text-on-surface">
+                  Bloom Agency
+                </span>
+                added as a client
+              </p>
+              <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                3 days ago
+              </p>
             </div>
           </div>
         </div>
+      </div>
       </div>
     </main>
   );
