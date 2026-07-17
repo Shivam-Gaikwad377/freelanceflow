@@ -1,0 +1,436 @@
+import React from "react";
+
+const page = () => {
+  return (
+    <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="font-headline-lg text-headline-lg text-on-surface mb-1">
+            Good afternoon, Shivam
+          </h2>
+          <p className="font-body-md text-body-md text-on-surface-variant">
+            Here's what's happening across your projects
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="h-10 px-4 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md text-label-md flex items-center gap-2 hover:bg-surface-container-low transition-colors shadow-sm">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "18px" }}
+            >
+              calendar_today
+            </span>
+            Last 30 days
+          </button>
+          <button className="h-10 px-4 rounded-lg bg-primary text-on-primary font-label-md text-label-md flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "18px" }}
+            >
+              add
+            </span>
+            New invoice
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md md:gap-lg">
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-2">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "18px" }}
+            >
+              payments
+            </span>
+            Total revenue
+          </div>
+          <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
+            ₹1,24,500
+          </div>
+          <div className="flex items-center gap-1 font-label-sm text-label-sm text-secondary">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "14px" }}
+            >
+              trending_up
+            </span>
+            +12% vs last month
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-2">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "18px" }}
+            >
+              schedule
+            </span>
+            Outstanding
+          </div>
+          <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
+            ₹32,000
+          </div>
+          <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+            4 invoices pending
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-2">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "18px" }}
+            >
+              work
+            </span>
+            Active projects
+          </div>
+          <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
+            8
+          </div>
+          <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+            2 due this week
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-2">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: "18px" }}
+            >
+              group
+            </span>
+            Total clients
+          </div>
+          <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
+            24
+          </div>
+          <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+            3 new this month
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-md md:gap-lg">
+        <div className="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-headline-sm text-headline-sm text-on-surface">
+              Revenue overview
+            </h3>
+            <button className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined">more_horiz</span>
+            </button>
+          </div>
+
+          <div className="flex-1 min-h-[200px] flex flex-col justify-end mt-4">
+            <div className="flex items-end justify-between gap-2 md:gap-4 h-48 border-b border-outline-variant pb-2">
+              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[40%] group relative">
+                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
+                  ₹45k
+                </div>
+              </div>
+              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[55%] group relative">
+                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
+                  ₹62k
+                </div>
+              </div>
+              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[48%] group relative">
+                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
+                  ₹54k
+                </div>
+              </div>
+              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[75%] group relative">
+                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
+                  ₹85k
+                </div>
+              </div>
+              <div className="w-full bg-primary hover:bg-primary/90 transition-colors rounded-t-sm h-[90%] group relative shadow-[0_0_15px_rgba(70,72,212,0.3)]">
+                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
+                  ₹102k
+                </div>
+              </div>
+              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[65%] group relative">
+                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
+                  ₹74k
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-3 font-label-sm text-label-sm text-on-surface-variant px-2">
+              <span>Feb</span>
+              <span>Mar</span>
+              <span>Apr</span>
+              <span>May</span>
+              <span>Jun</span>
+              <span>Jul</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-headline-sm text-headline-sm text-on-surface">
+              Recent invoices
+            </h3>
+            <a
+              className="font-label-sm text-label-sm text-primary hover:underline"
+              href="#"
+            >
+              View all
+            </a>
+          </div>
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-center group cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "20px" }}
+                  >
+                    receipt
+                  </span>
+                </div>
+                <div>
+                  <p className="font-label-md text-label-md text-on-surface">
+                    Acme Studio
+                  </p>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    INV-0231
+                  </p>
+                </div>
+              </div>
+              <span className="px-2.5 py-1 rounded-full bg-[#dcfce7] text-[#166534] font-label-sm text-label-sm uppercase tracking-wider text-[10px]">
+                Paid
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center group cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "20px" }}
+                  >
+                    receipt
+                  </span>
+                </div>
+                <div>
+                  <p className="font-label-md text-label-md text-on-surface">
+                    Nova Retail
+                  </p>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    INV-0230
+                  </p>
+                </div>
+              </div>
+              <span className="px-2.5 py-1 rounded-full bg-[#fef08a] text-[#854d0e] font-label-sm text-label-sm uppercase tracking-wider text-[10px]">
+                Pending
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center group cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "20px" }}
+                  >
+                    receipt
+                  </span>
+                </div>
+                <div>
+                  <p className="font-label-md text-label-md text-on-surface">
+                    Bloom Agency
+                  </p>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    INV-0229
+                  </p>
+                </div>
+              </div>
+              <span className="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm uppercase tracking-wider text-[10px]">
+                Overdue
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center group cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "20px" }}
+                  >
+                    receipt
+                  </span>
+                </div>
+                <div>
+                  <p className="font-label-md text-label-md text-on-surface">
+                    Kite Labs
+                  </p>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    INV-0228
+                  </p>
+                </div>
+              </div>
+              <span className="px-2.5 py-1 rounded-full bg-[#dcfce7] text-[#166534] font-label-sm text-label-sm uppercase tracking-wider text-[10px]">
+                Paid
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-md md:gap-lg mb-xl">
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-headline-sm text-headline-sm text-on-surface">
+              Active projects
+            </h3>
+            <button className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined">more_horiz</span>
+            </button>
+          </div>
+          <div className="flex flex-col gap-5">
+            <div>
+              <div className="flex justify-between items-end mb-2">
+                <div>
+                  <p className="font-label-md text-label-md text-on-surface">
+                    Portfolio redesign
+                  </p>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    Acme Studio
+                  </p>
+                </div>
+                <span className="font-label-sm text-label-sm text-on-surface-variant">
+                  70%
+                </span>
+              </div>
+              <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-500"
+                  style={{ width: "70%" }}
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-end mb-2">
+                <div>
+                  <p className="font-label-md text-label-md text-on-surface">
+                    Checkout flow
+                  </p>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    Nova Retail
+                  </p>
+                </div>
+                <span className="font-label-sm text-label-sm text-on-surface-variant">
+                  40%
+                </span>
+              </div>
+              <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-500"
+                  style={{ width: "40%" }}
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-end mb-2">
+                <div>
+                  <p className="font-label-md text-label-md text-on-surface">
+                    Brand refresh
+                  </p>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    Bloom Agency
+                  </p>
+                </div>
+                <span className="font-label-sm text-label-sm text-on-surface-variant">
+                  90%
+                </span>
+              </div>
+              <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-secondary rounded-full transition-all duration-500"
+                  style={{ width: "90%" }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-headline-sm text-headline-sm text-on-surface">
+              Recent activity
+            </h3>
+            <button className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined">filter_list</span>
+            </button>
+          </div>
+          <div className="flex flex-col gap-5 relative">
+            <div className="absolute left-[15px] top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
+
+            <div className="flex gap-4 relative z-10">
+              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+                NR
+              </div>
+              <div>
+                <p className="font-body-sm text-body-sm text-on-surface">
+                  <span className="font-semibold text-on-surface">
+                    Nova Retail
+                  </span>
+                  added a new project
+                </p>
+                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                  2 hours ago
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 relative z-10">
+              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+                KL
+              </div>
+              <div>
+                <p className="font-body-sm text-body-sm text-on-surface">
+                  <span className="font-semibold text-on-surface">
+                    Kite Labs
+                  </span>
+                  paid invoice
+                  <a className="text-primary hover:underline" href="#">
+                    INV-0228
+                  </a>
+                </p>
+                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                  Yesterday, 4:30 PM
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 relative z-10">
+              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+                BA
+              </div>
+              <div>
+                <p className="font-body-sm text-body-sm text-on-surface">
+                  <span className="font-semibold text-on-surface">
+                    Bloom Agency
+                  </span>
+                  added as a client
+                </p>
+                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                  3 days ago
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default page;
