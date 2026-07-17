@@ -5,7 +5,7 @@ import Project from "@/models/project.model";
 import { projectSchema } from "@/schemas/project.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-import  { BurnRateCalculationPipeline } from "@/lib/pipelines/project.pipeline";
+import { BurnRateCalculationPipeline } from "@/lib/pipelines/project.pipeline";
 import { Types } from "mongoose";
 export async function POST(request: Request) {
   try {
@@ -103,7 +103,7 @@ export async function GET(request: Request) {
     const sort = searchParams.get("sort") || "desc";
     const filter: any = { userId: new Types.ObjectId(ownerID) };
     if (status) filter.status = status;
-    if (clientId) filter.clientId = clientId;
+    if (clientId) filter.clientId = new Types.ObjectId(clientId);
 
     if (search) {
       filter.title = { $regex: search, $options: "i" };

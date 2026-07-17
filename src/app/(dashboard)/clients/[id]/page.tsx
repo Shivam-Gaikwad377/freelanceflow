@@ -20,7 +20,7 @@ import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 import ConfirmationBox from "@/components/confirmationBox";
 import axios from "axios";
-import { set } from "mongoose";
+import { useDelete } from "@/app/hooks/useDelete";
 
 const Page = () => {
   const { openModal } = useUiStore();
@@ -68,6 +68,20 @@ const Page = () => {
     `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}`
   );
 
+  const {deleteItem: deleteProject, isDeleting: isDeletingProject} = useDelete<IProject>({
+    resource: "projects",
+    setItems: setProjects,
+    successMessage: "Project deleted successfully",
+    errorMessage: "Failed to delete project",
+  });
+
+  const {deleteItem: deleteInvoice, isDeleting: isDeletingInvoice} = useDelete<IInvoice>({
+    resource: "Invoices",
+    setItems: setInvoices,
+    successMessage: "Invoice deleted successfully",
+    errorMessage: "Failed to delete invoice",
+  });
+
   useEffect(() => {
     if (clientData || invoiceData || projectData) {
       if (clientData) {
@@ -88,51 +102,23 @@ const Page = () => {
     setProjectOffset(0);
   }, [id]);
 
-  const handleDeleteProject = async (projectId: string) => {
-    try {
-      const response = await axios.delete(`/api/projects/${projectId}`);
-      if (response.data.success) {
-        toast.success("Project deleted successfully");
-        setProjects((prevProjects) =>
-          prevProjects.filter((project) => project._id.toString() !== projectId)
-        );
-      }
-    } catch (error) {
-      console.error("Error deleting project:", error);
-      toast.error("Failed to delete project");
-    }
-  };
+  
 
-  const handleDeleteInvoice = async (invoiceId: string) => {
-    try {
-      const response = await axios.delete(`/api/Invoices/${invoiceId}`);
-
-      if (response.data.success) {
-        toast.success("Invoice deleted successfully");
-        setInvoices((prevInvoices) =>
-          prevInvoices.filter((invoice) => invoice._id.toString() !== invoiceId)
-        );
-        setInvoiceTotal((prevTotal) => prevTotal - 1);
-      }
-    } catch (error) {
-      console.error("Error deleting invoice:", error);
-      toast.error("Failed to delete invoice");
-    }
-  };
+  
   const handleConfirm = async () => {
     if (projectToBeDeleted) {
-      await handleDeleteProject(projectToBeDeleted);
+      deleteProject(projectToBeDeleted);
       setShowProjectDeleteConfirmation(false);
       setProjectToBeDeleted(null);
     }
     if (invoiceToBeDeleted) {
-      await handleDeleteInvoice(invoiceToBeDeleted);
+      deleteInvoice(invoiceToBeDeleted);
       setShowInvoiceDeleteConfirmation(false);
       setInvoiceToBeDeleted(null);
     }
   };
   const router = useRouter();
-
+  console.log(projects)
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
       <div>

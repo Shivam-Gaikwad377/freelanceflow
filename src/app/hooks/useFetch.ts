@@ -26,8 +26,9 @@ const useFetch = <T>(url: string, params: Record<string, any> = {}) => {
         // 3. If the error is an abort cancellation, just ignore it.
         // We don't want to show an error state for a cancelled request.
         if (axios.isCancel(err)) {
-          console.log("Previous request cancelled");
-          return; 
+          
+          // Rethrow the error to be caught by the outer catch block
+         return;
         }
         setError("Failed to fetch data");
       } finally {
