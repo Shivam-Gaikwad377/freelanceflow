@@ -3,11 +3,27 @@ import Invoice from "@/models/invoice.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { isValidObjectId } from "mongoose";
+import type { PipelineStage } from "mongoose";
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
 
 import { markOverdueInvoices } from "@/helpers/markOverdues";
 import { invoiceStatsPipeline } from "@/lib/pipelines/invoice.pipeline";
+function buildMonthlySeries(rows: { _id: string; total: number }[]) {
+  const now = new Date();
+  const series: { month: string; total: number }[] = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(Date.UTC(now.getFullYear(), now.getMonth() - i, 1));
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const match = rows.find((r) => r._id === key);
+    series.push({
+      month: d.toLocaleString("en-US", { month: "short", year: "2-digit" }),
+      total: match?.total ?? 0,
+    });
+  }
+  return series;
+}
 
 export async function GET(request: Request) {
   try {
@@ -31,7 +47,9 @@ export async function GET(request: Request) {
 
     await markOverdueInvoices(userId);
 
-    const stats = await Invoice.aggregate(invoiceStatsPipeline(userId));
+    const stats = await Invoice.aggregate(
+      invoiceStatsPipeline(userId) as PipelineStage[]
+    );
     const result = stats[0] ?? {};
 
     return NextResponse.json<ApiResponse>(
@@ -55,6 +73,7 @@ export async function GET(request: Request) {
             total: result?.paidLastMonth[0]?.total || 0,
             count: result?.paidLastMonth[0]?.count || 0,
           },
+          monthlyRevenue: buildMonthlySeries(result?.monthlyRevenue || []),
         },
       },
       { status: 200 }

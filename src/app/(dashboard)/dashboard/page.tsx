@@ -7,7 +7,7 @@ import {
   getRecentActivities,
 } from "@/helpers/dashboardServices";
 import { useAsync } from "@/app/hooks/useAsync";
-import {Client, Project, Invoice} from "@/types/Model.types";
+import { Client, Project, Invoice } from "@/types/Model.types";
 import useFetch from "@/app/hooks/useFetch";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import { useRouter } from "next/navigation";
@@ -37,6 +37,7 @@ const page = () => {
       total: 0,
       count: 0,
     },
+    monthlyRevenue: [] as any[],
   });
   const [totalClients, setTotalClients] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -129,22 +130,14 @@ const page = () => {
       setGrowthResult(growth);
     }
   }, [stats.paidThisMonth, stats.paidLastMonth]);
-  function formatRelativeTime(date: Date): string {
-    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  const [max, setMax] = useState(0);
+  useEffect(() => {
+    if (stats.monthlyRevenue && stats.monthlyRevenue.length > 0) {
+      const maxRevenue = Math.max(...stats.monthlyRevenue.map((m) => m.total));
+      setMax(maxRevenue);
+    }
+  }, [stats.monthlyRevenue]);
 
-    if (seconds < 60) return "Just now";
-
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
-
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-
-    const days = Math.floor(hours / 24);
-    if (days < 7) return `${days}d ago`;
-
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  }
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -292,45 +285,31 @@ const page = () => {
 
           <div className="flex-1 min-h-50 flex flex-col justify-end mt-4">
             <div className="flex items-end justify-between gap-2 md:gap-4 h-48 border-b border-outline-variant pb-2">
-              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[40%] group relative">
-                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
-                  ₹45k
+              {stats?.monthlyRevenue?.map((monthData) => (
+                <div
+                  className={`w-full ${max === monthData.total ? 'bg-primary hover:bg-primary-container' : 'bg-surface-container hover:bg-surface-container-highest'}  transition-colors rounded-t-sm  group relative`}
+                  style={{
+                    height: Math.min(
+                      (monthData.total / (max > 0 ? max : 1)) * 100,
+                      100
+                    ),
+                  }}
+                >
+                  <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
+                    {monthData.total.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "INR",
+                      maxdigits: 0,
+                    })}
+                  </div>
                 </div>
-              </div>
-              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[55%] group relative">
-                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
-                  ₹62k
-                </div>
-              </div>
-              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[48%] group relative">
-                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
-                  ₹54k
-                </div>
-              </div>
-              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[75%] group relative">
-                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
-                  ₹85k
-                </div>
-              </div>
-              <div className="w-full bg-primary hover:bg-primary/90 transition-colors rounded-t-sm h-[90%] group relative shadow-[0_0_15px_rgba(70,72,212,0.3)]">
-                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
-                  ₹102k
-                </div>
-              </div>
-              <div className="w-full bg-surface-container hover:bg-surface-container-highest transition-colors rounded-t-sm h-[65%] group relative">
-                <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
-                  ₹74k
-                </div>
-              </div>
+              ))}
             </div>
 
             <div className="flex justify-between mt-3 font-label-sm text-label-sm text-on-surface-variant px-2">
-              <span>Feb</span>
-              <span>Mar</span>
-              <span>Apr</span>
-              <span>May</span>
-              <span>Jun</span>
-              <span>Jul</span>
+              {stats?.monthlyRevenue?.map((monthData) => (
+                <span key={monthData.month}>{monthData.month}</span>
+              ))}
             </div>
           </div>
         </div>
@@ -504,12 +483,13 @@ const page = () => {
                     {new Date(activity.timestamp).toLocaleString("en-US", {
                       month: "short",
                       day: "numeric",
-                    }) + " at " + new Date(activity.timestamp).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
-                    
+                    }) +
+                      " at " +
+                      new Date(activity.timestamp).toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
                   </p>
                 </div>
               </div>
