@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import ConfirmationBox from "../confirmationBox";
-import ProjectTimer from "../ProjectTImer";
+import ProjectTimer from "../TimeLogs/ProjectTImer";
 interface ProjectPageProps {
   // Define any props you want to pass to the component here
   projectId: string; // Unique identifier for the project

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import SecondaryButton from "./SecondaryButton";
+import SecondaryButton from "../SecondaryButton";
 import useFetch from "@/app/hooks/useFetch";
 import AddTimeLog from "./AddTimeLog";
-import ConfirmationBox from "./confirmationBox";
+import ConfirmationBox from "../confirmationBox";
 import axios from "axios";
 import { toast } from "sonner";
 

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import Image from "next/image";
 import { UserRound } from "lucide-react";
-import GlobalTimer from "./GlobalTimer";
+import GlobalTimer from "./TimeLogs/GlobalTimer";
 
 const TopNavbar = () => {
   const { data: session } = useSession();
