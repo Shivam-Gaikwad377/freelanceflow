@@ -10,12 +10,13 @@ import { IProject } from "@/schemas/project.schema";
 import { IInvoice } from "@/schemas/createInvoice.schema";
 import useFetch from "@/app/hooks/useFetch";
 import StatusBadge from "@/components/Invoice/StatusBadge";
-import { get } from "http";
+import { useRouter } from "next/navigation";
 type GrowthResult = {
   percentage: number | null; // null = undefined growth, render as "New"
   direction: "up" | "down" | "flat";
 };
 const page = () => {
+  const router = useRouter();
   const [activeProjects, setActiveProjects] = useState<IProject[]>([]);
   const [stats, setStats] = useState({
     outstanding: {
@@ -109,7 +110,7 @@ const page = () => {
         stats.paidLastMonth.total
       );
       setGrowthResult(growth);
-    } 
+    }
   }, [stats.paidThisMonth, stats.paidLastMonth]);
 
   return (
@@ -148,10 +149,7 @@ const page = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md md:gap-lg">
         <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
           <div className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-2">
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: "18px" }}
-            >
+            <span className="material-symbols-outlined text-headline-lg">
               payments
             </span>
             Total revenue
@@ -162,22 +160,32 @@ const page = () => {
               currency: "USD",
             })}
           </div>
-          <div className={"flex items-center gap-1 font-label-sm text-label-sm " + (growthResult.direction === "up" ? "text-on-secondary-container" : "text-on-accent-container")}>
-            <span
-              className="material-symbols-outlined text-label-lg"
-              
-            >
+          <div
+            className={
+              "flex items-center gap-1 font-label-sm text-label-sm " +
+              (growthResult.direction === "up"
+                ? "text-on-secondary-container"
+                : "text-on-accent-container")
+            }
+          >
+            <span className="material-symbols-outlined text-label-lg">
               {growthResult.direction === "up"
                 ? "trending_up"
-                : growthResult.direction === "down" ? "trending_down" : "remove"}
+                : growthResult.direction === "down"
+                  ? "trending_down"
+                  : "remove"}
             </span>
-            {
-              growthResult.percentage !== null ? (
-                <span className={growthResult.direction === "up" ? "text-on-secondary-container" : "text-on-accent-container"}>
-                  {growthResult.percentage.toFixed(2)}%
-                </span>
-              ) : null
-            }
+            {growthResult.percentage !== null ? (
+              <span
+                className={
+                  growthResult.direction === "up"
+                    ? "text-on-secondary-container"
+                    : "text-on-accent-container"
+                }
+              >
+                {growthResult.percentage.toFixed(2)}%
+              </span>
+            ) : null}
           </div>
         </div>
 
@@ -312,6 +320,10 @@ const page = () => {
               <div
                 key={invoice._id.toString()}
                 className="flex justify-between items-center group cursor-pointer"
+                onClick={() => {
+                 
+                  router.push(`/invoices/${invoice._id}`);
+                }}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
@@ -353,7 +365,7 @@ const page = () => {
       </div>
 
       <div className="grid grid-cols-1 h-auto lg:grid-cols-2 gap-md md:gap-lg mb-xl">
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+        <div className="bg-surface-container-lowest border max-h-70  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
               Active projects
@@ -362,13 +374,14 @@ const page = () => {
               <span className="material-symbols-outlined">more_horiz</span>
             </button>
           </div>
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 overflow-auto scrollbar-hide">
             <div>
               <div className="flex flex-col gap-md justify-center items-start  mb-2">
                 {activeProjects.map((project) => (
                   <div
                     key={project._id.toString()}
                     className="flex cursor-pointer gap-2 group items-center w-full justify-start  mb-2"
+                    onClick={()=> router.push(`/projects/${project._id}`)}
                   >
                     <div className="w-10 grop-hover:text-primary h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
                       <span className="material-symbols-outlined text-headline-sm">
@@ -427,7 +440,7 @@ const page = () => {
           </div>
         </div>
 
-        <div className="bg-surface-container-lowest min-h-70 max-h-80 border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+        <div className="bg-surface-container-lowest max-h-70 border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
               Recent activity
