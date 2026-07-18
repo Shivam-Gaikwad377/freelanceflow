@@ -57,6 +57,13 @@ const page = () => {
     }
     setLoading(isProjectsLoading || isClientsLoading || isInvoiceStatsLoading);
   }, [projectsData, clientsData, invoiceStatsData]);
+  const getBurnRatePercentage = (
+    burnRate: number | undefined,
+    budget: number
+  ) => {
+    if (budget === 0 || burnRate === undefined) return 0;
+    return (burnRate / budget) * 100;
+  };
 
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
@@ -345,7 +352,7 @@ const page = () => {
         </div>
       </div>
 
-       <div className="grid grid-cols-1 h-auto lg:grid-cols-2 gap-md md:gap-lg mb-xl">
+      <div className="grid grid-cols-1 h-auto lg:grid-cols-2 gap-md md:gap-lg mb-xl">
         <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
@@ -361,118 +368,128 @@ const page = () => {
                 {activeProjects.map((project) => (
                   <div
                     key={project._id.toString()}
-                    className="flex gap-2 items-center justify-between  mb-2"
+                    className="flex gap-2 items-center w-full justify-start  mb-2"
                   >
-                    <div
-                    className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors"
-                  >
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: "20px" }}
-                    >
-                      receipt
-                    </span>
-                  </div>
+                    <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: "20px" }}
+                      >
+                        receipt
+                      </span>
+                    </div>
                     <div>
-                        <p className="font-headline-sm text-label-md text-on-surface">
-                          {project.title}
-                        </p>
-                        <p className="font-label-sm text-label-sm text-on-surface-variant">
-                          {project.client}
-                        </p>
+                      <p className="font-headline-sm text-label-md text-on-surface">
+                        {project.title}
+                      </p>
+                      <p className="font-label-sm text-label-sm text-on-surface-variant">
+                        {project.client}
+                      </p>
+                      <div>
+                        <p className="font-label-sm text-label-sm text-on-surface-variant">{getBurnRatePercentage(project.burnRate, project.budget).toFixed(2)}% of budget used</p>
+                        <div className={`relative mt-2 h-1 w-50 rounded-full overflow-hidden  bg-stone-300`} >
+                        
+                        <div
+                          className="absolute inset-y-0 left-0 rounded-full opacity-100"
+                          style={{
+                            width: `${getBurnRatePercentage(project.burnRate, project.budget)}%`,
+                            background: `linear-gradient(to right, #3b82f6, #6366f1)`,
+                          }}
+                        />
+                                            </div>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-
             </div>
           </div>
           <div className=" text-center">
-                {activeProjects.length === totalProjects ? (
-                  <button
-                    onClick={() => setLimit(5)}
-                    className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
-                  >
-                    View Less
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setLimit(totalProjects)}
-                    className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
-                  >
-                    View All Projects
-                  </button>
-                )}
+            {activeProjects.length === totalProjects ? (
+              <button
+                onClick={() => setLimit(5)}
+                className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+              >
+                View Less
+              </button>
+            ) : (
+              <button
+                onClick={() => setLimit(totalProjects)}
+                className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+              >
+                View All Projects
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest min-h-70 max-h-80 border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-headline-sm text-headline-sm text-on-surface">
+              Recent activity
+            </h3>
+            <button className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined">filter_list</span>
+            </button>
+          </div>
+          <div className="flex flex-col gap-5 relative">
+            <div className="absolute left-3.75 top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
+
+            <div className="flex gap-4 relative z-10">
+              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+                NR
               </div>
-        </div>
-      
-
-
-      <div className="bg-surface-container-lowest h-auto border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-headline-sm text-headline-sm text-on-surface">
-            Recent activity
-          </h3>
-          <button className="text-on-surface-variant hover:text-primary transition-colors">
-            <span className="material-symbols-outlined">filter_list</span>
-          </button>
-        </div>
-        <div className="flex flex-col gap-5 relative">
-          <div className="absolute left-3.75 top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
-
-          <div className="flex gap-4 relative z-10">
-            <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-              NR
+              <div>
+                <p className="font-body-sm text-body-sm text-on-surface">
+                  <span className="font-semibold text-on-surface">
+                    Nova Retail
+                  </span>
+                  added a new project
+                </p>
+                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                  2 hours ago
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-body-sm text-body-sm text-on-surface">
-                <span className="font-semibold text-on-surface">
-                  Nova Retail
-                </span>
-                added a new project
-              </p>
-              <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                2 hours ago
-              </p>
-            </div>
-          </div>
 
-          <div className="flex gap-4 relative z-10">
-            <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-              KL
+            <div className="flex gap-4 relative z-10">
+              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+                KL
+              </div>
+              <div>
+                <p className="font-body-sm text-body-sm text-on-surface">
+                  <span className="font-semibold text-on-surface">
+                    Kite Labs
+                  </span>
+                  paid invoice
+                  <a className="text-primary hover:underline" href="#">
+                    INV-0228
+                  </a>
+                </p>
+                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                  Yesterday, 4:30 PM
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-body-sm text-body-sm text-on-surface">
-                <span className="font-semibold text-on-surface">Kite Labs</span>
-                paid invoice
-                <a className="text-primary hover:underline" href="#">
-                  INV-0228
-                </a>
-              </p>
-              <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                Yesterday, 4:30 PM
-              </p>
-            </div>
-          </div>
 
-          <div className="flex gap-4 relative z-10">
-            <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-              BA
-            </div>
-            <div>
-              <p className="font-body-sm text-body-sm text-on-surface">
-                <span className="font-semibold text-on-surface">
-                  Bloom Agency
-                </span>
-                added as a client
-              </p>
-              <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                3 days ago
-              </p>
+            <div className="flex gap-4 relative z-10">
+              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+                BA
+              </div>
+              <div>
+                <p className="font-body-sm text-body-sm text-on-surface">
+                  <span className="font-semibold text-on-surface">
+                    Bloom Agency
+                  </span>
+                  added as a client
+                </p>
+                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                  3 days ago
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
     </main>
   );
