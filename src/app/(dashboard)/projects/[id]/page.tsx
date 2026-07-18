@@ -9,12 +9,15 @@ import { toast } from "sonner";
 import { useUiStore } from "@/store/useUiStore";
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
-import {Project, Client, Invoice} from "@/types/Model.types"; 
+import { Project, Client, Invoice } from "@/types/Model.types";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
-
+import {
+  handleStartProject,
+  handleMarkAsDone,
+} from "@/helpers/project.helpers";
 import TasksTable from "@/components/Tasks/TasksTable";
 import TimeLog from "@/models/timeLog.model";
 import TimeLogTable from "@/components/TimeLogs/TimeLogTable";
@@ -26,7 +29,6 @@ const Page = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
   const [invoicesLimit, setInvoicesLimit] = useState<number>(4);
-
   const pathname = usePathname();
   const id = pathname.split("/").pop();
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
@@ -39,7 +41,6 @@ const Page = () => {
     `/api/Invoices?projectId=${id}&limit=${invoicesLimit}`
   );
 
-
   useEffect(() => {
     if (projectData) {
       setProject(projectData);
@@ -51,31 +52,7 @@ const Page = () => {
     }
   }, [projectData, invoicesData]);
 
-  const handleStartProject = async () => {
-    try {
-      const response = await axios.patch(`/api/projects/${id}`, {
-        StartedAt: new Date(),
-        status: "in progress",
-      });
-      setProject(response.data.data);
-    } catch (error) {
-      console.error("Error starting project:", error);
-    }
-  };
-  const handleMarkAsDone = async () => {
-    try {
-      const response = await axios.patch(`/api/projects/${id}`, {
-        status: "completed",
-      });
-      if (response.data.success) {
-        setProject(response.data.data);
-        router.refresh();
-        toast.success("Project marked as completed");
-      }
-    } catch (error) {
-      console.error("Error marking project as done:", error);
-    }
-  };
+ 
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
       <div
@@ -107,7 +84,18 @@ const Page = () => {
             {!(project?.status === "completed") && (
               <PrimaryButton
                 label="Mark as Done"
-                onClick={handleMarkAsDone}
+                onClick={() => {
+                  const data = handleMarkAsDone(id?.toString() || "");
+
+                  data.then((res) => {
+                    if (res) {
+                      setProject(res);
+                      toast.success("Project marked as completed");
+                    } else {
+                      toast.error("Failed to mark project as completed");
+                    }
+                  });
+                }}
                 icon="check_circle"
               />
             )}
@@ -186,7 +174,17 @@ const Page = () => {
                   ) : (
                     <SecondaryButton
                       label="Start Project"
-                      onClick={handleStartProject}
+                      onClick={() => {
+                        const data = handleStartProject(id?.toString());
+                        data.then((res) => {
+                          if (res) {
+                            setProject(res);
+                            toast.success("Project started successfully");
+                          } else {
+                            toast.error("Failed to start project");
+                          }
+                        });
+                      }}
                       icon=""
                     />
                   )}
@@ -229,9 +227,7 @@ const Page = () => {
                 </p>
               </div>
             </div>
-              <TasksTable projectId={id || ""} />
-
-            
+            <TasksTable projectId={id || ""} />
           </div>
 
           <div className="col-span-4 space-y-gutter">
@@ -355,7 +351,7 @@ const Page = () => {
               <div className="p-md text-center">
                 {invoices.length === invoicesTotal ? (
                   <button
-                    onClick={() => setInvoicesLimit(invoicesTotal-2)}
+                    onClick={() => setInvoicesLimit(invoicesTotal - 2)}
                     className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
                   >
                     View Less

@@ -17,7 +17,7 @@ import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 import ConfirmationBox from "@/components/confirmationBox";
-import axios from "axios";
+
 import { useDelete } from "@/app/hooks/useDelete";
 
 const Page = () => {
