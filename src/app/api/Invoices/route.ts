@@ -130,7 +130,7 @@ export async function GET(request: Request) {
     if (monthRange && monthRange !== "all") {
       const startDate = new Date();
       startDate.setMonth(startDate.getMonth() - parseInt(monthRange));
-      filter.issueDates = { $gte: startDate };
+      filter.issueDate = { $gte: startDate };
     }
     if (projectId) filter.projectId = projectId;
 

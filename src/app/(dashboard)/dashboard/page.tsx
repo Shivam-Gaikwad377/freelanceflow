@@ -7,7 +7,14 @@ import {
 } from "@/helpers/dashboardServices";
 import { useAsync } from "@/app/hooks/useAsync";
 import { IProject } from "@/schemas/project.schema";
-
+import { IInvoice } from "@/schemas/createInvoice.schema";
+import useFetch from "@/app/hooks/useFetch";
+import StatusBadge from "@/components/Invoice/StatusBadge";
+import { get } from "http";
+type GrowthResult = {
+  percentage: number | null; // null = undefined growth, render as "New"
+  direction: "up" | "down" | "flat";
+};
 const page = () => {
   const [activeProjects, setActiveProjects] = useState<IProject[]>([]);
   const [stats, setStats] = useState({
@@ -23,12 +30,21 @@ const page = () => {
       total: 0,
       count: 0,
     },
+    paidLastMonth: {
+      total: 0,
+      count: 0,
+    },
   });
   const [totalClients, setTotalClients] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(" ");
   const [totalProjects, setTotalProjects] = useState(0);
   const [limit, setLimit] = useState<number>(5);
+  const [invoices, setInvoices] = useState<IInvoice[]>([]);
+  const [growthResult, setGrowthResult] = useState<GrowthResult>({
+    percentage: null,
+    direction: "flat",
+  });
   const {
     data: projectsData,
     error: projectsError,
@@ -44,6 +60,9 @@ const page = () => {
     error: invoiceStatsError,
     isLoading: isInvoiceStatsLoading,
   } = useAsync((signal) => getInvoiceStats(signal), []);
+  const { data: invoicesData, error: invoicesError } = useFetch(
+    `/api/Invoices?monthRange=1&limit=5&sort=desc&sortBy=issueDate`
+  );
   useEffect(() => {
     if (projectsData) {
       setActiveProjects(projectsData.data.projects);
@@ -55,8 +74,11 @@ const page = () => {
     if (invoiceStatsData) {
       setStats(invoiceStatsData.data);
     }
+    if (invoicesData) {
+      setInvoices(invoicesData.invoices);
+    }
     setLoading(isProjectsLoading || isClientsLoading || isInvoiceStatsLoading);
-  }, [projectsData, clientsData, invoiceStatsData]);
+  }, [projectsData, clientsData, invoiceStatsData, invoicesData]);
   const getBurnRatePercentage = (
     burnRate: number | undefined,
     budget: number
@@ -64,6 +86,31 @@ const page = () => {
     if (budget === 0 || burnRate === undefined) return 0;
     return (burnRate / budget) * 100;
   };
+  const getGrowthResult = (current: number, previous: number): GrowthResult => {
+    if (previous === 0) {
+      return {
+        percentage: current === 0 ? 0 : null,
+        direction: current === 0 ? "flat" : "up",
+      };
+    }
+
+    const percentage = ((current - previous) / Math.abs(previous)) * 100;
+
+    return {
+      percentage: Math.abs(Number(percentage.toFixed(1))),
+      direction: percentage > 0 ? "up" : percentage < 0 ? "down" : "flat",
+    };
+  };
+
+  useEffect(() => {
+    if (stats.paidThisMonth && stats.paidLastMonth) {
+      const growth = getGrowthResult(
+        stats.paidThisMonth.total,
+        stats.paidLastMonth.total
+      );
+      setGrowthResult(growth);
+    } 
+  }, [stats.paidThisMonth, stats.paidLastMonth]);
 
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
@@ -115,14 +162,22 @@ const page = () => {
               currency: "USD",
             })}
           </div>
-          <div className="flex items-center gap-1 font-label-sm text-label-sm text-secondary">
+          <div className={"flex items-center gap-1 font-label-sm text-label-sm " + (growthResult.direction === "up" ? "text-on-secondary-container" : "text-on-accent-container")}>
             <span
-              className="material-symbols-outlined"
-              style={{ fontSize: "14px" }}
+              className="material-symbols-outlined text-label-lg"
+              
             >
-              trending_up
+              {growthResult.direction === "up"
+                ? "trending_up"
+                : growthResult.direction === "down" ? "trending_down" : "remove"}
             </span>
-            +12% vs last month
+            {
+              growthResult.percentage !== null ? (
+                <span className={growthResult.direction === "up" ? "text-on-secondary-container" : "text-on-accent-container"}>
+                  {growthResult.percentage.toFixed(2)}%
+                </span>
+              ) : null
+            }
           </div>
         </div>
 
@@ -253,101 +308,46 @@ const page = () => {
             </a>
           </div>
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center group cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "20px" }}
-                  >
-                    receipt
-                  </span>
+            {invoices.map((invoice) => (
+              <div
+                key={invoice._id.toString()}
+                className="flex justify-between items-center group cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: "20px" }}
+                    >
+                      receipt
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-label-md text-label-md text-on-surface">
+                      {invoice.client}
+                    </p>
+                    <p className="font-label-sm text-label-sm text-on-surface-variant">
+                      INV-{invoice.invoiceNumber} •{" "}
+                      {new Date(invoice.issueDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-label-md text-label-md text-on-surface">
-                    Acme Studio
-                  </p>
-                  <p className="font-label-sm text-label-sm text-on-surface-variant">
-                    INV-0231
-                  </p>
-                </div>
+                <StatusBadge
+                  color={
+                    invoice.status === "Paid"
+                      ? "success"
+                      : invoice.status === "pending"
+                        ? "normal"
+                        : "error"
+                  }
+                  label={invoice.status}
+                  fontSize="small"
+                />
               </div>
-              <span className="px-2.5 py-1 rounded-full bg-[#dcfce7] text-[#166534] font-label-sm text-label-sm uppercase tracking-wider text-[10px]">
-                Paid
-              </span>
-            </div>
-
-            <div className="flex justify-between items-center group cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "20px" }}
-                  >
-                    receipt
-                  </span>
-                </div>
-                <div>
-                  <p className="font-label-md text-label-md text-on-surface">
-                    Nova Retail
-                  </p>
-                  <p className="font-label-sm text-label-sm text-on-surface-variant">
-                    INV-0230
-                  </p>
-                </div>
-              </div>
-              <span className="px-2.5 py-1 rounded-full bg-[#fef08a] text-[#854d0e] font-label-sm text-label-sm uppercase tracking-wider text-[10px]">
-                Pending
-              </span>
-            </div>
-
-            <div className="flex justify-between items-center group cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "20px" }}
-                  >
-                    receipt
-                  </span>
-                </div>
-                <div>
-                  <p className="font-label-md text-label-md text-on-surface">
-                    Bloom Agency
-                  </p>
-                  <p className="font-label-sm text-label-sm text-on-surface-variant">
-                    INV-0229
-                  </p>
-                </div>
-              </div>
-              <span className="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm uppercase tracking-wider text-[10px]">
-                Overdue
-              </span>
-            </div>
-
-            <div className="flex justify-between items-center group cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "20px" }}
-                  >
-                    receipt
-                  </span>
-                </div>
-                <div>
-                  <p className="font-label-md text-label-md text-on-surface">
-                    Kite Labs
-                  </p>
-                  <p className="font-label-sm text-label-sm text-on-surface-variant">
-                    INV-0228
-                  </p>
-                </div>
-              </div>
-              <span className="px-2.5 py-1 rounded-full bg-[#dcfce7] text-[#166534] font-label-sm text-label-sm uppercase tracking-wider text-[10px]">
-                Paid
-              </span>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -368,14 +368,11 @@ const page = () => {
                 {activeProjects.map((project) => (
                   <div
                     key={project._id.toString()}
-                    className="flex gap-2 items-center w-full justify-start  mb-2"
+                    className="flex cursor-pointer gap-2 group items-center w-full justify-start  mb-2"
                   >
-                    <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                      <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: "20px" }}
-                      >
-                        receipt
+                    <div className="w-10 grop-hover:text-primary h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                      <span className="material-symbols-outlined text-headline-sm">
+                        folder
                       </span>
                     </div>
                     <div>
@@ -386,17 +383,24 @@ const page = () => {
                         {project.client}
                       </p>
                       <div>
-                        <p className="font-label-sm text-label-sm text-on-surface-variant">{getBurnRatePercentage(project.burnRate, project.budget).toFixed(2)}% of budget used</p>
-                        <div className={`relative mt-2 h-1 w-50 rounded-full overflow-hidden  bg-stone-300`} >
-                        
+                        <p className="font-label-sm text-label-sm text-on-surface-variant">
+                          {getBurnRatePercentage(
+                            project.burnRate,
+                            project.budget
+                          ).toFixed(2)}
+                          % of budget used
+                        </p>
                         <div
-                          className="absolute inset-y-0 left-0 rounded-full opacity-100"
-                          style={{
-                            width: `${getBurnRatePercentage(project.burnRate, project.budget)}%`,
-                            background: `linear-gradient(to right, #3b82f6, #6366f1)`,
-                          }}
-                        />
-                                            </div>
+                          className={`relative mt-2 h-1 w-50 rounded-full overflow-hidden  bg-stone-300`}
+                        >
+                          <div
+                            className="absolute inset-y-0 left-0 rounded-full opacity-100"
+                            style={{
+                              width: `${getBurnRatePercentage(project.burnRate, project.budget)}%`,
+                              background: `linear-gradient(to right, #3b82f6, #6366f1)`,
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

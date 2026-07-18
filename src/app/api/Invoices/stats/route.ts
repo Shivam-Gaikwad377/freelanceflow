@@ -51,6 +51,10 @@ export async function GET(request: Request) {
             total: result?.overdue[0]?.total || 0,
             count: result?.overdue[0]?.count || 0,
           },
+          paidLastMonth: {
+            total: result?.paidLastMonth[0]?.total || 0,
+            count: result?.paidLastMonth[0]?.count || 0,
+          },
         },
       },
       { status: 200 }

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 export const invoiceStatsPipeline = (ownerID: string) => [
   { $match: { userId: new mongoose.Types.ObjectId(ownerID) } },
   {
@@ -35,6 +34,24 @@ export const invoiceStatsPipeline = (ownerID: string) => [
       ],
       overdue: [
         { $match: { status: "overdue" } },
+        {
+          $group: { _id: null, total: { $sum: "$amount" }, count: { $sum: 1 } },
+        },
+      ],
+      paidLastMonth: [
+        {
+          $match: {
+            status: "Paid",
+            paidAt: {
+              $gte: new Date(
+                new Date().getFullYear(),
+                new Date().getMonth() - 1,
+                1
+              ),
+              $lt: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            },
+          },
+        },
         {
           $group: { _id: null, total: { $sum: "$amount" }, count: { $sum: 1 } },
         },
