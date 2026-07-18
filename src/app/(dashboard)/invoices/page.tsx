@@ -9,7 +9,7 @@ import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
 import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
-import { IInvoice } from "@/schemas/createInvoice.schema";
+import { Invoice } from "@/types/Model.types";
 import PrimaryButton from "@/components/PrimaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
@@ -29,7 +29,7 @@ const Page = () => {
     { label: "Overdue", value: "overdue" },
   ];
   const session = useSession();
-  const [invoices, setInvoices] = useState<IInvoice[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [totalInvoices, setTotalInvoices] = useState<number>(0);
   const openModal = useUiStore((state) => state.openModal);
@@ -43,7 +43,7 @@ const Page = () => {
   const [monthRange, setMonthRange] = useState<string>("all");
   const isNumeric = (str: string) => /^\d+$/.test(str.trim());
   const [showConfirmBox, setShowConfirmBox] = useState(false);
-  const [invoiceToDelete, setInvoiceToDelete] = useState<string >("");
+  const [invoiceToDelete, setInvoiceToDelete] = useState<string>("");
 
   const [stats, setStats] = useState({
     outstanding: {
@@ -73,12 +73,13 @@ const Page = () => {
     monthRange: monthRange !== "all" ? monthRange : undefined,
   });
 
-  const { deleteItem: deleteInvoice, isDeleting: isDeletingInvoice } = useDelete<IInvoice>({
-    resource: "Invoices",
-    setItems: setInvoices,
-    successMessage: "Invoice deleted successfully",
-    errorMessage: "Failed to delete invoice",
-  });
+  const { deleteItem: deleteInvoice, isDeleting: isDeletingInvoice } =
+    useDelete<Invoice>({
+      resource: "Invoices",
+      setItems: setInvoices,
+      successMessage: "Invoice deleted successfully",
+      errorMessage: "Failed to delete invoice",
+    });
   useEffect(() => {
     if (invoiceData) {
       setInvoices(invoiceData?.invoices || []);
@@ -95,8 +96,6 @@ const Page = () => {
       setStats(statsData);
     }
   }, [statsData]);
-  
-
 
   return (
     <div className="flex-1  min-h-screen bg-background">
@@ -131,7 +130,7 @@ const Page = () => {
               <span className="font-display text-display text-on-surface">
                 {stats?.outstanding?.total?.toLocaleString("en-US", {
                   style: "currency",
-                  currency:  "USD",
+                  currency: "USD",
                 })}
               </span>
             </div>
@@ -149,7 +148,7 @@ const Page = () => {
               <span className="font-display text-display text-on-surface">
                 {stats?.paidThisMonth?.total?.toLocaleString("en-US", {
                   style: "currency",
-                  currency:  "USD",
+                  currency: "USD",
                 })}
               </span>
               <div className="w-full bg-surface-variant h-unit rounded-full mt-sm overflow-hidden">
@@ -170,7 +169,7 @@ const Page = () => {
               <span className="font-display text-accent text-display text-error">
                 {stats?.overdue?.total?.toLocaleString("en-US", {
                   style: "currency",
-                  currency:  "USD",
+                  currency: "USD",
                 })}
               </span>
               <p className="font-label-sm text-label-sm text-accent mt-xs">
@@ -332,7 +331,7 @@ const Page = () => {
                       <td className="py-sm px-lg text-right font-medium text-on-surface">
                         {invoice?.amount?.toLocaleString("en-US", {
                           style: "currency",
-                          currency:  "USD",
+                          currency: "USD",
                         })}
                       </td>
                       <td className="py-sm px-lg text-center">

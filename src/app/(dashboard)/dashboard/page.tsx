@@ -7,8 +7,7 @@ import {
   getRecentActivities,
 } from "@/helpers/dashboardServices";
 import { useAsync } from "@/app/hooks/useAsync";
-import { IProject } from "@/schemas/project.schema";
-import { IInvoice } from "@/schemas/createInvoice.schema";
+import {Client, Project, Invoice} from "@/types/Model.types";
 import useFetch from "@/app/hooks/useFetch";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import { useRouter } from "next/navigation";
@@ -20,7 +19,7 @@ type GrowthResult = {
 };
 const page = () => {
   const router = useRouter();
-  const [activeProjects, setActiveProjects] = useState<IProject[]>([]);
+  const [activeProjects, setActiveProjects] = useState<Project[]>([]);
   const [stats, setStats] = useState({
     outstanding: {
       total: 0,
@@ -44,7 +43,7 @@ const page = () => {
   const [error, setError] = useState(" ");
   const [totalProjects, setTotalProjects] = useState(0);
   const [limit, setLimit] = useState<number>(5);
-  const [invoices, setInvoices] = useState<IInvoice[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([]);
   const [growthResult, setGrowthResult] = useState<GrowthResult>({
     percentage: null,

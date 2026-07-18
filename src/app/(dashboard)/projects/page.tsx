@@ -3,8 +3,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import ProjectKanbanBoard from "@/components/Project/ProjectKanbanBoard";
 import useDebounce from "@/app/hooks/useDebounce";
-import ApiResponse from "@/types/ApiResponse";
-import axios from "axios";
+import { Project } from "@/types/Model.types";
 import ProjectCard from "@/components/Project/ProjectCard";
 import { useRouter } from "next/navigation";
 import useFetch from "@/app/hooks/useFetch";
@@ -15,7 +14,7 @@ const page = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 400);
   const limit = 10;
-  const [projects, setProjects] = useState<IProject[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [offset, setOffset] = useState(0);
   const router = useRouter();
   useEffect(() => {

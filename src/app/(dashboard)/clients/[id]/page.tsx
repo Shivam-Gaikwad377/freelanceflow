@@ -11,9 +11,7 @@ import EditClientDrawer from "@/components/Client/EditClient";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
-import { IClient } from "@/schemas/createClient.schema";
-import { IInvoice } from "@/schemas/createInvoice.schema";
-import { IProject } from "@/schemas/project.schema";
+import { Client, Project, Invoice } from "@/types/Model.types";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
@@ -25,7 +23,7 @@ import { useDelete } from "@/app/hooks/useDelete";
 const Page = () => {
   const { openModal } = useUiStore();
   const session = useSession();
-  const [client, setClient] = useState<IClient | null>(null);
+  const [client, setClient] = useState<Client | null>(null);
   const pathname = usePathname();
   const id = pathname.split("/").pop();
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
@@ -34,7 +32,7 @@ const Page = () => {
   const limit = 5;
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
   const [projectTotal, setProjectTotal] = useState<number>(0);
-  const [invoices, setInvoices] = useState<IInvoice[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [projectToBeDeleted, setProjectToBeDeleted] = useState<string | null>(
     null
   );
@@ -51,7 +49,7 @@ const Page = () => {
     error: clientError,
   } = useFetch(`/api/Clients/${id}`);
 
-  const [projects, setProjects] = useState<IProject[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const {
     data: projectData,
     loading: projectLoading,
@@ -68,14 +66,14 @@ const Page = () => {
     `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}`
   );
 
-  const {deleteItem: deleteProject, isDeleting: isDeletingProject} = useDelete<IProject>({
+  const {deleteItem: deleteProject, isDeleting: isDeletingProject} = useDelete<Project>({
     resource: "projects",
     setItems: setProjects,
     successMessage: "Project deleted successfully",
     errorMessage: "Failed to delete project",
   });
 
-  const {deleteItem: deleteInvoice, isDeleting: isDeletingInvoice} = useDelete<IInvoice>({
+  const {deleteItem: deleteInvoice, isDeleting: isDeletingInvoice} = useDelete<Invoice>({
     resource: "Invoices",
     setItems: setInvoices,
     successMessage: "Invoice deleted successfully",

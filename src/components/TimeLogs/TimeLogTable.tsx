@@ -5,9 +5,10 @@ import AddTimeLog from "./AddTimeLog";
 import ConfirmationBox from "../confirmationBox";
 import axios from "axios";
 import { toast } from "sonner";
+import { TimeLog } from "@/types/Model.types";
 
 const TimeLogTable = ({ projectId }: { projectId: string }) => {
-  const [timeLogs, setTimeLogs] = useState<any[]>([]);
+  const [timeLogs, setTimeLogs] = useState<TimeLog[]>([]);
   const [timeLogsLimit, setTimeLogsLimit] = useState<number>(5);
   const [timeLogsTotal, setTimeLogsTotal] = useState<number>(0);
   const [showAddTimeLog, setShowAddTimeLog] = useState<boolean>(false);

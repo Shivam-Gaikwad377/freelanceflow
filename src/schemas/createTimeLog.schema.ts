@@ -1,15 +1,7 @@
 import { z } from "zod";
 import { Document } from "mongoose";
 import mongoose from "mongoose";
-export interface ITimeLog extends Document {
-  userId: mongoose.Types.ObjectId;
-  projectId: mongoose.Types.ObjectId;
-  startTime: Date;
-  endTime?: Date;
-  duration?: number; // in seconds
-  source?: "manual" | "automatic";
-  status?: "active" | "completed";
-}
+
 
 export const createTimeLogSchema = z
   .object({

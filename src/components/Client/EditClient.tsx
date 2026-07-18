@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClientSchema } from "@/schemas/createClient.schema";
 import ApiResponse from "@/types/ApiResponse";
-import { IClient } from "@/schemas/createClient.schema";
+import { Client } from "@/types/Model.types";
 import PrimaryButton from "../PrimaryButton";
 
 import SecondaryButton from "../SecondaryButton";
@@ -16,7 +16,7 @@ import SecondaryButton from "../SecondaryButton";
 interface EditClientDrawerProps {
   open: boolean;
   onClose: () => void;
-  client: IClient | null;
+  client: Client | null;
 }
 
 const EditClientDrawer = ({ open, onClose, client }: EditClientDrawerProps) => {

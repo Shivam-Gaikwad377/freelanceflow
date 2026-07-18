@@ -9,9 +9,7 @@ import { toast } from "sonner";
 import { useUiStore } from "@/store/useUiStore";
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
-import { IInvoice } from "@/schemas/createInvoice.schema";
-import { IProject } from "@/schemas/project.schema";
-import { IClient } from "@/schemas/createClient.schema";
+import {Project, Client, Invoice} from "@/types/Model.types"; 
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
@@ -22,10 +20,10 @@ import TimeLog from "@/models/timeLog.model";
 import TimeLogTable from "@/components/TimeLogs/TimeLogTable";
 
 const Page = () => {
-  const [project, setProject] = useState<IProject | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const { openModal } = useUiStore();
-  const [client, setClient] = useState<IClient | null>(null);
-  const [invoices, setInvoices] = useState<IInvoice[]>([]);
+  const [client, setClient] = useState<Client | null>(null);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [invoicesTotal, setInvoicesTotal] = useState<number>(0);
   const [invoicesLimit, setInvoicesLimit] = useState<number>(4);
 

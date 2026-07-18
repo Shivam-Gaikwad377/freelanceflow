@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { ITask } from "@/schemas/createTask.schema";
+import { Task } from "@/types/Model.types";
 import useFetch from "@/app/hooks/useFetch";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import { Check } from "lucide-react";
@@ -12,7 +12,7 @@ import ConfirmationBox from "../confirmationBox";
 import { toast } from "sonner";
 
 const TasksTable = ({ projectId }: { projectId: string }) => {
-  const [tasks, setTasks] = useState<ITask[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksTotal, setTasksTotal] = useState<number>(0);
   const [tasksLimit, setTasksLimit] = useState<number>(4);
   const [loadingId, setLoadingId] = useState<string | null>(null);

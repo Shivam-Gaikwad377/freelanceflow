@@ -11,22 +11,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
-import { IProject } from "@/schemas/project.schema";
-import { IClient } from "@/schemas/createClient.schema";
-import { IInvoice } from "@/schemas/createInvoice.schema";
+import { Project, Client, Invoice } from "@/types/Model.types";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 const Page = () => {
-  const [invoice, setInvoice] = useState<IInvoice | null>(null);
+  const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const invoiceId = pathname.split("/").pop();
-  const [client, setClient] = useState<IClient | null>(null);
-  const [project, setProject] = useState<IProject | null>(null);
+  const [client, setClient] = useState<Client | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingDueDate, setEditingDueDate] = useState<boolean>(false);
   function toDateInputValue(date?: Date | string): string {
@@ -145,7 +143,11 @@ const Page = () => {
       const { InvoicePDF } = await import("@/components/Invoice/InvoicePDF");
       const blob = await pdf(
         // invoice may have optional fields, assert to any for PDF generation
-        <InvoicePDF invoice={invoice as any} client={client} project={project} />
+        <InvoicePDF
+          invoice={invoice as any}
+          client={client}
+          project={project}
+        />
       ).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");

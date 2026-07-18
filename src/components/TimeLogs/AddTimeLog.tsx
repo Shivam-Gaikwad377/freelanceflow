@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import PrimaryButton from "../PrimaryButton";
 import SecondaryButton from "../SecondaryButton";
-import { ITask } from "@/schemas/createTask.schema";
+
 import { Form, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";

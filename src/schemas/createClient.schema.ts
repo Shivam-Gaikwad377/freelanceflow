@@ -1,20 +1,7 @@
 import { z } from "zod";
 import mongoose from "mongoose";
 
-export interface IClient  extends mongoose.Document  {
 
-    name: string;
-    email: string;
-    phone: string;
-    company: string;
-    status: "active" | "inactive";
-    userId: mongoose.Types.ObjectId;
-    description?: string;
-    createdAt: Date;
-    updatedAt: Date;
-    totalBilled?: number;
-    
-}
 
 export const createClientSchema = z.object({
     name: z.string().min(1, "Name is required"),    

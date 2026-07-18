@@ -7,15 +7,15 @@ import { useRouter } from "next/navigation";
 import ClientCard from "@/components/Client/ClientCard";
 import AddClient from "@/components/Client/AddCLient";
 import Pagination from "@/components/Pagination";
-import { toast } from "sonner";
+
 import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
-import { IClient } from "@/schemas/createClient.schema";
+import { Client } from "@/types/Model.types";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useDelete } from "@/app/hooks/useDelete";
 const Page = () => {
   const session = useSession();
-  const [clients, setClients] = useState<IClient[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [clientOffset, setClientOffset] = useState<number>(0);
   const [totalClients, setTotalClients] = useState<number>(0);
   const limit = 9;
@@ -30,7 +30,7 @@ const Page = () => {
     status: selectedStatus !== "all" ? selectedStatus : undefined,
     search: debouncedSearchTerm || undefined,
   });
-    const {deleteItem: deleteClient, isDeleting: isDeletingClient} = useDelete<IClient>({
+    const {deleteItem: deleteClient, isDeleting: isDeletingClient} = useDelete<Client>({
       resource: "Clients",
       setItems: setClients,
       successMessage: "Client deleted successfully",

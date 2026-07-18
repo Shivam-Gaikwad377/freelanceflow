@@ -1,20 +1,6 @@
 import {z} from "zod";
 import { Document } from "mongoose";
-export interface IProject extends Document {
-    title: string;
-    description: string;
-    budget: number;
-    deadline: Date;
-    status: "open" | "in progress" | "completed";
-    clientId?: string;
-    client: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: string; 
-    StartedAt?: Date;
-    hourlyRate?: number;
-    burnRate?: number;
-}
+
 
 export const projectSchema = z.object({
     title: z.string().min(1, "Title is required"),

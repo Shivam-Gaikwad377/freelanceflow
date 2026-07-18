@@ -1,15 +1,7 @@
 import {z} from "zod";
 import { Document } from "mongoose";
 
-export interface ITask extends Document {
-    
-    projectId: string;
-    title: string;
-    priority: "low" | "medium" | "high";
-    dueDate: Date;
-    status: "pending" | "completed" | "overdue";
-    completedAt?: Date;
-}
+
 
 export const createTaskSchema = z.object({
  
