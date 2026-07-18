@@ -19,6 +19,7 @@ export interface IInvoice extends Document {
   updatedAt: Date;
   userId: string;
   taxRate: number;
+  paidAt?: Date;
 }
 
 export const createInvoiceSchema = z.object({

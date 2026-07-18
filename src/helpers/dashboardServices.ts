@@ -23,3 +23,8 @@ export async function getInvoiceStats(signal?: AbortSignal) {
   const { data } = await axios.get<ApiResponse>("/api/Invoices/stats", { signal });
   return data;
 }
+
+export async function getRecentActivities(signal?: AbortSignal) {
+  const { data } = await axios.get<ApiResponse>("/api/dashboard/recent-activities", { signal });
+  return data;
+}

@@ -4,6 +4,7 @@ import {
   getActiveProjects,
   getTotalClients,
   getInvoiceStats,
+  getRecentActivities,
 } from "@/helpers/dashboardServices";
 import { useAsync } from "@/app/hooks/useAsync";
 import { IProject } from "@/schemas/project.schema";
@@ -11,6 +12,8 @@ import { IInvoice } from "@/schemas/createInvoice.schema";
 import useFetch from "@/app/hooks/useFetch";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import { useRouter } from "next/navigation";
+import { ActivityItem } from "@/app/api/dashboard/recent-activities/route";
+
 type GrowthResult = {
   percentage: number | null; // null = undefined growth, render as "New"
   direction: "up" | "down" | "flat";
@@ -42,6 +45,7 @@ const page = () => {
   const [totalProjects, setTotalProjects] = useState(0);
   const [limit, setLimit] = useState<number>(5);
   const [invoices, setInvoices] = useState<IInvoice[]>([]);
+  const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([]);
   const [growthResult, setGrowthResult] = useState<GrowthResult>({
     percentage: null,
     direction: "flat",
@@ -61,6 +65,11 @@ const page = () => {
     error: invoiceStatsError,
     isLoading: isInvoiceStatsLoading,
   } = useAsync((signal) => getInvoiceStats(signal), []);
+  const {
+    data: recentActivitiesData,
+    error: recentActivitiesError,
+    isLoading: isRecentActivitiesLoading,
+  } = useAsync((signal) => getRecentActivities(signal), []);
   const { data: invoicesData, error: invoicesError } = useFetch(
     `/api/Invoices?monthRange=1&limit=5&sort=desc&sortBy=issueDate`
   );
@@ -78,8 +87,17 @@ const page = () => {
     if (invoicesData) {
       setInvoices(invoicesData.invoices);
     }
+    if (recentActivitiesData) {
+      setRecentActivities(recentActivitiesData.data);
+    }
     setLoading(isProjectsLoading || isClientsLoading || isInvoiceStatsLoading);
-  }, [projectsData, clientsData, invoiceStatsData, invoicesData]);
+  }, [
+    projectsData,
+    clientsData,
+    invoiceStatsData,
+    invoicesData,
+    recentActivitiesData,
+  ]);
   const getBurnRatePercentage = (
     burnRate: number | undefined,
     budget: number
@@ -112,7 +130,22 @@ const page = () => {
       setGrowthResult(growth);
     }
   }, [stats.paidThisMonth, stats.paidLastMonth]);
+  function formatRelativeTime(date: Date): string {
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
 
+    if (seconds < 60) return "Just now";
+
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -321,7 +354,6 @@ const page = () => {
                 key={invoice._id.toString()}
                 className="flex justify-between items-center group cursor-pointer"
                 onClick={() => {
-                 
                   router.push(`/invoices/${invoice._id}`);
                 }}
               >
@@ -381,7 +413,7 @@ const page = () => {
                   <div
                     key={project._id.toString()}
                     className="flex cursor-pointer gap-2 group items-center w-full justify-start  mb-2"
-                    onClick={()=> router.push(`/projects/${project._id}`)}
+                    onClick={() => router.push(`/projects/${project._id}`)}
                   >
                     <div className="w-10 grop-hover:text-primary h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
                       <span className="material-symbols-outlined text-headline-sm">
@@ -440,7 +472,7 @@ const page = () => {
           </div>
         </div>
 
-        <div className="bg-surface-container-lowest max-h-70 border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+        <div className="bg-surface-container-lowest max-h-70 border  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
               Recent activity
@@ -449,62 +481,40 @@ const page = () => {
               <span className="material-symbols-outlined">filter_list</span>
             </button>
           </div>
-          <div className="flex flex-col gap-5 relative">
+          <div className="flex flex-col gap-5 overflow-auto scrollbar-hide relative">
             <div className="absolute left-3.75 top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
 
-            <div className="flex gap-4 relative z-10">
-              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-                NR
+            {recentActivities.map((activity) => (
+              <div className="flex gap-4 relative z-10">
+                <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+                  {activity.type === "timelog" ? (
+                    <span className="material-symbols-outlined text-headline-sm">
+                      schedule
+                    </span>
+                  ) : (
+                    <span className="material-symbols-outlined text-headline-sm">
+                      receipt
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <p className="font-body-sm text-body-sm text-on-surface">
+                    {activity.message}
+                  </p>
+                  <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                    {new Date(activity.timestamp).toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    }) + " at " + new Date(activity.timestamp).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                    
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-body-sm text-body-sm text-on-surface">
-                  <span className="font-semibold text-on-surface">
-                    Nova Retail
-                  </span>
-                  added a new project
-                </p>
-                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                  2 hours ago
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 relative z-10">
-              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-                KL
-              </div>
-              <div>
-                <p className="font-body-sm text-body-sm text-on-surface">
-                  <span className="font-semibold text-on-surface">
-                    Kite Labs
-                  </span>
-                  paid invoice
-                  <a className="text-primary hover:underline" href="#">
-                    INV-0228
-                  </a>
-                </p>
-                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                  Yesterday, 4:30 PM
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 relative z-10">
-              <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-                BA
-              </div>
-              <div>
-                <p className="font-body-sm text-body-sm text-on-surface">
-                  <span className="font-semibold text-on-surface">
-                    Bloom Agency
-                  </span>
-                  added as a client
-                </p>
-                <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                  3 days ago
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
