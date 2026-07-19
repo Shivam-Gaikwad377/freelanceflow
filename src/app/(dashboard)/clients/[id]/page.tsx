@@ -66,19 +66,21 @@ const Page = () => {
     `/api/Invoices?searchBy=clientId&search=${id}&offset=${invoiceOffset}&limit=${limit}`
   );
 
-  const {deleteItem: deleteProject, isDeleting: isDeletingProject} = useDelete<Project>({
-    resource: "projects",
-    setItems: setProjects,
-    successMessage: "Project deleted successfully",
-    errorMessage: "Failed to delete project",
-  });
+  const { deleteItem: deleteProject, isDeleting: isDeletingProject } =
+    useDelete<Project>({
+      resource: "projects",
+      setItems: setProjects,
+      successMessage: "Project deleted successfully",
+      errorMessage: "Failed to delete project",
+    });
 
-  const {deleteItem: deleteInvoice, isDeleting: isDeletingInvoice} = useDelete<Invoice>({
-    resource: "Invoices",
-    setItems: setInvoices,
-    successMessage: "Invoice deleted successfully",
-    errorMessage: "Failed to delete invoice",
-  });
+  const { deleteItem: deleteInvoice, isDeleting: isDeletingInvoice } =
+    useDelete<Invoice>({
+      resource: "Invoices",
+      setItems: setInvoices,
+      successMessage: "Invoice deleted successfully",
+      errorMessage: "Failed to delete invoice",
+    });
 
   useEffect(() => {
     if (clientData || invoiceData || projectData) {
@@ -100,9 +102,6 @@ const Page = () => {
     setProjectOffset(0);
   }, [id]);
 
-  
-
-  
   const handleConfirm = async () => {
     if (projectToBeDeleted) {
       deleteProject(projectToBeDeleted);
@@ -116,7 +115,7 @@ const Page = () => {
     }
   };
   const router = useRouter();
-  
+
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
       <div>
@@ -222,7 +221,7 @@ const Page = () => {
                   <p className="font-display text-headline-md font-bold text-on-surface">
                     {client?.totalBilled?.toLocaleString("en-US", {
                       style: "currency",
-                      currency:  "USD",
+                      currency: "USD",
                     })}
                   </p>
                 </div>
@@ -238,99 +237,108 @@ const Page = () => {
               Project History
             </h3>
           </div>
-          <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-2xl border overflow-hidden border-outline-variant shadow-sm ">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-surface-container-low border-b border-outline-variant">
-                    <th className="py-3 w-2/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
-                      Project Name
-                    </th>
-                    <th className="py-3 w-0.66/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
-                      Status
-                    </th>
-                    <th className="py-3 w-0.66/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
-                      Start Date
-                    </th>
-                    <th className="py-3 w-0.66/4 px-6  font-label-sm  text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold ">
-                      Value
-                    </th>
-                    <th className="px-4 "></th>
-                  </tr>
-                </thead>
-                <tbody className="font-body-sm text-body-sm text-on-surface">
-                  {projects.map((project) => (
-                    <tr
-                      onClick={() =>
-                        router.replace(`/projects/${project._id.toString()}`)
-                      }
-                      key={project._id.toString()}
-                      className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
-                    >
-                      <td className="py-4 px-6 w-2/4">
-                        <div className="font-label-md  text-label-md text-on-surface group-hover:text-primary transition-colors">
-                          {project.title}
-                        </div>
-                        <div className="text-on-surface-variant  mt-0.5">
-                          {project.description}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 w-0.66/4 ">
-                        <StatusBadge
-                          color={
-                            project.status === "completed"
-                              ? "success"
-                              : project.status === "in progress"
-                                ? "error"
-                                : "normal"
+          {projects.length > 0 ? (
+            <>
+              <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-2xl border overflow-hidden border-outline-variant shadow-sm ">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-surface-container-low border-b border-outline-variant">
+                        <th className="py-3 w-2/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                          Project Name
+                        </th>
+                        <th className="py-3 w-0.66/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                          Status
+                        </th>
+                        <th className="py-3 w-0.66/4 px-6  font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                          Start Date
+                        </th>
+                        <th className="py-3 w-0.66/4 px-6  font-label-sm  text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold ">
+                          Value
+                        </th>
+                        <th className="px-4 "></th>
+                      </tr>
+                    </thead>
+                    <tbody className="font-body-sm text-body-sm text-on-surface">
+                      {projects.map((project) => (
+                        <tr
+                          onClick={() =>
+                            router.replace(
+                              `/projects/${project._id.toString()}`
+                            )
                           }
-                          label={project.status}
-                          fontSize="small"
-                        />
-                      </td>
-                      <td className="py-4 w-0.66/4 px-6    text-on-surface-variant">
-                        {new Date(project.createdAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
-                      </td>
-                      <td className="py-4 w-0.66/4 px-6  font-label-md text-label-md">
-                        {project?.budget?.toLocaleString("en-US", {
-                          style: "currency",
-                          currency:  "USD",
-                        })}
-                      </td>
-                      <td className="px-4 text-right">
-                        <span
-                          onClick={(e) =>{
-                            e.stopPropagation();
-                            setProjectToBeDeleted(project._id.toString())
-                            setShowProjectDeleteConfirmation(true);
-                          }
-                          }
-                          className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                          key={project._id.toString()}
+                          className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
                         >
-                          delete
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          <td className="py-4 px-6 w-2/4">
+                            <div className="font-label-md  text-label-md text-on-surface group-hover:text-primary transition-colors">
+                              {project.title}
+                            </div>
+                            <div className="text-on-surface-variant  mt-0.5">
+                              {project.description}
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 w-0.66/4 ">
+                            <StatusBadge
+                              color={
+                                project.status === "completed"
+                                  ? "success"
+                                  : project.status === "in progress"
+                                    ? "error"
+                                    : "normal"
+                              }
+                              label={project.status}
+                              fontSize="small"
+                            />
+                          </td>
+                          <td className="py-4 w-0.66/4 px-6    text-on-surface-variant">
+                            {new Date(project.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )}
+                          </td>
+                          <td className="py-4 w-0.66/4 px-6  font-label-md text-label-md">
+                            {project?.budget?.toLocaleString("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            })}
+                          </td>
+                          <td className="px-4 text-right">
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setProjectToBeDeleted(project._id.toString());
+                                setShowProjectDeleteConfirmation(true);
+                              }}
+                              className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              delete
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <Pagination
+                  total={projectTotal}
+                  offset={projectOffset}
+                  limit={limit}
+                  onPageChange={(newOffset) => setProjectOffset(newOffset)}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm p-lg text-on-surface-variant">
+              No projects yet.
             </div>
-          </div>
-          <div>
-            <Pagination
-              total={projectTotal}
-              offset={projectOffset}
-              limit={limit}
-              onPageChange={(newOffset) => setProjectOffset(newOffset)}
-            />
-          </div>
+          )}
         </section>
         {/* <!-- 3. Invoices Section --> */}
         <section className=" flex flex-col gap-2 ">
@@ -338,129 +346,136 @@ const Page = () => {
             <h3 className="font-display text-headline-sm font-semibold text-on-surface">
               Recent Invoices
             </h3>
-            <button className="flex items-center gap-2 px-3 py-1.5 bg-surface border border-outline-variant text-on-surface font-label-sm text-label-sm rounded-lg hover:bg-surface-container-high transition-colors">
-              <span className="material-symbols-outlined text-[16px]">
-                filter_list
-              </span>
-              Filter
-            </button>
           </div>
-          <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-surface-container-low border-b border-outline-variant">
-                    <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
-                      Invoice #
-                    </th>
-                    <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
-                      Due Date
-                    </th>
-                    <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
-                      Status
-                    </th>
-                    <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-right">
-                      Amount
-                    </th>
-                    <th className="py-3 px-6 w-10"></th>
-                  </tr>
-                </thead>
-                <tbody className="font-body-sm text-body-sm text-on-surface">
-                  {invoiceLoading && (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="py-6 px-6 text-on-surface-variant"
-                      >
-                        Loading invoices...
-                      </td>
-                    </tr>
-                  )}
-                  {invoiceError && (
-                    <tr>
-                      <td colSpan={5} className="py-6 px-6 text-error">
-                        Couldn't load invoices.
-                      </td>
-                    </tr>
-                  )}
-                  {!invoiceLoading &&
-                    !invoiceError &&
-                    invoices.length === 0 && (
-                      <tr>
-                        <td
-                          colSpan={5}
-                          className="py-6 px-6 text-on-surface-variant"
-                        >
-                          No invoices yet.
-                        </td>
+          {invoices.length > 0 ? (
+            <>
+              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-surface-container-low border-b border-outline-variant">
+                        <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                          Invoice #
+                        </th>
+                        <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                          Due Date
+                        </th>
+                        <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+                          Status
+                        </th>
+                        <th className="py-3 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-right">
+                          Amount
+                        </th>
+                        <th className="py-3 px-6 w-10"></th>
                       </tr>
-                    )}
-                  {invoices.map((invoice: any) => (
-                    <tr
-                      onClick={() => router.push(`/invoices/${invoice._id}`)}
-                      key={invoice?._id}
-                      className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
-                    >
-                      <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
-                        {invoice.invoiceNumber}
-                      </td>
-                      <td className="py-4 px-6 text-on-surface-variant">
-                        {new Date(invoice.dueDate).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </td>
-                      <td className="py-4 flex  px-6">
-                        <StatusBadge
-                          color={
-                            invoice.status === "Paid"
-                              ? "success"
-                              : invoice.status === "pending"
-                                ? "normal"
-                                : "error"
+                    </thead>
+                    <tbody className="font-body-sm text-body-sm text-on-surface">
+                      {invoiceLoading && (
+                        <tr>
+                          <td
+                            colSpan={5}
+                            className="py-6 px-6 text-on-surface-variant"
+                          >
+                            Loading invoices...
+                          </td>
+                        </tr>
+                      )}
+                      {invoiceError && (
+                        <tr>
+                          <td colSpan={5} className="py-6 px-6 text-error">
+                            Couldn't load invoices.
+                          </td>
+                        </tr>
+                      )}
+                      {!invoiceLoading &&
+                        !invoiceError &&
+                        invoices.length === 0 && (
+                          <tr>
+                            <td
+                              colSpan={5}
+                              className="py-6 px-6 text-on-surface-variant"
+                            >
+                              No invoices yet.
+                            </td>
+                          </tr>
+                        )}
+                      {invoices.map((invoice: any) => (
+                        <tr
+                          onClick={() =>
+                            router.push(`/invoices/${invoice._id}`)
                           }
-                          label={invoice.status}
-                          fontSize="small"
-                        />
-                      </td>
-                      <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
-                        {invoice.amount?.toLocaleString("en-US", {
-                          style: "currency",
-                          currency: session?.data?.user?.currency || "USD",
-                        })}
-                      </td>
-                      <td className="py-4 px-6 text-right flex gap-md">
-                        <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                          <span className="material-symbols-outlined">
-                            download
-                          </span>
-                        </button>
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setInvoiceToBeDeleted(invoice._id.toString());
-                            setShowInvoiceDeleteConfirmation(true);
-                          }}
-                          className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                          key={invoice?._id}
+                          className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
                         >
-                          delete
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
+                            {invoice.invoiceNumber}
+                          </td>
+                          <td className="py-4 px-6 text-on-surface-variant">
+                            {new Date(invoice.dueDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )}
+                          </td>
+                          <td className="py-4 flex  px-6">
+                            <StatusBadge
+                              color={
+                                invoice.status === "Paid"
+                                  ? "success"
+                                  : invoice.status === "pending"
+                                    ? "normal"
+                                    : "error"
+                              }
+                              label={invoice.status}
+                              fontSize="small"
+                            />
+                          </td>
+                          <td className="py-4 px-6 text-right font-label-md text-label-md text-on-surface">
+                            {invoice.amount?.toLocaleString("en-US", {
+                              style: "currency",
+                              currency: session?.data?.user?.currency || "USD",
+                            })}
+                          </td>
+                          <td className="py-4 px-6 text-right flex gap-md">
+                            <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+                              <span className="material-symbols-outlined">
+                                download
+                              </span>
+                            </button>
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setInvoiceToBeDeleted(invoice._id.toString());
+                                setShowInvoiceDeleteConfirmation(true);
+                              }}
+                              className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              delete
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <Pagination
+                  total={invoiceTotal}
+                  offset={invoiceOffset}
+                  limit={limit}
+                  onPageChange={(newOffset) => setInvoiceOffset(newOffset)}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm p-lg text-on-surface-variant">
+              No invoices yet.
             </div>
-          </div>
-          <div>
-            <Pagination
-              total={invoiceTotal}
-              offset={invoiceOffset}
-              limit={limit}
-              onPageChange={(newOffset) => setInvoiceOffset(newOffset)}
-            />
-          </div>
+          )}
         </section>
       </div>
       {showProjectDeleteConfirmation && projectToBeDeleted && (
