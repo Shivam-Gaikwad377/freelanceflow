@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import { signInSchema } from "@/schemas/signin.schema";
-
+import Gradient from "../../../../public/Gradient.png";
 import { toast } from "sonner";
 
 export default function SignIn() {
@@ -61,9 +61,7 @@ export default function SignIn() {
           <Image
             alt=""
             className="w-full h-full object-cover scale-110 blur-2xl"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5cLUWEf_p8Gvu43B9igYz_nNUVekCCOffUwGQTPRoPH5Dv-LyuZP1lV7BxAY8euVUlOgn4TfdWe5k3sWh1W2hm8fcuRC1gDae0tFFrddkytYuucosY2ZSo3qJYZBnY3UuHH9H3N7LBryRFwLhwmQsmEtYyNyxht3ARorldYHsmRYjfsev0gT3ksHXTeP8rmn9_418j3z64-QprUK7TE-jHrf_X6Eo_27DgqeDSWzTazURLWHqM9m_U5i32sHArWwNdA3blQ_BK_4m"
-            fill
-            sizes="100vw"
+            src={Gradient}
           />
         </div>
         <div className="w-full max-w-110 bg-surface-container-lowest rounded-lg border border-outline-variant p-xl shadow-level-3 relative z-10 flex flex-col backdrop-blur-sm">
