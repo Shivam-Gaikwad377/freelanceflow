@@ -74,11 +74,7 @@ export async function GET(request: Request) {
             count: result?.paidLastMonth[0]?.count || 0,
           },
           monthlyRevenue: buildMonthlySeries(result?.monthlyRevenue || []),
-          InvoicesDueThisWeek: {
-            total: result?.InvoicesDueThisWeek[0]?.total || 0,
-            count: result?.InvoicesDueThisWeek[0]?.count || 0,
-            invoices: result?.InvoicesDueThisWeek || [],
-          },
+          InvoicesDueThisWeek: result?.InvoicesDueThisWeek || { invoices: [] },
         },
       },
       { status: 200 }

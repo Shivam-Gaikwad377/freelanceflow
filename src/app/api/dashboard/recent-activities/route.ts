@@ -2,8 +2,7 @@ import ApiResponse from "@/types/ApiResponse";
 import { NextResponse } from "next/server";
 import Invoice from "@/models/invoice.model";
 import TimeLog from "@/models/timeLog.model";
-import { ITimeLog } from "@/schemas/createTimeLog.schema";
-import { IInvoice } from "@/schemas/createInvoice.schema";
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { connectToDatabase } from "@/lib/dbConfig";

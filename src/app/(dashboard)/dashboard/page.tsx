@@ -38,6 +38,7 @@ const page = () => {
       count: 0,
     },
     monthlyRevenue: [] as any[],
+    InvoicesDueThisWeek: [] as any[]
   });
   const [totalClients, setTotalClients] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -74,9 +75,8 @@ const page = () => {
   const { data: invoicesData, error: invoicesError } = useFetch(
     `/api/Invoices?monthRange=1&limit=5&sort=desc&sortBy=issueDate`
   );
-  const { data: projectDueThisMonthData, error: projectDueThisMonthError } = useFetch(
-    `/api/projects/stats`
-  );
+  const { data: projectDueThisMonthData, error: projectDueThisMonthError } =
+    useFetch(`/api/projects/stats`);
   useEffect(() => {
     if (projectsData) {
       setActiveProjects(projectsData.data.projects);
@@ -145,7 +145,7 @@ const page = () => {
       setMax(maxRevenue);
     }
   }, [stats.monthlyRevenue]);
-  console.log("projectDueThisMonth", projectDueThisMonth);
+  console.log("invoices due this week", stats.InvoicesDueThisWeek);
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -284,7 +284,7 @@ const page = () => {
         <div className="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
-              Revenue overview
+              Revenue Past 12 Months
             </h3>
             <button className="text-on-surface-variant hover:text-primary transition-colors">
               <span className="material-symbols-outlined">more_horiz</span>
@@ -295,7 +295,8 @@ const page = () => {
             <div className="flex items-end justify-between gap-2 md:gap-4 h-48 border-b border-outline-variant pb-2">
               {stats?.monthlyRevenue?.map((monthData) => (
                 <div
-                  className={`w-full ${max === monthData.total ? 'bg-primary hover:bg-primary-container' : 'bg-surface-container hover:bg-surface-container-highest'}  transition-colors rounded-t-sm  group relative`}
+                key={monthData.month}
+                  className={`w-full ${max === monthData.total ? "bg-primary hover:bg-primary-container" : "bg-surface-container hover:bg-surface-container-highest"}  transition-colors rounded-t-sm  group relative`}
                   style={{
                     height: Math.min(
                       (monthData.total / (max > 0 ? max : 1)) * 100,
@@ -321,69 +322,67 @@ const page = () => {
             </div>
           </div>
         </div>
-
-        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+        <div className="bg-surface-container-lowest max-h-85 border  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
-              Recent invoices
+              Recent activity
             </h3>
-            <a
-              className="font-label-sm text-label-sm text-primary hover:underline"
-              href="#"
-            >
-              View all
-            </a>
+            <button className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined">filter_list</span>
+            </button>
           </div>
-          <div className="flex flex-col gap-4">
-            {invoices.map((invoice) => (
-              <div
-                key={invoice._id.toString()}
-                className="flex justify-between items-center group cursor-pointer"
-                onClick={() => {
-                  router.push(`/invoices/${invoice._id}`);
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: "20px" }}
-                    >
-                      receipt
-                    </span>
+          <div className="flex flex-col gap-5 overflow-auto scrollbar-hide relative">
+            <div className="absolute left-3.75 top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
+
+            {recentActivities.length > 0 ? (
+              recentActivities.map((activity) => (
+                <div key={activity.id} className="flex gap-4 relative z-10">
+                  <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
+                    {activity.type === "timelog" ? (
+                      <span className="material-symbols-outlined text-headline-sm">
+                        schedule
+                      </span>
+                    ) : (
+                      <span className="material-symbols-outlined text-headline-sm">
+                        receipt
+                      </span>
+                    )}
                   </div>
                   <div>
-                    <p className="font-label-md text-label-md text-on-surface">
-                      {invoice.client}
+                    <p className="font-body-sm text-body-sm text-on-surface">
+                      {activity.message}
                     </p>
-                    <p className="font-label-sm text-label-sm text-on-surface-variant">
-                      INV-{invoice.invoiceNumber} •{" "}
-                      {new Date(invoice.issueDate).toLocaleDateString("en-US", {
+                    <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+                      {new Date(activity.timestamp).toLocaleString("en-US", {
                         month: "short",
                         day: "numeric",
-                      })}
+                      }) +
+                        " at " +
+                        new Date(activity.timestamp).toLocaleTimeString(
+                          "en-US",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          }
+                        )}
                     </p>
                   </div>
                 </div>
-                <StatusBadge
-                  color={
-                    invoice.status === "Paid"
-                      ? "success"
-                      : invoice.status === "pending"
-                        ? "normal"
-                        : "error"
-                  }
-                  label={invoice.status}
-                  fontSize="small"
-                />
+              ))
+            ) : (
+              <div className="flex justify-center items-center h-20">
+                <p className="font-label-md text-label-md text-on-surface-variant">
+                  No recent activities has been recorded.
+                </p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 h-auto lg:grid-cols-2 gap-md md:gap-lg mb-xl">
-        <div className="bg-surface-container-lowest border max-h-70  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+        <div className="bg-surface-container-lowest border max-h-90  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
               Active projects
@@ -395,47 +394,55 @@ const page = () => {
           <div className="flex flex-col gap-5 overflow-auto scrollbar-hide">
             <div>
               <div className="flex flex-col gap-md justify-center items-start  mb-2">
-                {activeProjects.map((project) => (
-                  <div
-                    key={project._id.toString()}
-                    className="flex cursor-pointer gap-2 group items-center w-full justify-start  mb-2"
-                    onClick={() => router.push(`/projects/${project._id}`)}
-                  >
-                    <div className="w-10 grop-hover:text-primary h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                      <span className="material-symbols-outlined text-headline-sm">
-                        folder
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-headline-sm text-label-md text-on-surface">
-                        {project.title}
-                      </p>
-                      <p className="font-label-sm text-label-sm text-on-surface-variant">
-                        {project.client}
-                      </p>
+                {activeProjects.length > 0 ? (
+                  activeProjects.map((project) => (
+                    <div
+                      key={project._id.toString()}
+                      className="flex cursor-pointer gap-2 group items-center w-full justify-start  mb-2"
+                      onClick={() => router.push(`/projects/${project._id}`)}
+                    >
+                      <div className="w-10 grop-hover:text-primary h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                        <span className="material-symbols-outlined text-headline-sm">
+                          folder
+                        </span>
+                      </div>
                       <div>
-                        <p className="font-label-sm text-label-sm text-on-surface-variant">
-                          {getBurnRatePercentage(
-                            project.burnRate,
-                            project.budget
-                          ).toFixed(2)}
-                          % of budget used
+                        <p className="font-headline-sm text-label-md text-on-surface">
+                          {project.title}
                         </p>
-                        <div
-                          className={`relative mt-2 h-1 w-50 rounded-full overflow-hidden  bg-stone-300`}
-                        >
+                        <p className="font-label-sm text-label-sm text-on-surface-variant">
+                          {project.client}
+                        </p>
+                        <div>
+                          <p className="font-label-sm text-label-sm text-on-surface-variant">
+                            {getBurnRatePercentage(
+                              project.burnRate,
+                              project.budget
+                            ).toFixed(2)}
+                            % of budget used
+                          </p>
                           <div
-                            className="absolute inset-y-0 left-0 rounded-full opacity-100"
-                            style={{
-                              width: `${getBurnRatePercentage(project.burnRate, project.budget)}%`,
-                              background: `linear-gradient(to right, #3b82f6, #6366f1)`,
-                            }}
-                          />
+                            className={`relative mt-2 h-1 w-50 rounded-full overflow-hidden  bg-stone-300`}
+                          >
+                            <div
+                              className="absolute inset-y-0 left-0 rounded-full opacity-100"
+                              style={{
+                                width: `${getBurnRatePercentage(project.burnRate, project.budget)}%`,
+                                background: `linear-gradient(to right, #3b82f6, #6366f1)`,
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="flex justify-center items-center h-20">
+                    <p className="font-label-md text-label-md text-on-surface-variant">
+                      No active projects found.
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
@@ -457,51 +464,208 @@ const page = () => {
             )}
           </div>
         </div>
-
-        <div className="bg-surface-container-lowest max-h-70 border  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+        <div className="bg-surface-container-lowest border   border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
-              Recent activity
+              Project Due this Month
             </h3>
             <button className="text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined">filter_list</span>
+              <span className="material-symbols-outlined">more_horiz</span>
             </button>
           </div>
-          <div className="flex flex-col gap-5 overflow-auto scrollbar-hide relative">
-            <div className="absolute left-3.75 top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
-
-            {recentActivities.map((activity) => (
-              <div className="flex gap-4 relative z-10">
-                <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
-                  {activity.type === "timelog" ? (
-                    <span className="material-symbols-outlined text-headline-sm">
-                      schedule
-                    </span>
-                  ) : (
-                    <span className="material-symbols-outlined text-headline-sm">
-                      receipt
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <p className="font-body-sm text-body-sm text-on-surface">
-                    {activity.message}
-                  </p>
-                  <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                    {new Date(activity.timestamp).toLocaleString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    }) +
-                      " at " +
-                      new Date(activity.timestamp).toLocaleTimeString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
-                  </p>
-                </div>
+          <div className="flex flex-col gap-5 overflow-auto scrollbar-hide">
+            <div>
+              <div className="flex flex-col gap-md justify-center items-start  mb-2">
+                {projectDueThisMonth.length > 0 ? (
+                  projectDueThisMonth.map((project) => (
+                    <div
+                      key={project._id.toString()}
+                      className="flex cursor-pointer gap-2 group items-center w-full justify-start  mb-2"
+                      onClick={() => router.push(`/projects/${project._id}`)}
+                    >
+                      <div className="w-10 grop-hover:text-primary h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                        <span className="material-symbols-outlined text-headline-sm">
+                          folder
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-headline-sm text-label-md text-on-surface">
+                          {project.title}
+                        </p>
+                        <p className="font-label-sm text-label-sm text-on-surface-variant">
+                          {project.client}
+                        </p>
+                        <div>
+                          <p className="font-label-sm text-label-sm text-on-surface-variant">
+                            {getBurnRatePercentage(
+                              project.burnRate,
+                              project.budget
+                            ).toFixed(2)}
+                            % of budget used
+                          </p>
+                          <div
+                            className={`relative mt-2 h-1 w-50 rounded-full overflow-hidden  bg-stone-300`}
+                          >
+                            <div
+                              className="absolute inset-y-0 left-0 rounded-full opacity-100"
+                              style={{
+                                width: `${getBurnRatePercentage(project.burnRate, project.budget)}%`,
+                                background: `linear-gradient(to right, #3b82f6, #6366f1)`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex justify-center items-center h-20">
+                    <p className="font-label-md text-label-md text-on-surface-variant">
+                      No projects due this month.
+                    </p>
+                  </div>
+                )}
               </div>
-            ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest border max-h-90 scrollbar-hide overflow-auto border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-headline-sm text-headline-sm text-on-surface">
+              Invoices Due this Week
+            </h3>
+            <a
+              className="font-label-sm text-label-sm text-primary hover:underline"
+              href="#"
+            >
+              View all
+            </a>
+          </div>
+          <div className="flex flex-col gap-4">
+            {stats.InvoicesDueThisWeek.length > 0 ? (
+              stats.InvoicesDueThisWeek?.map((invoice) => (
+                <div
+                  key={invoice._id.toString()}
+                  className="flex justify-between items-center group cursor-pointer"
+                  onClick={() => {
+                    router.push(`/invoices/${invoice._id}`);
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: "20px" }}
+                      >
+                        receipt
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-label-md text-label-md text-on-surface">
+                        {invoice.client}
+                      </p>
+                      <p className="font-label-sm text-label-sm text-on-surface-variant">
+                        INV-{invoice.invoiceNumber} •{" "}
+                        {new Date(invoice.issueDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <StatusBadge
+                    color={
+                      invoice.status === "Paid"
+                        ? "success"
+                        : invoice.status === "pending"
+                          ? "normal"
+                          : "error"
+                    }
+                    label={invoice.status}
+                    fontSize="small"
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="flex justify-center items-center h-20">
+                <p className="font-label-md text-label-md text-on-surface-variant">
+                  No recent invoices found.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-headline-sm text-headline-sm text-on-surface">
+              Recent Invoices
+            </h3>
+            <a
+              className="font-label-sm text-label-sm text-primary hover:underline"
+              href="#"
+            >
+              View all
+            </a>
+          </div>
+          <div className="flex flex-col gap-4">
+            {invoices.length > 0 ? (
+              invoices.map((invoice) => (
+                <div
+                  key={invoice._id.toString()}
+                  className="flex justify-between items-center group cursor-pointer"
+                  onClick={() => {
+                    router.push(`/invoices/${invoice._id}`);
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: "20px" }}
+                      >
+                        receipt
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-label-md text-label-md text-on-surface">
+                        {invoice.client}
+                      </p>
+                      <p className="font-label-sm text-label-sm text-on-surface-variant">
+                        INV-{invoice.invoiceNumber} •{" "}
+                        {new Date(invoice.issueDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <StatusBadge
+                    color={
+                      invoice.status === "Paid"
+                        ? "success"
+                        : invoice.status === "pending"
+                          ? "normal"
+                          : "error"
+                    }
+                    label={invoice.status}
+                    fontSize="small"
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="flex justify-center items-center h-20">
+                <p className="font-label-md text-label-md text-on-surface-variant">
+                  No recent invoices found.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
