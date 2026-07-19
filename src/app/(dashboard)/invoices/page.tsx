@@ -3,7 +3,11 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
+import {
+  InvoiceRowsSkeleton,
+  InvoiceStatsSkeleton,
+  InvoiceTableSkeleton,
+} from "@/components/Skeletals/Invoice";
 import { toast } from "sonner";
 import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
@@ -117,66 +121,80 @@ const Page = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">
-          <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-sm">
-              <span className="font-label-md text-label-md text-on-surface-variant">
-                Outstanding
-              </span>
-              <span className="material-symbols-outlined text-outline">
-                pending_actions
-              </span>
-            </div>
-            <div>
-              <span className="font-display text-display text-on-surface">
-                {stats?.outstanding?.total?.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </span>
-            </div>
-          </div>
-          <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-sm">
-              <span className="font-label-md text-label-md text-on-surface-variant">
-                Paid this month
-              </span>
-              <span className="material-symbols-outlined text-secondary">
-                check_circle
-              </span>
-            </div>
-            <div>
-              <span className="font-display text-display text-on-surface">
-                {stats?.paidThisMonth?.total?.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </span>
-              <div className="w-full bg-surface-variant h-unit rounded-full mt-sm overflow-hidden">
-                <div className="bg-secondary h-full w-[65%] rounded-full"></div>
+          {statsLoading ? (
+            <InvoiceStatsSkeleton />
+          ) : (
+            <>
+              <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
+                <div className="flex items-center justify-between mb-sm">
+                  <span className="font-label-md text-label-md text-on-surface-variant">
+                    Outstanding
+                  </span>
+                  <span className="material-symbols-outlined text-outline">
+                    pending_actions
+                  </span>
+                </div>
+                <div>
+                  <span className="font-display text-display text-on-surface">
+                    {stats?.outstanding?.total?.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    })}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
+          {statsLoading ? (
+            <InvoiceStatsSkeleton />
+          ) : (
+            <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
+              <div className="flex items-center justify-between mb-sm">
+                <span className="font-label-md text-label-md text-on-surface-variant">
+                  Paid this month
+                </span>
+                <span className="material-symbols-outlined text-secondary">
+                  check_circle
+                </span>
+              </div>
+              <div>
+                <span className="font-display text-display text-on-surface">
+                  {stats?.paidThisMonth?.total?.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
+                </span>
+                <div className="w-full bg-surface-variant h-unit rounded-full mt-sm overflow-hidden">
+                  <div className="bg-secondary h-full w-[65%] rounded-full"></div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="glass-card rounded-xl p-lg flex flex-col justify-between border-l-4! border-0! border-accent!">
-            <div className="flex items-center justify-between mb-sm">
-              <span className="font-label-md text-label-md text-on-surface-variant">
-                Overdue
-              </span>
-              <span className="material-symbols-outlined text-accent text-error">
-                warning
-              </span>
+          )}
+          {statsLoading ? (
+            <InvoiceStatsSkeleton />
+          ) : (
+            <div className="glass-card rounded-xl p-lg flex flex-col justify-between border-l-4! border-0! border-accent!">
+              <div className="flex items-center justify-between mb-sm">
+                <span className="font-label-md text-label-md text-on-surface-variant">
+                  Overdue
+                </span>
+                <span className="material-symbols-outlined text-accent text-error">
+                  warning
+                </span>
+              </div>
+              <div>
+                <span className="font-display text-accent text-display text-error">
+                  {stats?.overdue?.total?.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
+                </span>
+                <p className="font-label-sm text-label-sm text-accent mt-xs">
+                  {stats?.overdue?.count} invoices need attention
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="font-display text-accent text-display text-error">
-                {stats?.overdue?.total?.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </span>
-              <p className="font-label-sm text-label-sm text-accent mt-xs">
-                {stats?.overdue?.count} invoices need attention
-              </p>
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="flex flex-col md:flex-row gap-md items-center justify-between glass-card rounded-lg p-sm">
@@ -231,150 +249,158 @@ const Page = () => {
         </div>
 
         <div className="glass-card rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-outline-variant/50">
-                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
-                    Invoice Number
-                  </th>
-                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
-                    Client
-                  </th>
-                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
-                    Issue Date
-                  </th>
-                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold text-right">
-                    Amount
-                  </th>
-                  <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold text-center">
-                    Status
-                  </th>
-                  <th className=" font-label-sm text-label-lg text-on-surface-variant font-semibold"></th>
-                </tr>
-              </thead>
-              <tbody className="font-body-sm text-body-sm">
-                {isSearching ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <tr
-                      key={`skeleton-${i}`}
-                      className="border-b border-outline-variant/30 animate-pulse"
-                    >
-                      <td className="py-sm px-lg">
-                        <div className="h-4 w-24 bg-surface-variant rounded" />
-                      </td>
-                      <td className="py-sm px-lg">
-                        <div className="flex items-center gap-sm">
-                          <div className="w-8 h-8 rounded-full bg-surface-variant" />
-                          <div className="h-4 w-32 bg-surface-variant rounded" />
-                        </div>
-                      </td>
-                      <td className="py-sm px-lg">
-                        <div className="h-4 w-20 bg-surface-variant rounded" />
-                      </td>
-                      <td className="py-sm px-lg text-right">
-                        <div className="h-4 w-16 bg-surface-variant rounded ml-auto" />
-                      </td>
-                      <td className="py-sm px-lg text-center">
-                        <div className="h-4 w-14 bg-surface-variant rounded mx-auto" />
-                      </td>
+          {invoiceLoading ? (
+            <InvoiceTableSkeleton rows={5} />
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-outline-variant/50">
+                      <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
+                        Invoice Number
+                      </th>
+                      <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
+                        Client
+                      </th>
+                      <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold">
+                        Issue Date
+                      </th>
+                      <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold text-right">
+                        Amount
+                      </th>
+                      <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold text-center">
+                        Status
+                      </th>
+                      <th className=" font-label-sm text-label-lg text-on-surface-variant font-semibold"></th>
                     </tr>
-                  ))
-                ) : debouncedSearchTerm && invoices.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="py-2xl px-lg text-center">
-                      <div className="flex flex-col items-center gap-sm">
-                        <span className="material-symbols-outlined text-4xl text-outline">
-                          search_off
-                        </span>
-                        <p className="font-body-md text-body-md text-on-surface">
-                          No invoices found for &quot;{debouncedSearchTerm}
-                          &quot;
-                        </p>
-                        <p className="font-body-sm text-body-sm text-on-surface-variant">
-                          Try a different client name or invoice number.
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  invoices.map((invoice) => (
-                    <tr
-                      onClick={() => router.push(`/invoices/${invoice._id}`)}
-                      key={invoice?._id.toString()}
-                      className="group border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
-                    >
-                      <td className="py-sm px-lg font-medium text-on-surface">
-                        {invoice?.invoiceNumber}
-                      </td>
-                      <td className="py-sm px-lg">
-                        <div className="flex items-center gap-sm">
-                          <ClientInitialBadge
-                            name={invoice?.client || "Client Name"}
-                            size="small"
-                          />
-                          <span className="text-on-surface">
-                            {invoice?.client}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-sm px-lg text-on-surface-variant">
-                        {new Date(invoice?.issueDate).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
-                      </td>
-                      <td className="py-sm px-lg text-right font-medium text-on-surface">
-                        {invoice?.amount?.toLocaleString("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        })}
-                      </td>
-                      <td className="py-sm px-lg text-center">
-                        <StatusBadge
-                          color={
-                            invoice.status === "Paid"
-                              ? "success"
-                              : invoice.status === "pending"
-                                ? "normal"
-                                : "error"
-                          }
-                          label={invoice.status}
-                          fontSize="small"
-                        />
-                      </td>
-                      <td className=" pr-lg text-right">
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowConfirmBox(true);
-                            setInvoiceToDelete(invoice._id.toString());
-                          }}
-                          className="group-hover:opacity-100 opacity-0 transition-all duration-200 hover:text-primary  material-symbols-outlined text-on-surface-variant group-hover:text-on-surface"
+                  </thead>
+                  <tbody className="font-body-sm text-body-sm">
+                    {isSearching ? (
+                      Array.from({ length: 5 }).map((_, i) => (
+                        <tr
+                          key={`skeleton-${i}`}
+                          className="border-b border-outline-variant/30 animate-pulse"
                         >
-                          delete
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="p-sm flex items-center justify-between border-t border-outline-variant/30 text-label-sm text-on-surface-variant bg-surface-container-lowest/50">
-            <div className="flex gap-1">
-              <Pagination
-                total={totalInvoices}
-                offset={invoiceOffset}
-                limit={limit}
-                onPageChange={(newOffset) => setInvoiceOffset(newOffset)}
-              />
-            </div>
-          </div>
+                          <td className="py-sm px-lg">
+                            <div className="h-4 w-24 bg-surface-variant rounded" />
+                          </td>
+                          <td className="py-sm px-lg">
+                            <div className="flex items-center gap-sm">
+                              <div className="w-8 h-8 rounded-full bg-surface-variant" />
+                              <div className="h-4 w-32 bg-surface-variant rounded" />
+                            </div>
+                          </td>
+                          <td className="py-sm px-lg">
+                            <div className="h-4 w-20 bg-surface-variant rounded" />
+                          </td>
+                          <td className="py-sm px-lg text-right">
+                            <div className="h-4 w-16 bg-surface-variant rounded ml-auto" />
+                          </td>
+                          <td className="py-sm px-lg text-center">
+                            <div className="h-4 w-14 bg-surface-variant rounded mx-auto" />
+                          </td>
+                        </tr>
+                      ))
+                    ) : debouncedSearchTerm && invoices.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-2xl px-lg text-center">
+                          <div className="flex flex-col items-center gap-sm">
+                            <span className="material-symbols-outlined text-4xl text-outline">
+                              search_off
+                            </span>
+                            <p className="font-body-md text-body-md text-on-surface">
+                              No invoices found for &quot;{debouncedSearchTerm}
+                              &quot;
+                            </p>
+                            <p className="font-body-sm text-body-sm text-on-surface-variant">
+                              Try a different client name or invoice number.
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      invoices.map((invoice) => (
+                        <tr
+                          onClick={() =>
+                            router.push(`/invoices/${invoice._id}`)
+                          }
+                          key={invoice?._id.toString()}
+                          className="group border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
+                        >
+                          <td className="py-sm px-lg font-medium text-on-surface">
+                            {invoice?.invoiceNumber}
+                          </td>
+                          <td className="py-sm px-lg">
+                            <div className="flex items-center gap-sm">
+                              <ClientInitialBadge
+                                name={invoice?.client || "Client Name"}
+                                size="small"
+                              />
+                              <span className="text-on-surface">
+                                {invoice?.client}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-sm px-lg text-on-surface-variant">
+                            {new Date(invoice?.issueDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )}
+                          </td>
+                          <td className="py-sm px-lg text-right font-medium text-on-surface">
+                            {invoice?.amount?.toLocaleString("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            })}
+                          </td>
+                          <td className="py-sm px-lg text-center">
+                            <StatusBadge
+                              color={
+                                invoice.status === "Paid"
+                                  ? "success"
+                                  : invoice.status === "pending"
+                                    ? "normal"
+                                    : "error"
+                              }
+                              label={invoice.status}
+                              fontSize="small"
+                            />
+                          </td>
+                          <td className=" pr-lg text-right">
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowConfirmBox(true);
+                                setInvoiceToDelete(invoice._id.toString());
+                              }}
+                              className="group-hover:opacity-100 opacity-0 transition-all duration-200 hover:text-primary  material-symbols-outlined text-on-surface-variant group-hover:text-on-surface"
+                            >
+                              delete
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div className="p-sm flex items-center justify-between border-t border-outline-variant/30 text-label-sm text-on-surface-variant bg-surface-container-lowest/50">
+                <div className="flex gap-1">
+                  <Pagination
+                    total={totalInvoices}
+                    offset={invoiceOffset}
+                    limit={limit}
+                    onPageChange={(newOffset) => setInvoiceOffset(newOffset)}
+                  />
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
       {showConfirmBox && (
