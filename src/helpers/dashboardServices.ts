@@ -1,6 +1,5 @@
 // services/dashboard.ts
 import axios from "axios";
-import { IProject } from "@/schemas/project.schema";
 import ApiResponse from "@/types/ApiResponse";
 
 export async function getActiveProjects(limit: number, signal?: AbortSignal) {

@@ -27,15 +27,15 @@ export const PopulateClientPipeline: PipelineStage[] = [
     $lookup: {
       from: "clients",
       localField: "clientId", // Look at the project's clientId
-      foreignField: "_id",    // Match it to the client's _id
-      as: "clientId",       // Output to a new field to avoid confusion
+      foreignField: "_id", // Match it to the client's _id
+      as: "clientId", // Output to a new field to avoid confusion
     },
   },
   {
     $unwind: {
       path: "$clientId",
       // IMPORTANT: Keeps the project in the results even if the client isn't found
-      preserveNullAndEmptyArrays: true, 
+      preserveNullAndEmptyArrays: true,
     },
   },
   {
@@ -45,7 +45,20 @@ export const PopulateClientPipeline: PipelineStage[] = [
       // Example of things to hide
       "clientId.createdAt",
       "clientId.updatedAt",
-      "clientId.__v"
-    ]
-  }
+      "clientId.__v",
+    ],
+  },
+];
+
+ export const DueThisMonthPipeline: PipelineStage[] = [
+  {
+    $match: {
+      dueDate: {
+        $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        $lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+      },
+      status: "in progress"
+    },
+  },
+  { $group: { _id: null, count: { $sum: 1 } } },
 ];

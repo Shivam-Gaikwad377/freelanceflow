@@ -46,6 +46,7 @@ const page = () => {
   const [limit, setLimit] = useState<number>(5);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([]);
+  const [projectDueThisMonth, setProjectDueThisMonth] = useState<Project[]>([]);
   const [growthResult, setGrowthResult] = useState<GrowthResult>({
     percentage: null,
     direction: "flat",
@@ -73,6 +74,9 @@ const page = () => {
   const { data: invoicesData, error: invoicesError } = useFetch(
     `/api/Invoices?monthRange=1&limit=5&sort=desc&sortBy=issueDate`
   );
+  const { data: projectDueThisMonthData, error: projectDueThisMonthError } = useFetch(
+    `/api/projects/stats`
+  );
   useEffect(() => {
     if (projectsData) {
       setActiveProjects(projectsData.data.projects);
@@ -90,6 +94,9 @@ const page = () => {
     if (recentActivitiesData) {
       setRecentActivities(recentActivitiesData.data);
     }
+    if (projectDueThisMonthData) {
+      setProjectDueThisMonth(projectDueThisMonthData.projects);
+    }
     setLoading(isProjectsLoading || isClientsLoading || isInvoiceStatsLoading);
   }, [
     projectsData,
@@ -97,6 +104,7 @@ const page = () => {
     invoiceStatsData,
     invoicesData,
     recentActivitiesData,
+    projectDueThisMonthData,
   ]);
   const getBurnRatePercentage = (
     burnRate: number | undefined,
@@ -137,7 +145,7 @@ const page = () => {
       setMax(maxRevenue);
     }
   }, [stats.monthlyRevenue]);
-
+  console.log("projectDueThisMonth", projectDueThisMonth);
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

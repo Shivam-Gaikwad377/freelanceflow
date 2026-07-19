@@ -7,9 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { BurnRateCalculationPipeline } from "@/lib/pipelines/project.pipeline";
 import { Types } from "mongoose";
-import { IProject } from "@/schemas/project.schema";
 import {  isValidObjectId } from "mongoose";
-import { QueryFilter  } from "mongoose";
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
