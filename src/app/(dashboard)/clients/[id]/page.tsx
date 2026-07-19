@@ -17,7 +17,11 @@ import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 import ConfirmationBox from "@/components/confirmationBox";
-
+import {
+  ClientHeaderSkeleton,
+  InvoiceTableSkeleton,
+  ProjectTableSkeleton,
+} from "@/components/Skeletals/Client";
 import { useDelete } from "@/app/hooks/useDelete";
 
 const Page = () => {
@@ -43,6 +47,11 @@ const Page = () => {
     useState(false);
   const [showInvoiceDeleteConfirmation, setShowInvoiceDeleteConfirmation] =
     useState(false);
+  const [isLoading, setIsLoading] = useState({
+    projects: true,
+    invoices: true,
+    client: true,
+  });
   const {
     data: clientData,
     loading: clientLoading,
@@ -86,14 +95,17 @@ const Page = () => {
     if (clientData || invoiceData || projectData) {
       if (clientData) {
         setClient(clientData);
+        setIsLoading((prev) => ({ ...prev, client: false }));
       }
       if (invoiceData) {
         setInvoices(invoiceData?.invoices || []);
         setInvoiceTotal(invoiceData?.total || 0);
+        setIsLoading((prev) => ({ ...prev, invoices: false }));
       }
       if (projectData) {
         setProjects(projectData?.projects || []);
         setProjectTotal(projectData?.total || 0);
+        setIsLoading((prev) => ({ ...prev, projects: false }));
       }
     }
   }, [clientData, invoiceData, projectData]);
@@ -136,100 +148,104 @@ const Page = () => {
         />
 
         {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
-        <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg md:p-xl mb-xl shadow-sm relative overflow-hidden">
-          {/* Subtle decorative background element */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-container/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
-            {/* Left: Identity */}
-            <div className="flex items-start gap-6">
-              <ClientInitialBadge
-                name={client?.name || "John Doe"}
-                size="large"
-              />
-              <div>
-                <div className="flex items-center gap-3 mb-1">
-                  <h2 className="font-display text-headline-lg font-bold text-on-surface tracking-tight">
-                    {client?.company || "Client Name"}
-                  </h2>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider">
-                    {client?.status || "Status"}
-                  </span>
+        {isLoading.client ? (
+          <ClientHeaderSkeleton />
+        ) : (
+          <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg md:p-xl mb-xl shadow-sm relative overflow-hidden">
+            {/* Subtle decorative background element */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-container/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
+              {/* Left: Identity */}
+              <div className="flex items-start gap-6">
+                <ClientInitialBadge
+                  name={client?.name || "John Doe"}
+                  size="large"
+                />
+                <div>
+                  <div className="flex items-center gap-3 mb-1">
+                    <h2 className="font-display text-headline-lg font-bold text-on-surface tracking-tight">
+                      {client?.company || "Client Name"}
+                    </h2>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider">
+                      {client?.status || "Status"}
+                    </span>
+                  </div>
+                  <p className="font-body-md text-body-md text-on-surface-variant mb-4">
+                    {client?.description || "Company Description"}
+                  </p>
+                  <div className="flex flex-wrap gap-x-6 gap-y-3">
+                    <div className="flex items-center gap-2 text-on-surface-variant">
+                      <span className="material-symbols-outlined text-[18px]">
+                        person
+                      </span>
+                      <span className="font-label-md text-label-md">
+                        {client?.name || "Jane Doe (Director of Product)"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-on-surface-variant">
+                      <span className="material-symbols-outlined text-[18px]">
+                        mail
+                      </span>
+                      <a
+                        className="font-label-md text-label-md hover:text-primary transition-colors"
+                        href={`mailto:${client?.email || "jane@acme.corp"}`}
+                      >
+                        {client?.email || "jane@acme.corp"}
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2 text-on-surface-variant">
+                      <span className="material-symbols-outlined text-[18px]">
+                        phone
+                      </span>
+                      <a
+                        className="font-label-md text-label-md hover:text-primary transition-colors"
+                        href={`tel:${client?.phone || "+15551234567"}`}
+                      >
+                        {client?.phone || "+1 (555) 123-4567"}
+                      </a>
+                    </div>
+                  </div>
                 </div>
-                <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-                  {client?.description || "Company Description"}
-                </p>
-                <div className="flex flex-wrap gap-x-6 gap-y-3">
-                  <div className="flex items-center gap-2 text-on-surface-variant">
-                    <span className="material-symbols-outlined text-[18px]">
-                      person
-                    </span>
-                    <span className="font-label-md text-label-md">
-                      {client?.name || "Jane Doe (Director of Product)"}
-                    </span>
+              </div>
+              {/* Right: Quick Actions / Metrics */}
+              <div className="flex flex-col items-start md:items-end gap-4 shrink-0">
+                <div className="flex gap-3 w-full md:w-auto">
+                  <SecondaryButton
+                    onClick={() => setEditOpen(true)}
+                    label="Edit Client"
+                    icon="edit"
+                  />
+                  <PrimaryButton
+                    onClick={() =>
+                      openModal("addProject", {
+                        prefillClient: {
+                          name: client?.name.toString() || "",
+                          id: client?._id.toString() || "",
+                        },
+                      })
+                    }
+                    label=" New Project "
+                    icon="add"
+                  />
+                </div>
+                <div className="flex gap-6 mt-2">
+                  <div className="text-left md:text-right">
+                    <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+                      Lifetime Value
+                    </p>
+                    <p className="font-display text-headline-md font-bold text-on-surface">
+                      {client?.totalBilled?.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2 text-on-surface-variant">
-                    <span className="material-symbols-outlined text-[18px]">
-                      mail
-                    </span>
-                    <a
-                      className="font-label-md text-label-md hover:text-primary transition-colors"
-                      href={`mailto:${client?.email || "jane@acme.corp"}`}
-                    >
-                      {client?.email || "jane@acme.corp"}
-                    </a>
-                  </div>
-                  <div className="flex items-center gap-2 text-on-surface-variant">
-                    <span className="material-symbols-outlined text-[18px]">
-                      phone
-                    </span>
-                    <a
-                      className="font-label-md text-label-md hover:text-primary transition-colors"
-                      href={`tel:${client?.phone || "+15551234567"}`}
-                    >
-                      {client?.phone || "+1 (555) 123-4567"}
-                    </a>
-                  </div>
+                  <div className="w-px bg-outline-variant h-full hidden md:block"></div>
                 </div>
               </div>
             </div>
-            {/* Right: Quick Actions / Metrics */}
-            <div className="flex flex-col items-start md:items-end gap-4 shrink-0">
-              <div className="flex gap-3 w-full md:w-auto">
-                <SecondaryButton
-                  onClick={() => setEditOpen(true)}
-                  label="Edit Client"
-                  icon="edit"
-                />
-                <PrimaryButton
-                  onClick={() =>
-                    openModal("addProject", {
-                      prefillClient: {
-                        name: client?.name.toString() || "",
-                        id: client?._id.toString() || "",
-                      },
-                    })
-                  }
-                  label=" New Project "
-                  icon="add"
-                />
-              </div>
-              <div className="flex gap-6 mt-2">
-                <div className="text-left md:text-right">
-                  <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
-                    Lifetime Value
-                  </p>
-                  <p className="font-display text-headline-md font-bold text-on-surface">
-                    {client?.totalBilled?.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}
-                  </p>
-                </div>
-                <div className="w-px bg-outline-variant h-full hidden md:block"></div>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
         {/* 2. Project History Section */}
         <section className="mb-xl flex flex-col gap-2 ">
           <div className="flex items-center justify-between mb-6">
@@ -237,7 +253,9 @@ const Page = () => {
               Project History
             </h3>
           </div>
-          {projects.length > 0 ? (
+          {isLoading.projects ? (
+            <ProjectTableSkeleton />
+          ) : projects.length > 0 ? (
             <>
               <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-2xl border overflow-hidden border-outline-variant shadow-sm ">
                 <div className="overflow-x-auto">
@@ -347,7 +365,9 @@ const Page = () => {
               Recent Invoices
             </h3>
           </div>
-          {invoices.length > 0 ? (
+          {isLoading.invoices ? (
+            <InvoiceTableSkeleton />
+          ) : invoices.length > 0 ? (
             <>
               <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
@@ -370,23 +390,6 @@ const Page = () => {
                       </tr>
                     </thead>
                     <tbody className="font-body-sm text-body-sm text-on-surface">
-                      {invoiceLoading && (
-                        <tr>
-                          <td
-                            colSpan={5}
-                            className="py-6 px-6 text-on-surface-variant"
-                          >
-                            Loading invoices...
-                          </td>
-                        </tr>
-                      )}
-                      {invoiceError && (
-                        <tr>
-                          <td colSpan={5} className="py-6 px-6 text-error">
-                            Couldn't load invoices.
-                          </td>
-                        </tr>
-                      )}
                       {!invoiceLoading &&
                         !invoiceError &&
                         invoices.length === 0 && (

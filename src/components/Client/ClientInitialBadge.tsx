@@ -38,7 +38,7 @@ const ClientInitialBadge = ({ name, size }: ClientInitialBadgeProps) => {
   };
   return (
     <div
-      className={`${clientInitialsColor[name.charAt(0).toUpperCase()]}${ size === "small" ? " w-9 h-9 text-sm " : size === "medium" ? " w-12 h-12 text-xl font-bold" : " w-20 h-20 text-headline-lg font-bold" } rounded-full flex items-center   justify-center object-cover border  border-surface-variant`}
+      className={`${clientInitialsColor[name.charAt(0).toUpperCase()]}${ size === "small" ? " w-9 h-9 text-sm " : size === "medium" ? " w-12 h-12 text-xl font-bold" : " w-20 h-20 text-headline-lg font-bold" } rounded-full flex items-center aspect-square  justify-center object-cover border  border-surface-variant`}
     >
       {name.charAt(0).toUpperCase() +
         name.split(" ").slice(-1)[0].charAt(0).toUpperCase()}

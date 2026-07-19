@@ -7,7 +7,10 @@ import { useRouter } from "next/navigation";
 import ClientCard from "@/components/Client/ClientCard";
 import AddClient from "@/components/Client/AddCLient";
 import Pagination from "@/components/Pagination";
-
+import {
+  ClientHeaderSkeleton,
+  ClientsGridSkeleton,
+} from "@/components/Skeletals/Client";
 import useDebounce from "@/app/hooks/useDebounce";
 import useFetch from "@/app/hooks/useFetch";
 import { Client } from "@/types/Model.types";
@@ -30,7 +33,8 @@ const Page = () => {
     status: selectedStatus !== "all" ? selectedStatus : undefined,
     search: debouncedSearchTerm || undefined,
   });
-    const {deleteItem: deleteClient, isDeleting: isDeletingClient} = useDelete<Client>({
+  const { deleteItem: deleteClient, isDeleting: isDeletingClient } =
+    useDelete<Client>({
       resource: "Clients",
       setItems: setClients,
       successMessage: "Client deleted successfully",
@@ -44,12 +48,12 @@ const Page = () => {
       setTotalClients(data?.total || 0);
     }
   }, [data]);
-  
+
   const router = useRouter();
   const handleClick = (id: string) => {
     router.replace(`/clients/${id}`);
   };
-  
+
   const [AddClientOpen, setAddClientOpen] = useState<boolean>(false);
 
   return (
@@ -108,45 +112,48 @@ const Page = () => {
           </div>
         </div>
         {/* Client List (Bento Grid Style) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
-          {clients.length === 0 ? (
-            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-              <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-2">
-                search_off
-              </span>
-              <p className="font-body-lg text-body-lg text-on-surface">
-                No clients found
-              </p>
-             
-            </div>
-          ) : (
-            clients.map((client) => (
-             
-                <ClientCard
-                  key={client?._id.toString()}
-                  name={client?.name}
-                  status={client?.status}
-                  phone={client?.phone}
-                  email={client?.email}
-                  totalBilled={client?.totalBilled?.toLocaleString("en-US", {
+        { loading ? (
+          <ClientsGridSkeleton   />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+              {clients.length === 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                  <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-2">
+                    search_off
+                  </span>
+                  <p className="font-body-lg text-body-lg text-on-surface">
+                    No clients found
+                  </p>
+                </div>
+              ) : (
+                clients.map((client) => (
+                  <ClientCard
+                    key={client?._id.toString()}
+                    name={client?.name}
+                    status={client?.status}
+                    phone={client?.phone}
+                    email={client?.email}
+                    totalBilled={client?.totalBilled?.toLocaleString("en-US", {
                       style: "currency",
-                      currency:  "USD",
+                      currency: "USD",
                     })}
                     onClick={() => handleClick(client._id.toString())}
                     onDelete={() => deleteClient(client._id.toString())}
-                />
-              
-            ))
-          )}
-        </div>
-        <div className="p-4">
-          <Pagination
-            total={totalClients}
-            limit={limit}
-            offset={clientOffset}
-            onPageChange={(newOffset) => setClientOffset(newOffset)}
-          />
-        </div>
+                  />
+                ))
+              )}
+            </div>
+            <div className="p-4">
+              <Pagination
+                total={totalClients}
+                limit={limit}
+                offset={clientOffset}
+                onPageChange={(newOffset) => setClientOffset(newOffset)}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
