@@ -44,6 +44,15 @@ export const invoiceStatsPipeline = (ownerID: string) => {
           },
           { $sort: { _id: 1 } }, // ascending — chronological order, no client-side re-sort needed
         ],
+        InvoicesDueThisWeek: [
+          {
+            $match: {
+              status: { $in: [STATUS.PENDING, STATUS.OVERDUE] },
+              dueDate: { $gte: new Date(new Date().setDate(new Date().getDate() - 7)), $lt: new Date() }
+            }
+          },
+          { $group: { _id: null, total: { $sum: "$amount" }, count: { $sum: 1 } } },
+        ],
       },
     },
   ];
