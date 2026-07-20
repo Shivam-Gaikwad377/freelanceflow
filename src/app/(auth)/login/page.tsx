@@ -26,7 +26,7 @@ export default function SignIn() {
 
   const {
     register,
-    watch,
+   
     formState: { errors, isSubmitting },
   } = form;
 
@@ -46,8 +46,12 @@ export default function SignIn() {
         });
         router.replace("/dashboard");
       }
-    } catch (error: any) {
-      setError("Invalid email or password" + error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError("Invalid email or password" + error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 
@@ -145,6 +149,7 @@ export default function SignIn() {
             <button
               className="w-full py-3 cursor-pointer active:scale-95 px-lg bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md rounded-lg transition-all duration-200 flex justify-center items-center mt-sm"
               type="submit"
+              disabled={isSubmitting}
             >
               Log In
             </button>

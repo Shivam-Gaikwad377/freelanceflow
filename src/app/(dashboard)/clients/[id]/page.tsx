@@ -6,9 +6,9 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import Pagination from "@/components/Pagination";
 import { useUiStore } from "@/store/useUiStore";
-import Link from "next/link";
-import EditClientDrawer from "@/components/Client/EditClient";
 import { toast } from "sonner";
+import EditClientDrawer from "@/components/Client/EditClient";
+
 import useFetch from "@/app/hooks/useFetch";
 import BackButton from "@/components/BackButton";
 import { Client, Project, Invoice } from "@/types/Model.types";
@@ -33,6 +33,7 @@ const Page = () => {
   const [invoiceOffset, setInvoiceOffset] = useState<number>(0);
   const [projectOffset, setProjectOffset] = useState<number>(0);
   const [editOpen, setEditOpen] = useState(false);
+  const router = useRouter();
   const limit = 5;
   const [invoiceTotal, setInvoiceTotal] = useState<number>(0);
   const [projectTotal, setProjectTotal] = useState<number>(0);
@@ -47,11 +48,7 @@ const Page = () => {
     useState(false);
   const [showInvoiceDeleteConfirmation, setShowInvoiceDeleteConfirmation] =
     useState(false);
-  const [isLoading, setIsLoading] = useState({
-    projects: true,
-    invoices: true,
-    client: true,
-  });
+
   const {
     data: clientData,
     loading: clientLoading,
@@ -91,24 +88,7 @@ const Page = () => {
       errorMessage: "Failed to delete invoice",
     });
 
-  useEffect(() => {
-    if (clientData || invoiceData || projectData) {
-      if (clientData) {
-        setClient(clientData);
-        setIsLoading((prev) => ({ ...prev, client: false }));
-      }
-      if (invoiceData) {
-        setInvoices(invoiceData?.invoices || []);
-        setInvoiceTotal(invoiceData?.total || 0);
-        setIsLoading((prev) => ({ ...prev, invoices: false }));
-      }
-      if (projectData) {
-        setProjects(projectData?.projects || []);
-        setProjectTotal(projectData?.total || 0);
-        setIsLoading((prev) => ({ ...prev, projects: false }));
-      }
-    }
-  }, [clientData, invoiceData, projectData]);
+  
   useEffect(() => {
     setInvoiceOffset(0);
     setProjectOffset(0);
@@ -126,7 +106,17 @@ const Page = () => {
       setInvoiceToBeDeleted(null);
     }
   };
-  const router = useRouter();
+  useEffect(() => {
+    if (clientError) {
+      toast.error("Failed to fetch client data. Please try again.");
+    }
+    if (projectError) {
+      toast.error("Failed to fetch project data. Please try again.");
+    }
+    if (invoiceError) {
+      toast.error("Failed to fetch invoice data. Please try again.");
+    }
+  }, [clientError, projectError, invoiceError]);
 
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
@@ -148,7 +138,7 @@ const Page = () => {
         />
 
         {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
-        {isLoading.client ? (
+        {clientLoading ? (
           <ClientHeaderSkeleton />
         ) : (
           <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-lg md:p-xl mb-xl shadow-sm relative overflow-hidden">
@@ -164,14 +154,14 @@ const Page = () => {
                 <div>
                   <div className="flex items-center gap-3 mb-1">
                     <h2 className="font-display text-headline-lg font-bold text-on-surface tracking-tight">
-                      {client?.company || "Client Name"}
+                      {clientData?.company || "Client Name"}
                     </h2>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider">
-                      {client?.status || "Status"}
+                      {clientData?.status || "Status"}
                     </span>
                   </div>
                   <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-                    {client?.description || "Company Description"}
+                    {clientData?.description || "Company Description"}
                   </p>
                   <div className="flex flex-wrap gap-x-6 gap-y-3">
                     <div className="flex items-center gap-2 text-on-surface-variant">
@@ -179,7 +169,7 @@ const Page = () => {
                         person
                       </span>
                       <span className="font-label-md text-label-md">
-                        {client?.name || "Jane Doe (Director of Product)"}
+                        {clientData?.name || "Jane Doe (Director of Product)"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-on-surface-variant">
@@ -188,9 +178,9 @@ const Page = () => {
                       </span>
                       <a
                         className="font-label-md text-label-md hover:text-primary transition-colors"
-                        href={`mailto:${client?.email || "jane@acme.corp"}`}
+                        href={`mailto:${clientData?.email || "jane@acme.corp"}`}
                       >
-                        {client?.email || "jane@acme.corp"}
+                        {clientData?.email || "jane@acme.corp"}
                       </a>
                     </div>
                     <div className="flex items-center gap-2 text-on-surface-variant">
@@ -199,9 +189,9 @@ const Page = () => {
                       </span>
                       <a
                         className="font-label-md text-label-md hover:text-primary transition-colors"
-                        href={`tel:${client?.phone || "+15551234567"}`}
+                        href={`tel:${clientData?.phone || "+15551234567"}`}
                       >
-                        {client?.phone || "+1 (555) 123-4567"}
+                        {clientData?.phone || "+1 (555) 123-4567"}
                       </a>
                     </div>
                   </div>
@@ -219,7 +209,7 @@ const Page = () => {
                     onClick={() =>
                       openModal("addProject", {
                         prefillClient: {
-                          name: client?.name.toString() || "",
+                          name: clientData?.name.toString() || "",
                           id: client?._id.toString() || "",
                         },
                       })
@@ -253,9 +243,9 @@ const Page = () => {
               Project History
             </h3>
           </div>
-          {isLoading.projects ? (
+          {projectLoading ? (
             <ProjectTableSkeleton />
-          ) : projects.length > 0 ? (
+          ) : projectData.projects.length > 0 ? (
             <>
               <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-2xl border overflow-hidden border-outline-variant shadow-sm ">
                 <div className="overflow-x-auto">
@@ -278,7 +268,7 @@ const Page = () => {
                       </tr>
                     </thead>
                     <tbody className="font-body-sm text-body-sm text-on-surface">
-                      {projects.map((project) => (
+                      {projectData.projects.map((project : Project) => (
                         <tr
                           onClick={() =>
                             router.replace(
@@ -326,16 +316,22 @@ const Page = () => {
                             })}
                           </td>
                           <td className="px-4 text-right">
-                            <span
+                            <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setProjectToBeDeleted(project._id.toString());
                                 setShowProjectDeleteConfirmation(true);
                               }}
-                              className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                              disabled={isDeletingProject}
                             >
-                              delete
-                            </span>
+                              <span
+
+
+                                className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                delete
+                              </span>
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -365,9 +361,9 @@ const Page = () => {
               Recent Invoices
             </h3>
           </div>
-          {isLoading.invoices ? (
+          {invoiceLoading ? (
             <InvoiceTableSkeleton />
-          ) : invoices.length > 0 ? (
+          ) : invoiceData.invoices.length > 0 ? (
             <>
               <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
@@ -392,7 +388,7 @@ const Page = () => {
                     <tbody className="font-body-sm text-body-sm text-on-surface">
                       {!invoiceLoading &&
                         !invoiceError &&
-                        invoices.length === 0 && (
+                        invoiceData.invoices.length === 0 && (
                           <tr>
                             <td
                               colSpan={5}
@@ -402,12 +398,12 @@ const Page = () => {
                             </td>
                           </tr>
                         )}
-                      {invoices.map((invoice: any) => (
+                      {invoiceData.invoices.map((invoice: Invoice) => (
                         <tr
                           onClick={() =>
                             router.push(`/invoices/${invoice._id}`)
                           }
-                          key={invoice?._id}
+                          key={invoice?._id.toString()}
                           className="cursor-pointer border-b border-outline-variant/30 hover:bg-surface-container-highest/30 transition-colors group"
                         >
                           <td className="py-4 px-6 font-label-md text-label-md text-on-surface">
@@ -448,16 +444,21 @@ const Page = () => {
                                 download
                               </span>
                             </button>
-                            <span
+                            <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setInvoiceToBeDeleted(invoice._id.toString());
                                 setShowInvoiceDeleteConfirmation(true);
                               }}
-                              className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                              disabled={isDeletingInvoice}
                             >
-                              delete
-                            </span>
+                              <span
+
+                                className="hover:text-primary material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                delete
+                              </span>
+                            </button>
                           </td>
                         </tr>
                       ))}

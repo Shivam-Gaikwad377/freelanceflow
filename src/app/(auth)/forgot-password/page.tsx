@@ -27,8 +27,13 @@ const Page = () => {
         );
         router.replace("/reset-password?email=" + email);
       }
-    } catch (error: any) {
-      toast.error("Failed to send password reset otp." + error.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        // safe to access err.message, err.stack, err.name
+      } else {
+        console.error("Unknown error:", err);
+      }
     }
   };
 

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import axios from "axios";
+
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,6 @@ import ClientCard from "@/components/Client/ClientCard";
 import AddClient from "@/components/Client/AddCLient";
 import Pagination from "@/components/Pagination";
 import {
-  ClientHeaderSkeleton,
   ClientsGridSkeleton,
 } from "@/components/Skeletals/Client";
 import useDebounce from "@/app/hooks/useDebounce";
@@ -16,8 +15,9 @@ import useFetch from "@/app/hooks/useFetch";
 import { Client } from "@/types/Model.types";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useDelete } from "@/app/hooks/useDelete";
+import { da } from "@faker-js/faker";
 const Page = () => {
-  const session = useSession();
+  
   const [clients, setClients] = useState<Client[]>([]);
   const [clientOffset, setClientOffset] = useState<number>(0);
   const [totalClients, setTotalClients] = useState<number>(0);
@@ -40,14 +40,6 @@ const Page = () => {
       successMessage: "Client deleted successfully",
       errorMessage: "Failed to delete client",
     });
-
-  // Use another useEffect ONLY to sync the fetched data to your local state
-  useEffect(() => {
-    if (data) {
-      setClients(data?.clients || []);
-      setTotalClients(data?.total || 0);
-    }
-  }, [data]);
 
   const router = useRouter();
   const handleClick = (id: string) => {
@@ -117,7 +109,7 @@ const Page = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
-              {clients.length === 0 ? (
+              {data.clients.length === 0 ? (
                 <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
                   <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-2">
                     search_off
@@ -146,7 +138,7 @@ const Page = () => {
             </div>
             <div className="p-4">
               <Pagination
-                total={totalClients}
+                total={data.total}
                 limit={limit}
                 offset={clientOffset}
                 onPageChange={(newOffset) => setClientOffset(newOffset)}

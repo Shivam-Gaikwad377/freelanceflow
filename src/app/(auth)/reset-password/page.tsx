@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
@@ -10,12 +10,12 @@ import ApiResponse from "@/types/ApiResponse";
 import Image from "next/image";
 import Gradient from "../../../../public/Gradient.png";
 const Page = () => {
-  const [timer, setTimer] = useState(60); // 5 minutes in seconds
+  const [timer, setTimer] = useState(60); // 60 seconds (1 minute)
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
   const [otp, setOtp] = useState<string[]>(Array(6).fill("")); // Initialize an array of 6 empty strings
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
-
+  const [resend, setResend] = useState(false);
   const router = useRouter();
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -67,7 +67,7 @@ const Page = () => {
     } catch (err: any) {
       toast.error(
         err.response?.data?.message ||
-          "Invalid verification code. Please try again."
+        "Invalid verification code. Please try again."
       );
     }
   };
@@ -95,18 +95,29 @@ const Page = () => {
       if (response.data.success) {
         toast.success(
           response.data.message ||
-            "Verification code resent successfully. Please check your email."
+          "Verification code resent successfully. Please check your email."
         );
       }
     } catch (err: any) {
       toast.error(
         err.response?.data?.message ||
-          "Failed to resend verification code. Please try again."
+        "Failed to resend verification code. Please try again."
       );
 
       return;
     }
   };
+  useEffect(() => {
+    if (timer > 0) {
+      const countdown = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(countdown);
+    } else {
+      setResend(true);
+    }
+  }, [timer]);
   return (
     <div className="antialiased  flex flex-col justify-center  min-h-screen relative  overflow-x-hidden">
       <div className="flex flex-col items-center justify-center min-h-full">
@@ -164,10 +175,22 @@ const Page = () => {
                     />
                   ))}
                 </div>
-                <div className="flex justify-end mt-sm">
+                <div className="flex flex-col items-center gap-xs mb-xl w-full">
+                  <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-xs">
+                    <span className="material-symbols-outlined text-[16px]">
+                      schedule
+                    </span>
+                    <span id="countdown" className="text-error">
+                      {Math.floor(timer / 60)}:
+                      {(timer % 60).toString().padStart(2, "0")}
+                    </span>
+                  </span>
                   <button
+                    className="font-label-md disabled:opacity-50 disabled:cursor-not-allowed text-label-md transition-colors text-primary hover:underline cursor-pointer"
+                    id="resend-btn"
                     type="button"
-                    className="text-label-md font-label-md text-primary hover:text-primary-container transition-colors"
+                    disabled={!resend}
+                    onClick={handleResend}
                   >
                     Resend Code
                   </button>

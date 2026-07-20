@@ -11,7 +11,7 @@ import Gradient from "../../../../public/Gradient.png";
 import { useSearchParams } from "next/navigation";
 
 const Page = () => {
-  const [timer, setTimer] = useState(5); // 5 minutes in seconds
+  const [timer, setTimer] = useState(60); // 60 seconds (1 minute)
   const [resend, setResend] = useState(false);
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";

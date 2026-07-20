@@ -7,7 +7,7 @@ import {
   getRecentActivities,
 } from "@/helpers/dashboardServices";
 import { useAsync } from "@/app/hooks/useAsync";
-import { Client, Project, Invoice } from "@/types/Model.types";
+import {  Project, Invoice } from "@/types/Model.types";
 import useFetch from "@/app/hooks/useFetch";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ type GrowthResult = {
   percentage: number | null; // null = undefined growth, render as "New"
   direction: "up" | "down" | "flat";
 };
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const [activeProjects, setActiveProjects] = useState<Project[]>([]);
   const [stats, setStats] = useState({
@@ -739,4 +739,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

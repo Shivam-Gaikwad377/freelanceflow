@@ -22,11 +22,11 @@ const Page = () => {
       password: "",
     },
   });
-  const [existingEmail, setExistingEmail] = useState(false);
+
   const {
     register,
-    handleSubmit,
-    watch,
+    
+    
     formState: { errors, isSubmitting },
   } = form;
   const router = useRouter();
@@ -45,12 +45,12 @@ const Page = () => {
         );
         router.replace(`/verify?email=${data.email}`);
       }
-    } catch (err: any) {
-      const status = err.response?.status;
-      const message = err.response?.data?.message;
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } }).response?.status;
+      const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
 
       if (status === 401) {
-        setExistingEmail(true); // ← now actually called
+         // ← now actually called
         toast.error(message || "Email already in use.", {
           position: "top-right",
         });
@@ -278,7 +278,7 @@ const Page = () => {
                 fill
                 sizes="100vw"
                 className="w-full h-full object-cover rounded-xl opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ6jN1lR8L1uOkGQo2qRLuYU_HYGktzDw8dPT7huLCN9hO35IqkyXRp12Nar72Lw0-BmNIpOxMxZFll68YdUk93l32ZeITbqcU2gFyQyCEktvGhv5Tf_QkS4Cs5wUZSNrQzL7OnNhDTRfAsEceiqmM7xS-3l9Blt__ZUwj97im5MoH-CQniqEbMkElIPehyEjMAfYT4RPVHGLm9ZzSzgaevCqG3mHde-n5EIbT1qeQzprzSE1NYuM_E7TcjxzMqBJdbK8vhHgPqkJH"
+                src={Gradient}
               />
               {/* <!-- Floating abstract UI elements to simulate the prompt's request --> */}
               <div
