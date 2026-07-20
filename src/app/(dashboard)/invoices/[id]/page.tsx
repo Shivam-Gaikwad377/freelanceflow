@@ -16,10 +16,13 @@ import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
+import {
+  InvoiceDetailSkeleton
+} from "@/components/Skeletals/Invoice";
 const Page = () => {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { data: session } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
   const pathname = usePathname();
   const invoiceId = pathname.split("/").pop();
@@ -65,6 +68,7 @@ const Page = () => {
       setInvoice(invoiceData);
       setClient(invoiceData.clientId);
       setProject(invoiceData.projectId);
+      setIsLoading(false);
     }
   }, [invoiceData]);
 
@@ -161,412 +165,417 @@ const Page = () => {
   };
 
   return (
-    <div className="flex-1 px-xl mx-auto w-full">
-      <div className="py-md">
-        <div className="flex items-center justify-between ">
-          <BackButton
-            onBack={() => router.push("/invoices")}
-            label="Back to Invoices"
-          />
-          <div className="flex items-center justify-center gap-sm mb-lg">
-            <SecondaryButton
-              label="Download"
-              icon="download"
-              onClick={handleDownload}
-            />
-            {invoice?.status !== "Paid" ? (
-              <PrimaryButton
-                label="Mark as Paid"
-                onClick={handlePaid}
-                icon="check_circle"
+    <>
+      {isLoading ? (
+        <InvoiceDetailSkeleton />
+      ) : (
+        <div className="flex-1 px-xl mx-auto w-full">
+          <div className="py-md">
+            <div className="flex items-center justify-between ">
+              <BackButton
+                onBack={() => router.push("/invoices")}
+                label="Back to Invoices"
               />
-            ) : (
-              <p className="text-label-lg text-on-surface-variant"></p>
-            )}
-          </div>
-        </div>
-        <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg mb-md">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-label-md text-on-surface-variant m-0 mb-1.25 tracking-[0.07em] uppercase font-semibold">
-                Invoice
-              </p>
-              <p className="text-[22px] font-medium font-mono m-0 tracking-[-0.02em] text-on-surface">
-                #INV-{invoice?.invoiceNumber}
-              </p>
-            </div>
-            <span
-              className="text-label-md px-3.5 py-1.25 rounded-lg font-medium"
-              id="status-badge"
-            >
-              <StatusBadge
-                color={
-                  invoice?.status === "Paid"
-                    ? "success"
-                    : invoice?.status === "pending"
-                      ? "normal"
-                      : "error"
-                }
-                label={invoice?.status || "Status"}
-                fontSize="large"
-              />
-            </span>
-          </div>
-          <div className="border-t border-outline-variant/30 mt-md pt-md grid grid-cols-3 gap-md">
-            <div>
-              <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
-                Issue date
-              </p>
-              <p className="text-label-md font-medium m-0 text-on-surface">
-                {invoice
-                  ? new Date(invoice.issueDate).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })
-                  : "-"}
-              </p>
-            </div>
-            <div>
-              <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
-                Due date
-              </p>
-              {editingDueDate ? (
-                <input
-                  type="date"
-                  defaultValue={toDateInputValue(invoice?.dueDate)}
-                  onChange={handleDateChange}
-                  className="text-label-md font-medium m-0 text-on-surface"
+              <div className="flex items-center justify-center gap-sm mb-lg">
+                <SecondaryButton
+                  label="Download"
+                  icon="download"
+                  onClick={handleDownload}
                 />
-              ) : (
-                <div className="cursor-pointer flex group items-center gap-1.25">
+                {invoice?.status !== "Paid" ? (
+                  <PrimaryButton
+                    label="Mark as Paid"
+                    onClick={handlePaid}
+                    icon="check_circle"
+                  />
+                ) : (
+                  <p className="text-label-lg text-on-surface-variant"></p>
+                )}
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg mb-md">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-label-md text-on-surface-variant m-0 mb-1.25 tracking-[0.07em] uppercase font-semibold">
+                    Invoice
+                  </p>
+                  <p className="text-[22px] font-medium font-mono m-0 tracking-[-0.02em] text-on-surface">
+                    #INV-{invoice?.invoiceNumber}
+                  </p>
+                </div>
+                <span
+                  className="text-label-md px-3.5 py-1.25 rounded-lg font-medium"
+                  id="status-badge"
+                >
+                  <StatusBadge
+                    color={
+                      invoice?.status === "Paid"
+                        ? "success"
+                        : invoice?.status === "pending"
+                          ? "normal"
+                          : "error"
+                    }
+                    label={invoice?.status || "Status"}
+                    fontSize="large"
+                  />
+                </span>
+              </div>
+              <div className="border-t border-outline-variant/30 mt-md pt-md grid grid-cols-3 gap-md">
+                <div>
+                  <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
+                    Issue date
+                  </p>
                   <p className="text-label-md font-medium m-0 text-on-surface">
-                    {invoice?.dueDate
-                      ? new Date(invoice?.dueDate).toLocaleDateString("en-IN", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })
+                    {invoice
+                      ? new Date(invoice.issueDate).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })
+                      : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
+                    Due date
+                  </p>
+                  {editingDueDate ? (
+                    <input
+                      type="date"
+                      defaultValue={toDateInputValue(invoice?.dueDate)}
+                      onChange={handleDateChange}
+                      className="text-label-md font-medium m-0 text-on-surface"
+                    />
+                  ) : (
+                    <div className="cursor-pointer flex group items-center gap-1.25">
+                      <p className="text-label-md font-medium m-0 text-on-surface">
+                        {invoice?.dueDate
+                          ? new Date(invoice?.dueDate).toLocaleDateString("en-IN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                          : "Not set"}
+                      </p>
+                      <span
+                        onClick={() => setEditingDueDate(true)}
+                        className="material-symbols-outlined opacity-0 duration-200 transition-opacity group-hover:opacity-100 text-label-sm"
+                      >
+                        edit
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
+                    Total amount
+                  </p>
+                  <p className="text-label-md font-medium m-0 text-on-surface">
+                    ₹{invoice?.amount?.toLocaleString("en-IN")}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-sm mb-md">
+              <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg">
+                <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
+                  Bill to
+                </p>
+                <div className="flex items-center gap-3 mb-sm">
+                  <ClientInitialBadge
+                    name={client?.name || "Client Name"}
+                    size="small"
+                  />
+                  <div className="flex gap-2">
+                    <p
+                      onClick={() =>
+                        router.replace(`/clients/${invoice?.clientId}`)
+                      }
+                      className="cursor-pointer text-md font-medium m-0 mb-0.75 text-on-surface"
+                    >
+                      {client?.name}
+                    </p>
+                    <StatusBadge
+                      color={client?.status === "active" ? "success" : "normal"}
+                      label={client?.status || "Status"}
+                      fontSize="small"
+                    />
+                  </div>
+                </div>
+                <div className="border-t border-outline-variant/30 pt-2.5 flex flex-col gap-1.75">
+                  <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
+                    <span className="material-symbols-outlined text-[15px]">
+                      mail
+                    </span>
+                    {client?.email}
+                  </p>
+                  <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
+                    <span className="material-symbols-outlined text-[15px]">
+                      phone
+                    </span>
+                    {client?.phone}
+                  </p>
+                </div>
+              </div>
+              <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg">
+                <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
+                  Project
+                </p>
+                <div className="flex items-center gap-2.5 mb-sm">
+                  <div className="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[18px] text-on-surface-variant">
+                      folder
+                    </span>
+                  </div>
+                  <p
+                    onClick={() =>
+                      router.replace(`/projects/${invoice?.projectId}`)
+                    }
+                    className="cursor-pointer text-[14px] font-medium m-0 text-on-surface"
+                  >
+                    {project?.title}
+                  </p>
+                </div>
+                <div className="border-t border-outline-variant/30 pt-2.5 flex flex-col gap-1.75">
+                  <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
+                    <span className="material-symbols-outlined text-[15px]">
+                      {project?.status === "completed"
+                        ? "check_circle"
+                        : project?.status === "in progress"
+                          ? "clock_loader_40"
+                          : "pending"}
+                    </span>
+                    {project?.status}
+                  </p>
+                  <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
+                    <span className="material-symbols-outlined text-[15px]">
+                      calendar_month
+                    </span>
+                    Deadline:{" "}
+                    {project?.deadline
+                      ? new Date(project.deadline).toLocaleDateString("en-IN", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
                       : "Not set"}
                   </p>
-                  <span
-                    onClick={() => setEditingDueDate(true)}
-                    className="material-symbols-outlined opacity-0 duration-200 transition-opacity group-hover:opacity-100 text-label-sm"
-                  >
-                    edit
-                  </span>
                 </div>
-              )}
+              </div>
             </div>
-            <div>
-              <p className="text-label-md text-on-surface-variant m-0 mb-[4px]">
-                Total amount
-              </p>
-              <p className="text-label-md font-medium m-0 text-on-surface">
-                ₹{invoice?.amount?.toLocaleString("en-IN")}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-sm mb-md">
-          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg">
-            <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
-              Bill to
-            </p>
-            <div className="flex items-center gap-3 mb-sm">
-              <ClientInitialBadge
-                name={client?.name || "Client Name"}
-                size="small"
-              />
-              <div className="flex gap-2">
-                <p
-                  onClick={() =>
-                    router.replace(`/clients/${invoice?.clientId}`)
-                  }
-                  className="cursor-pointer text-md font-medium m-0 mb-0.75 text-on-surface"
-                >
-                  {client?.name}
+            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg">
+              <div className="flex justify-between px-1">
+                <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
+                  Line items
                 </p>
-                <StatusBadge
-                  color={client?.status === "active" ? "success" : "normal"}
-                  label={client?.status || "Status"}
+                <SecondaryButton
+                  label="Add Item"
+                  icon="add"
+                  onClick={async () => {
+                    // 1. Validate all existing line items
+                    const isValid = await trigger("lineItems");
+                    if (!isValid) {
+                      toast.error("please enter all fields.", {
+                        position: "top-right",
+                      });
+                    }
+                    // 2. Only add a new row if all current rows are valid
+                    if (isValid || editingIndex === null) {
+                      const newIndex = fields.length;
+                      append({
+                        description: "",
+                        quantity: 1,
+                        price: 0,
+                      });
+                      // 3. Put the newly added row into edit mode
+                      setEditingIndex(newIndex);
+                    }
+                  }}
                   fontSize="small"
                 />
               </div>
-            </div>
-            <div className="border-t border-outline-variant/30 pt-2.5 flex flex-col gap-1.75">
-              <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
-                <span className="material-symbols-outlined text-[15px]">
-                  mail
-                </span>
-                {client?.email}
-              </p>
-              <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
-                <span className="material-symbols-outlined text-[15px]">
-                  phone
-                </span>
-                {client?.phone}
-              </p>
-            </div>
-          </div>
-          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg">
-            <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
-              Project
-            </p>
-            <div className="flex items-center gap-2.5 mb-sm">
-              <div className="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-[18px] text-on-surface-variant">
-                  folder
-                </span>
-              </div>
-              <p
-                onClick={() =>
-                  router.replace(`/projects/${invoice?.projectId}`)
-                }
-                className="cursor-pointer text-[14px] font-medium m-0 text-on-surface"
-              >
-                {project?.title}
-              </p>
-            </div>
-            <div className="border-t border-outline-variant/30 pt-2.5 flex flex-col gap-1.75">
-              <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
-                <span className="material-symbols-outlined text-[15px]">
-                  {project?.status === "completed"
-                    ? "check_circle"
-                    : project?.status === "in progress"
-                      ? "clock_loader_40"
-                      : "pending"}
-                </span>
-                {project?.status}
-              </p>
-              <p className="text-[13px] text-on-surface-variant m-0 flex items-center gap-1.75">
-                <span className="material-symbols-outlined text-[15px]">
-                  calendar_month
-                </span>
-                Deadline:{" "}
-                {project?.deadline
-                  ? new Date(project.deadline).toLocaleDateString("en-IN", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                  : "Not set"}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-lg">
-          <div className="flex justify-between px-1">
-            <p className="text-[11px] text-on-surface-variant tracking-[0.07em] m-0 mb-sm uppercase font-semibold">
-              Line items
-            </p>
-            <SecondaryButton
-              label="Add Item"
-              icon="add"
-              onClick={async () => {
-                // 1. Validate all existing line items
-                const isValid = await trigger("lineItems");
-                if (!isValid) {
-                  toast.error("please enter all fields.", {
-                    position: "top-right",
-                  });
-                }
-                // 2. Only add a new row if all current rows are valid
-                if (isValid || editingIndex === null) {
-                  const newIndex = fields.length;
-                  append({
-                    description: "",
-                    quantity: 1,
-                    price: 0,
-                  });
-                  // 3. Put the newly added row into edit mode
-                  setEditingIndex(newIndex);
-                }
-              }}
-              fontSize="small"
-            />
-          </div>
-          <table className="w-full table-fixed border-collapse">
-            <thead>
-              <tr className="border-b border-outline-variant/30">
-                <th className="text-left  py-sm text-[12px] text-on-surface-variant font-medium w-[40%]">
-                  Description
-                </th>
-                <th className="text-left py-sm text-[12px] text-on-surface-variant font-medium w-[10%]">
-                  Qty
-                </th>
-                <th className="text-left py-sm text-[12px] text-on-surface-variant font-medium w-[15%]">
-                  Rate
-                </th>
-                <th className="text-left py-sm text-[12px] text-on-surface-variant font-medium w-[15%]">
-                  Total
-                </th>
-                <th className="text-left py-sm text-[12px] text-on-surface-variant font-medium w-[10%]">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {fields.map((field: any, index: number) =>
-                editingIndex === index ? (
-                  <tr key={index}>
-                    <td className="p-2.75 text-right text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
-                      <input
-                        className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
-                        placeholder="e.g. Jonathan Smith"
-                        required={true}
-                        type="text"
-                        defaultValue={field.description}
-                        {...register(`lineItems.${index}.description`, {
-                          required: "Description is required",
-                          minLength: {
-                            value: 5,
-                            message:
-                              "Description must be at least 5 characters long",
-                          },
-                        })}
-                      />
-                    </td>
-                    <td className="p-2.75 text-right  text-[13px] w-[10%] text-on-surface-variant">
-                      <input
-                        className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
-                        placeholder="e.g. Jonathan Smith"
-                        required={true}
-                        type="text"
-                        defaultValue={field.quantity}
-                        {...register(`lineItems.${index}.quantity`, {
-                          required: "Quantity is required",
-                          valueAsNumber: true,
-                          min: {
-                            value: 1,
-                            message: "Quantity must be at least 1",
-                          },
-                        })}
-                      />
-                    </td>
-                    <td className="p-2.75 text-right  text-[13px] w-[15%] text-on-surface-variant">
-                      <input
-                        className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
-                        placeholder="e.g. Jonathan Smith"
-                        required={true}
-                        type="text"
-                        defaultValue={field.price}
-                        {...register(`lineItems.${index}.price`, {
-                          required: "Price is required",
-                          valueAsNumber: true,
-                          min: {
-                            value: 0,
-                            message: "Price must be a positive number",
-                          },
-                        })}
-                      />
-                    </td>
-                    <td className="p-2.75 text-left text-[13px] w-[10%] font-medium text-on-surface">
-                      {field.price * field.quantity}
-                    </td>
-                    <td className="p-2.75 flex gap-2 font-medium text-right justify-center items-center w-[15%] text-on-surface">
-                      <button
-                        onClick={() => {
-                          const savedCount = invoice?.lineItems?.length ?? 0;
-                          if (index >= savedCount) {
-                            // it's a newly appended, unsaved row — remove it entirely
-                            remove(index);
-                          } else {
-                            // it's an existing row — revert any typed-but-unsaved edits
-                            lineItemsForm.resetField(`lineItems.${index}`, {
-                              defaultValue: invoice!.lineItems[index],
-                            });
-                          }
-                          setEditingIndex(null);
-                        }}
-                        className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={async () => {
-                          // 1. Manually trigger validation for the current row's fields
-                          const isValid = await trigger([
-                            `lineItems.${index}.description`,
-                            `lineItems.${index}.quantity`,
-                            `lineItems.${index}.price`,
-                          ]);
+              <table className="w-full table-fixed border-collapse">
+                <thead>
+                  <tr className="border-b border-outline-variant/30">
+                    <th className="text-left  py-sm text-[12px] text-on-surface-variant font-medium w-[40%]">
+                      Description
+                    </th>
+                    <th className="text-left py-sm text-[12px] text-on-surface-variant font-medium w-[10%]">
+                      Qty
+                    </th>
+                    <th className="text-left py-sm text-[12px] text-on-surface-variant font-medium w-[15%]">
+                      Rate
+                    </th>
+                    <th className="text-left py-sm text-[12px] text-on-surface-variant font-medium w-[15%]">
+                      Total
+                    </th>
+                    <th className="text-left py-sm text-[12px] text-on-surface-variant font-medium w-[10%]">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fields.map((field: any, index: number) =>
+                    editingIndex === index ? (
+                      <tr key={index}>
+                        <td className="p-2.75 text-right text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
+                          <input
+                            className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                            placeholder="e.g. Jonathan Smith"
+                            required={true}
+                            type="text"
+                            defaultValue={field.description}
+                            {...register(`lineItems.${index}.description`, {
+                              required: "Description is required",
+                              minLength: {
+                                value: 5,
+                                message:
+                                  "Description must be at least 5 characters long",
+                              },
+                            })}
+                          />
+                        </td>
+                        <td className="p-2.75 text-right  text-[13px] w-[10%] text-on-surface-variant">
+                          <input
+                            className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                            placeholder="e.g. Jonathan Smith"
+                            required={true}
+                            type="text"
+                            defaultValue={field.quantity}
+                            {...register(`lineItems.${index}.quantity`, {
+                              required: "Quantity is required",
+                              valueAsNumber: true,
+                              min: {
+                                value: 1,
+                                message: "Quantity must be at least 1",
+                              },
+                            })}
+                          />
+                        </td>
+                        <td className="p-2.75 text-right  text-[13px] w-[15%] text-on-surface-variant">
+                          <input
+                            className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
+                            placeholder="e.g. Jonathan Smith"
+                            required={true}
+                            type="text"
+                            defaultValue={field.price}
+                            {...register(`lineItems.${index}.price`, {
+                              required: "Price is required",
+                              valueAsNumber: true,
+                              min: {
+                                value: 0,
+                                message: "Price must be a positive number",
+                              },
+                            })}
+                          />
+                        </td>
+                        <td className="p-2.75 text-left text-[13px] w-[10%] font-medium text-on-surface">
+                          {field.price * field.quantity}
+                        </td>
+                        <td className="p-2.75 flex gap-2 font-medium text-right justify-center items-center w-[15%] text-on-surface">
+                          <button
+                            onClick={() => {
+                              const savedCount = invoice?.lineItems?.length ?? 0;
+                              if (index >= savedCount) {
+                                // it's a newly appended, unsaved row — remove it entirely
+                                remove(index);
+                              } else {
+                                // it's an existing row — revert any typed-but-unsaved edits
+                                lineItemsForm.resetField(`lineItems.${index}`, {
+                                  defaultValue: invoice!.lineItems[index],
+                                });
+                              }
+                              setEditingIndex(null);
+                            }}
+                            className="flex items-center gap-1.25 text-[13px] text-on-surface-variant hover:text-primary transition-colors px-md py-xs rounded-lg border border-outline-variant/50 bg-surface"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={async () => {
+                              // 1. Manually trigger validation for the current row's fields
+                              const isValid = await trigger([
+                                `lineItems.${index}.description`,
+                                `lineItems.${index}.quantity`,
+                                `lineItems.${index}.price`,
+                              ]);
 
-                          // 2. If valid, close the edit mode for this row
-                          if (isValid) {
-                            handleLineItemsUpdate({
-                              lineItems: watchLineItems,
-                            });
-                          }
-                        }}
-                        className="flex items-center gap-1.25 text-[13px] text-on-primary bg-primary hover:opacity-90 transition-opacity px-md py-xs rounded-lg"
-                      >
-                        <span id="action-label">Save</span>
-                      </button>
-                    </td>
-                  </tr>
-                ) : (
-                  <tr key={index}>
-                    <td className="py-2.75 text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
-                      {field.description}
-                    </td>
-                    <td className="py-2.75 text-left  text-[13px] w-[10%] text-on-surface-variant">
-                      {field.quantity}
-                    </td>
-                    <td className="py-2.75 text-left  text-[13px] w-[15%] text-on-surface-variant">
-                      {field.price}
-                    </td>
-                    <td className="py-2.75 text-left text-[13px] w-[15%] font-medium text-on-surface">
-                      {field.price * field.quantity}
-                    </td>
-                    <td className="py-2.75 font-medium text-left w-[10%] text-on-surface">
-                      <SecondaryButton
-                        onClick={() => setEditingIndex(index)}
-                        label="Edit"
-                        icon="edit"
-                        fontSize="small"
-                      />
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-          <div className="border-t border-outline-variant/30 mt-sm pt-3.5 flex justify-end">
-            <div className="min-w-52.5">
-              <div className="flex justify-between mb-2.5">
-                <span className="text-[13px] text-on-surface-variant">
-                  Subtotal
-                </span>
-                <span className="text-[13px] text-on-surface">
-                  {fields
-                    .reduce(
-                      (total: number, field: any) =>
-                        total + field.price * field.quantity,
-                      0
+                              // 2. If valid, close the edit mode for this row
+                              if (isValid) {
+                                handleLineItemsUpdate({
+                                  lineItems: watchLineItems,
+                                });
+                              }
+                            }}
+                            className="flex items-center gap-1.25 text-[13px] text-on-primary bg-primary hover:opacity-90 transition-opacity px-md py-xs rounded-lg"
+                          >
+                            <span id="action-label">Save</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr key={index}>
+                        <td className="py-2.75 text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
+                          {field.description}
+                        </td>
+                        <td className="py-2.75 text-left  text-[13px] w-[10%] text-on-surface-variant">
+                          {field.quantity}
+                        </td>
+                        <td className="py-2.75 text-left  text-[13px] w-[15%] text-on-surface-variant">
+                          {field.price}
+                        </td>
+                        <td className="py-2.75 text-left text-[13px] w-[15%] font-medium text-on-surface">
+                          {field.price * field.quantity}
+                        </td>
+                        <td className="py-2.75 font-medium text-left w-[10%] text-on-surface">
+                          <SecondaryButton
+                            onClick={() => setEditingIndex(index)}
+                            label="Edit"
+                            icon="edit"
+                            fontSize="small"
+                          />
+                        </td>
+                      </tr>
                     )
-                    .toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}
-                </span>
-              </div>
-              <div className="border-t border-outline-variant/30 pt-2.5 flex justify-between">
-                <span className="text-[15px] font-medium text-on-surface">
-                  Total
-                </span>
-                <span className="text-[15px] font-medium text-on-surface">
-                  {invoice?.amount?.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  })}
-                </span>
+                  )}
+                </tbody>
+              </table>
+              <div className="border-t border-outline-variant/30 mt-sm pt-3.5 flex justify-end">
+                <div className="min-w-52.5">
+                  <div className="flex justify-between mb-2.5">
+                    <span className="text-[13px] text-on-surface-variant">
+                      Subtotal
+                    </span>
+                    <span className="text-[13px] text-on-surface">
+                      {fields
+                        .reduce(
+                          (total: number, field: any) =>
+                            total + field.price * field.quantity,
+                          0
+                        )
+                        .toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                    </span>
+                  </div>
+                  <div className="border-t border-outline-variant/30 pt-2.5 flex justify-between">
+                    <span className="text-[15px] font-medium text-on-surface">
+                      Total
+                    </span>
+                    <span className="text-[15px] font-medium text-on-surface">
+                      {invoice?.amount?.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </div>)}
+    </>
   );
 };
 
