@@ -19,7 +19,7 @@ import {
   handleMarkAsDone,
 } from "@/helpers/project.helpers";
 import TasksTable from "@/components/Tasks/TasksTable";
-import TimeLog from "@/models/timeLog.model";
+import { ProjectActionsSkeleton, ProjectHeaderCardSkeleton, ClientContactCardSkeleton, ProjectDescriptionCardSkeleton, InvoicesSummaryCardSkeleton, } from "@/components/Skeletals/Project";
 import TimeLogTable from "@/components/TimeLogs/TimeLogTable";
 
 const Page = () => {
@@ -34,10 +34,10 @@ const Page = () => {
   const [timeElapsed, setTimeElapsed] = useState<number>(0);
   const [edit, setEdit] = useState(false);
   const router = useRouter();
-  const { data: projectData, error: projectError } = useFetch(
+  const { data: projectData, loading: projectLoading, error: projectError } = useFetch(
     `/api/projects/${id}`
   );
-  const { data: invoicesData, error: invoicesError } = useFetch(
+  const { data: invoicesData, loading: invoicesLoading, error: invoicesError } = useFetch(
     `/api/Invoices?projectId=${id}&limit=${invoicesLimit}`
   );
 
@@ -52,61 +52,64 @@ const Page = () => {
     }
   }, [projectData, invoicesData]);
 
- 
+
   return (
     <div className="flex-1 flex flex-col min-w-0 relative">
       <div
         className={` flex-1 overflow-y-auto p-10  md:px-gutter max-w-container-max mx-auto w-full`}
       >
-        <div>
-          <EditProjectDrawer
-            open={edit}
-            onClose={() => {
-              setEdit(false);
-            }}
-            project={project}
-          />
-        </div>
-        {/* <!-- Breadcrumbs --> */}
-        <div className="flex justify-between items-center mb-xl">
-          <BackButton
-            onBack={() => router.push("/projects")}
-            label="Back to Projects"
-          />
-
-          <div className="flex gap-md">
-            <SecondaryButton
-              label="Edit Project"
-              icon="edit"
-              onClick={() => setEdit(true)}
+        {projectLoading ? (
+          <ProjectActionsSkeleton />
+        ) : (
+          <><div>
+            <EditProjectDrawer
+              open={edit}
+              onClose={() => {
+                setEdit(false);
+              }}
+              project={project}
             />
-
-            {!(project?.status === "completed") && (
-              <PrimaryButton
-                label="Mark as Done"
-                onClick={() => {
-                  const data = handleMarkAsDone(id?.toString() || "");
-
-                  data.then((res) => {
-                    if (res) {
-                      setProject(res);
-                      toast.success("Project marked as completed");
-                    } else {
-                      toast.error("Failed to mark project as completed");
-                    }
-                  });
-                }}
-                icon="check_circle"
-              />
-            )}
           </div>
-        </div>
+            {/* <!-- Breadcrumbs --> */}
+            <div className="flex justify-between items-center mb-xl">
+              <BackButton
+                onBack={() => router.push("/projects")}
+                label="Back to Projects"
+              />
+
+              <div className="flex gap-md">
+                <SecondaryButton
+                  label="Edit Project"
+                  icon="edit"
+                  onClick={() => setEdit(true)}
+                />
+
+                {!(project?.status === "completed") && (
+                  <PrimaryButton
+                    label="Mark as Done"
+                    onClick={() => {
+                      const data = handleMarkAsDone(id?.toString() || "");
+
+                      data.then((res) => {
+                        if (res) {
+                          setProject(res);
+                          toast.success("Project marked as completed");
+                        } else {
+                          toast.error("Failed to mark project as completed");
+                        }
+                      });
+                    }}
+                    icon="check_circle"
+                  />
+                )}
+              </div>
+            </div></>)}
         {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
         <div className="grid grid-cols-12 gap-gutter">
           <div className="col-span-8 space-y-gutter">
             <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-lg overflow-hidden relative">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-              <div className="flex justify-between items-start relative z-9">
+              {projectLoading ? (<ProjectHeaderCardSkeleton />) : (<><div className="flex justify-between items-start relative z-9">
                 <div>
                   <StatusBadge
                     color={
@@ -152,16 +155,16 @@ const Page = () => {
                   </h3>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-lg border-t border-outline-variant/30 pt-lg relative z-9">
-                <div className="flex items-start flex-col gap-2">
-                  <p className="text-label-sm text-on-surface-variant uppercase mb-1">
-                    Start Date
-                  </p>
-                  {project?.status === "in progress" ||
-                  project?.status === "completed" ? (
-                    <p className="font-body-md font-semibold ">
-                      {project.StartedAt
-                        ? new Date(project?.StartedAt).toLocaleDateString(
+                <div className="grid grid-cols-3 gap-lg border-t border-outline-variant/30 pt-lg relative z-9">
+                  <div className="flex items-start flex-col gap-2">
+                    <p className="text-label-sm text-on-surface-variant uppercase mb-1">
+                      Start Date
+                    </p>
+                    {project?.status === "in progress" ||
+                      project?.status === "completed" ? (
+                      <p className="font-body-md font-semibold ">
+                        {project.StartedAt
+                          ? new Date(project?.StartedAt).toLocaleDateString(
                             "en-US",
                             {
                               year: "numeric",
@@ -169,109 +172,113 @@ const Page = () => {
                               day: "numeric",
                             }
                           )
-                        : "Not Started Yet"}
+                          : "Not Started Yet"}
+                      </p>
+                    ) : (
+                      <SecondaryButton
+                        label="Start Project"
+                        onClick={() => {
+                          const data = handleStartProject(id?.toString());
+                          data.then((res) => {
+                            if (res) {
+                              setProject(res);
+                              toast.success("Project started successfully");
+                            } else {
+                              toast.error("Failed to start project");
+                            }
+                          });
+                        }}
+                        icon=""
+                      />
+                    )}
+                  </div>
+                  <div className="flex items-start flex-col gap-2">
+                    <p className="text-label-sm text-on-surface-variant uppercase mb-1">
+                      Deadline
                     </p>
-                  ) : (
-                    <SecondaryButton
-                      label="Start Project"
-                      onClick={() => {
-                        const data = handleStartProject(id?.toString());
-                        data.then((res) => {
-                          if (res) {
-                            setProject(res);
-                            toast.success("Project started successfully");
-                          } else {
-                            toast.error("Failed to start project");
-                          }
-                        });
-                      }}
-                      icon=""
-                    />
-                  )}
-                </div>
-                <div className="flex items-start flex-col gap-2">
-                  <p className="text-label-sm text-on-surface-variant uppercase mb-1">
-                    Deadline
-                  </p>
-                  <p className="font-body-md font-semibold text-tertiary">
-                    {project?.deadline
-                      ? new Date(project.deadline).toLocaleDateString("en-US", {
+                    <p className="font-body-md font-semibold text-tertiary">
+                      {project?.deadline
+                        ? new Date(project.deadline).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
                         })
-                      : "No deadline set"}
-                  </p>
+                        : "No deadline set"}
+                    </p>
+                  </div>
+                  <div className="flex items-start flex-col gap-2">
+                    <p className="text-label-sm text-on-surface-variant uppercase mb-1">
+                      Time Elapsed
+                    </p>
+                    <p className="font-body-md font-semibold">
+                      {project?.status === "in progress" ||
+                        project?.status === "completed"
+                        ? `Time Elapsed: ${timeElapsed.toFixed(0)} days`
+                        : "Project not started"}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-start flex-col gap-2">
-                  <p className="text-label-sm text-on-surface-variant uppercase mb-1">
-                    Time Elapsed
-                  </p>
-                  <p className="font-body-md font-semibold">
-                    {project?.status === "in progress" ||
-                    project?.status === "completed"
-                      ? `Time Elapsed: ${timeElapsed.toFixed(0)} days`
-                      : "Project not started"}
-                  </p>
-                </div>
-              </div>
+              </>
+              )}
             </div>
 
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg space-y-lg">
-              <div>
-                <h4 className="font-headline-sm text-on-surface mb-md">
-                  Project Description
-                </h4>
-                <p className="text-on-surface-variant font-body-md leading-relaxed">
-                  {project?.description}
-                </p>
-              </div>
-            </div>
+            {projectLoading ? (<ProjectDescriptionCardSkeleton />) : (
+              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg space-y-lg">
+                <div>
+                  <h4 className="font-headline-sm text-on-surface mb-md">
+                    Project Description
+                  </h4>
+                  <p className="text-on-surface-variant font-body-md leading-relaxed">
+                    {project?.description}
+                  </p>
+                </div>
+              </div>)}
             <TasksTable projectId={id || ""} />
           </div>
 
           <div className="col-span-4 space-y-gutter">
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
-              <h4 className="font-label-md text-on-surface-variant uppercase mb-md">
-                Client Contact
-              </h4>
-              <div
-                onClick={() => router.replace(`/clients/${client?._id}`)}
-                className=" cursor-pointer flex items-center gap-md mb-lg"
-              >
-                <ClientInitialBadge
-                  name={client?.name || "Client Name"}
-                  size="medium"
-                />
-                <div>
-                  <p className="font-headline-sm text-on-surface">
-                    {client?.name || "Client Name"}
-                  </p>
-                  <p className="text-body-sm text-on-surface-variant">
-                    {client?.company}
-                  </p>
+            {projectLoading ? (<ClientContactCardSkeleton />) : (
+              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
+                <h4 className="font-label-md text-on-surface-variant uppercase mb-md">
+                  Client Contact
+                </h4>
+                <div
+                  onClick={() => router.replace(`/clients/${client?._id}`)}
+                  className=" cursor-pointer flex whitespace-nowrap items-center gap-md mb-lg"
+                >
+                  <ClientInitialBadge
+                    name={client?.name || "Client Name"}
+                    size="medium"
+                  />
+                  <div>
+                    <p className="font-headline-sm text-on-surface">
+                      {client?.name || "Client Name"}
+                    </p>
+                    <p className="text-body-sm text-on-surface-variant">
+                      {client?.company}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-sm">
-                <button className="w-full flex items-center gap-3 p-3 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors group">
-                  <span className="material-symbols-outlined group-hover:text-primary">
-                    mail
-                  </span>
-                  <span className="font-body-sm">
-                    {client?.email || "jane.doe@acme.com"}
-                  </span>
-                </button>
-                <button className="w-full flex items-center gap-3 p-3 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors group">
-                  <span className="material-symbols-outlined group-hover:text-primary">
-                    call
-                  </span>
-                  <span className="font-body-sm">
-                    {client?.phone || "+1 (555) 012-3456"}
-                  </span>
-                </button>
-              </div>
-            </div>
-            <div className="bg-surface-container-lowest rounded-lg border border-outline-variant overflow-hidden card-shadow">
+                <div className="space-y-sm">
+                  <button className="w-full flex whitespace-nowrap gap-3 p-3 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors group">
+                    <span className="material-symbols-outlined group-hover:text-primary">
+                      mail
+                    </span>
+                    <span className="font-body-sm">
+                      {client?.email || "jane.doe@acme.com"}
+                    </span>
+                  </button>
+                  <button className="w-full flex whitespace-nowrap gap-3 p-3 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors group">
+                    <span className="material-symbols-outlined group-hover:text-primary">
+                      call
+                    </span>
+                    <span className="font-body-sm">
+                      {client?.phone || "+1 (555) 012-3456"}
+                    </span>
+                  </button>
+                </div>
+              </div>)}
+            {invoicesLoading ? (<InvoicesSummaryCardSkeleton />) : (<div className="bg-surface-container-lowest rounded-lg border border-outline-variant overflow-hidden card-shadow">
               <div className="p-md flex justify-between items-center border-b border-outline-variant/30">
                 <h3 className="font-label-md text-on-surface font-semibold">
                   Invoices Summary
@@ -365,7 +372,7 @@ const Page = () => {
                   </button>
                 )}
               </div>
-            </div>
+            </div>)}
             <TimeLogTable projectId={id?.toString() || ""} />
           </div>
         </div>

@@ -39,6 +39,9 @@ export type TimeLog = {
   duration?: number; // in seconds
   source?: "manual" | "automatic";
   status?: "active" | "completed";
+  createdAt: Date;
+  updatedAt: Date;
+  
 };
 
 export type Invoice = {
