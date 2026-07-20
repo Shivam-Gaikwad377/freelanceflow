@@ -180,16 +180,16 @@ const Page = () => {
   useEffect(() => {
     if (invoiceStatsData?.data?.paidThisMonth && invoiceStatsData?.data?.paidLastMonth) {
       const growth = getGrowthResult(
-        invoiceStatsData.data.paidThisMonth.total,
-        invoiceStatsData.data.paidLastMonth.total
+        invoiceStatsData?.data?.paidThisMonth?.total,
+        invoiceStatsData?.data?.paidLastMonth?.total
       );
       setGrowthResult(growth);
     }
   }, [invoiceStatsData?.data?.paidThisMonth, invoiceStatsData?.data?.paidLastMonth]);
   const [max, setMax] = useState(0);
   useEffect(() => {
-    if (invoiceStatsData?.data?.monthlyRevenue && invoiceStatsData.data.monthlyRevenue.length > 0) {
-      const maxRevenue = Math.max(...invoiceStatsData.data.monthlyRevenue.map((m : MonthlyRevenue) => m.total));
+    if (invoiceStatsData?.data?.monthlyRevenue && invoiceStatsData?.data?.monthlyRevenue.length > 0) {
+      const maxRevenue = Math.max(...invoiceStatsData?.data?.monthlyRevenue.map((m : MonthlyRevenue) => m.total));
       setMax(maxRevenue);
     }
   }, [invoiceStatsData?.data?.monthlyRevenue]);
@@ -219,7 +219,7 @@ const Page = () => {
               Total revenue
             </div>
             <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
-              {stats?.paidThisMonth?.total?.toLocaleString("en-US", {
+              {invoiceStatsData?.data?.paidThisMonth?.total?.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}
@@ -268,7 +268,7 @@ const Page = () => {
               Outstanding
             </div>
             <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
-              {stats?.outstanding?.total?.toLocaleString("en-US", {
+              {invoiceStatsData?.data?.outstanding?.total?.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}
@@ -296,7 +296,7 @@ const Page = () => {
               {projectsData?.data?.total || 0}
             </div>
             <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
-              2 due this week
+              {projectDueThisMonthData?.projects?.length} due this month
             </div>
           </div>
         )}
@@ -317,9 +317,7 @@ const Page = () => {
             <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
               {clientsData?.data?.total || 0}
             </div>
-            <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
-              3 new this month
-            </div>
+            
           </div>
         )}
       </div>

@@ -26,8 +26,11 @@ export async function proxy(request: NextRequest) {
   }
 
   // Unauthenticated user on root → send to home
-  if (!token && url.pathname === "/") {
+  if (!token && url.pathname === "") {
     return NextResponse.redirect(new URL("/home", request.url));
+  }
+  if(token && (url.pathname === "/" || url.pathname === "")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // All other cases → allow through
