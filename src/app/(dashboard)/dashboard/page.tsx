@@ -20,6 +20,7 @@ import {
   RevenueChartSkeleton,
   StatCardSkeleton,
 } from "@/components/Skeletals/DashBoard";
+import { MonthlyRevenue } from "@/app/api/Invoices/stats/route";
 type GrowthResult = {
   percentage: number | null; // null = undefined growth, render as "New"
   direction: "up" | "down" | "flat";
@@ -44,11 +45,11 @@ const Page = () => {
       total: 0,
       count: 0,
     },
-    monthlyRevenue: [] as any[],
-    InvoicesDueThisWeek: [] as any[],
+    monthlyRevenue: [] as MonthlyRevenue[],
+    InvoicesDueThisWeek: [] as Invoice[],
   });
+  const session = useSession();
   const getGreeting = () => {
-    const session = useSession();
     const user = session?.data?.user?.name;
     const currentHour = new Date().getHours();
     if (currentHour < 12) {
@@ -100,59 +101,59 @@ const Page = () => {
     error: recentActivitiesError,
     isLoading: isRecentActivitiesLoading,
   } = useAsync((signal) => getRecentActivities(signal), []);
-  const { data: invoicesData, error: invoicesError } = useFetch(
+  const { data: invoicesData, error: invoicesError, loading: isInvoicesLoading } = useFetch(
     `/api/Invoices?monthRange=1&limit=5&sort=desc&sortBy=issueDate`
   );
-  const { data: projectDueThisMonthData, error: projectDueThisMonthError } =
+  const { data: projectDueThisMonthData, error: projectDueThisMonthError, loading: isProjectDueThisMonthLoading } =
     useFetch(`/api/projects/stats`);
-  useEffect(() => {
-    if (projectsData) {
-      setActiveProjects(projectsData.data.projects);
-      setTotalProjects(projectsData.data.total);
-      setIsLoading((prev) => ({ ...prev, projects: false }));
-    }
-    if (clientsData) {
-      setTotalClients(clientsData.data.total);
-      setIsLoading((prev) => ({ ...prev, clients: false }));
-    }
-    if (invoiceStatsData) {
-      setStats(invoiceStatsData.data);
-      if (invoiceStatsData.data.InvoicesDueThisWeek) {
-        setIsLoading((prev) => ({ ...prev, invoiceDueThisWeek: false }));
-      }
-      if (invoiceStatsData.data.monthlyRevenue) {
-        setIsLoading((prev) => ({ ...prev, revenueChart: false }));
-      }
-      if (
-        invoiceStatsData.data.paidThisMonth 
-      ) {
-        setIsLoading((prev) => ({ ...prev, paidThisMonth: false }));
-      }
-      if (invoiceStatsData.data.outstanding) {
-        setIsLoading((prev) => ({ ...prev, outStanding: false }));
-      }
+  // useEffect(() => {
+  //   if (projectsData) {
+  //     setActiveProjects(projectsData.data.projects);
+  //     setTotalProjects(projectsData.data.total);
+  //     setIsLoading((prev) => ({ ...prev, projects: false }));
+  //   }
+  //   if (clientsData) {
+  //     setTotalClients(clientsData.data.total);
+  //     setIsLoading((prev) => ({ ...prev, clients: false }));
+  //   }
+  //   if (invoiceStatsData) {
+  //     setStats(invoiceStatsData.data);
+  //     if (invoiceStatsData.data.InvoicesDueThisWeek) {
+  //       setIsLoading((prev) => ({ ...prev, invoiceDueThisWeek: false }));
+  //     }
+  //     if (invoiceStatsData.data.monthlyRevenue) {
+  //       setIsLoading((prev) => ({ ...prev, revenueChart: false }));
+  //     }
+  //     if (
+  //       invoiceStatsData.data.paidThisMonth 
+  //     ) {
+  //       setIsLoading((prev) => ({ ...prev, paidThisMonth: false }));
+  //     }
+  //     if (invoiceStatsData.data.outstanding) {
+  //       setIsLoading((prev) => ({ ...prev, outStanding: false }));
+  //     }
       
-    }
-    if (invoicesData) {
-      setInvoices(invoicesData.invoices);
-      setIsLoading((prev) => ({ ...prev, invoices: false }));
-    }
-    if (recentActivitiesData) {
-      setRecentActivities(recentActivitiesData.data);
-      setIsLoading((prev) => ({ ...prev, recentActivities: false }));
-    }
-    if (projectDueThisMonthData) {
-      setProjectDueThisMonth(projectDueThisMonthData.projects);
-      setIsLoading((prev) => ({ ...prev, projectDueThisMonth: false }));
-    }
-  }, [
-    projectsData,
-    clientsData,
-    invoiceStatsData,
-    invoicesData,
-    recentActivitiesData,
-    projectDueThisMonthData,
-  ]);
+  //   }
+  //   if (invoicesData) {
+  //     setInvoices(invoicesData.invoices);
+  //     setIsLoading((prev) => ({ ...prev, invoices: false }));
+  //   }
+  //   if (recentActivitiesData) {
+  //     setRecentActivities(recentActivitiesData.data);
+  //     setIsLoading((prev) => ({ ...prev, recentActivities: false }));
+  //   }
+  //   if (projectDueThisMonthData) {
+  //     setProjectDueThisMonth(projectDueThisMonthData.projects);
+  //     setIsLoading((prev) => ({ ...prev, projectDueThisMonth: false }));
+  //   }
+  // }, [
+  //   projectsData,
+  //   clientsData,
+  //   invoiceStatsData,
+  //   invoicesData,
+  //   recentActivitiesData,
+  //   projectDueThisMonthData,
+  // ]);
   const getBurnRatePercentage = (
     burnRate: number | undefined,
     budget: number
@@ -177,22 +178,22 @@ const Page = () => {
   };
 
   useEffect(() => {
-    if (stats.paidThisMonth && stats.paidLastMonth) {
+    if (invoiceStatsData?.data?.paidThisMonth && invoiceStatsData?.data?.paidLastMonth) {
       const growth = getGrowthResult(
-        stats.paidThisMonth.total,
-        stats.paidLastMonth.total
+        invoiceStatsData.data.paidThisMonth.total,
+        invoiceStatsData.data.paidLastMonth.total
       );
       setGrowthResult(growth);
     }
-  }, [stats.paidThisMonth, stats.paidLastMonth]);
+  }, [invoiceStatsData?.data?.paidThisMonth, invoiceStatsData?.data?.paidLastMonth]);
   const [max, setMax] = useState(0);
   useEffect(() => {
-    if (stats.monthlyRevenue && stats.monthlyRevenue.length > 0) {
-      const maxRevenue = Math.max(...stats.monthlyRevenue.map((m) => m.total));
+    if (invoiceStatsData?.data?.monthlyRevenue && invoiceStatsData.data.monthlyRevenue.length > 0) {
+      const maxRevenue = Math.max(...invoiceStatsData.data.monthlyRevenue.map((m : MonthlyRevenue) => m.total));
       setMax(maxRevenue);
     }
-  }, [stats.monthlyRevenue]);
-  console.log("invoices due this week", stats.InvoicesDueThisWeek);
+  }, [invoiceStatsData?.data?.monthlyRevenue]);
+  
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -207,7 +208,7 @@ const Page = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md md:gap-lg">
-        {isLoading.paidThisMonth ? (
+        {isInvoiceStatsLoading ? (
           <StatCardSkeleton />
         ) : (
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
@@ -253,7 +254,7 @@ const Page = () => {
           </div>
         )}
 
-        {isLoading.outStanding ? (
+        {isInvoiceStatsLoading ? (
           <StatCardSkeleton />
         ) : (
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
@@ -273,12 +274,12 @@ const Page = () => {
               })}
             </div>
             <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
-              {stats?.outstanding?.count} invoices pending
+              {invoiceStatsData?.data?.outstanding?.count} invoices pending
             </div>
           </div>
         )}
 
-        {isLoading.projects ? (
+        {isInvoiceStatsLoading ? (
           <StatCardSkeleton />
         ) : (
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
@@ -292,7 +293,7 @@ const Page = () => {
               Active projects
             </div>
             <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
-              {totalProjects}
+              {projectsData?.data?.total || 0}
             </div>
             <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
               2 due this week
@@ -300,7 +301,7 @@ const Page = () => {
           </div>
         )}
 
-        {isLoading.clients ? (
+        {isClientsLoading ? (
           <StatCardSkeleton />
         ) : (
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col hover:shadow-md transition-shadow">
@@ -314,7 +315,7 @@ const Page = () => {
               Total clients
             </div>
             <div className="font-headline-lg text-headline-lg text-on-surface mb-2">
-              {totalClients}
+              {clientsData?.data?.total || 0}
             </div>
             <div className="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
               3 new this month
@@ -324,7 +325,7 @@ const Page = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-md md:gap-lg">
-        {isLoading.revenueChart ? (
+        {isInvoiceStatsLoading ? (
           <RevenueChartSkeleton />
         ) : (
           <div className="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
@@ -339,7 +340,7 @@ const Page = () => {
 
             <div className="flex-1 min-h-50 flex flex-col justify-end mt-4">
               <div className="flex items-end justify-between gap-2 md:gap-4 h-48 border-b border-outline-variant pb-2">
-                {stats?.monthlyRevenue?.map((monthData) => (
+                {invoiceStatsData?.data?.monthlyRevenue?.map((monthData :MonthlyRevenue) => (
                   <div
                     key={monthData.month}
                     className={`w-full ${max === monthData.total ? "bg-primary hover:bg-primary-container" : "bg-surface-container hover:bg-surface-container-highest"}  transition-colors rounded-t-sm  group relative`}
@@ -353,8 +354,8 @@ const Page = () => {
                     <div className="hidden group-hover:block absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-md whitespace-nowrap">
                       {monthData.total.toLocaleString("en-US", {
                         style: "currency",
-                        currency: "INR",
-                        maxdigits: 0,
+                        currency: "USD",
+                        maximumFractionDigits: 0,
                       })}
                     </div>
                   </div>
@@ -362,14 +363,14 @@ const Page = () => {
               </div>
 
               <div className="flex justify-between mt-3 font-label-sm text-label-sm text-on-surface-variant px-2">
-                {stats?.monthlyRevenue?.map((monthData) => (
+                {invoiceStatsData?.data?.monthlyRevenue?.map((monthData :MonthlyRevenue) => (
                   <span key={monthData.month}>{monthData.month}</span>
                 ))}
               </div>
             </div>
           </div>
         )}
-        {isLoading.recentActivities ? (
+        {isRecentActivitiesLoading ? (
           <RecentActivitySkeleton />
         ) : (
           <div className="bg-surface-container-lowest max-h-85 border  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
@@ -384,8 +385,8 @@ const Page = () => {
             <div className="flex flex-col gap-5 overflow-auto scrollbar-hide relative">
               <div className="absolute left-3.75 top-4 bottom-4 w-px bg-outline-variant/50 z-0"></div>
 
-              {recentActivities.length > 0 ? (
-                recentActivities.map((activity) => (
+              {recentActivitiesData?.data?.length > 0 ? (
+                recentActivitiesData?.data?.map((activity : ActivityItem) => (
                   <div key={activity.id} className="flex gap-4 relative z-10">
                     <div className="w-8 h-8 rounded-full bg-surface-container border-2 border-surface-container-lowest flex items-center justify-center font-label-sm text-label-sm text-primary font-bold shrink-0 mt-1">
                       {activity.type === "timelog" ? (
@@ -433,7 +434,7 @@ const Page = () => {
       </div>
 
       <div className="grid grid-cols-1 h-auto lg:grid-cols-2 gap-md md:gap-lg mb-xl">
-        {isLoading.projects ? (
+        {isProjectsLoading ? (
           <ProjectListSkeleton />
         ) : (
           <div className="bg-surface-container-lowest border max-h-90  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
@@ -448,8 +449,8 @@ const Page = () => {
             <div className="flex flex-col gap-5 overflow-auto scrollbar-hide">
               <div>
                 <div className="flex flex-col gap-md justify-center items-start  mb-2">
-                  {activeProjects.length > 0 ? (
-                    activeProjects.map((project) => (
+                  {projectsData?.data?.projects?.length > 0 ? (
+                    projectsData?.data?.projects?.map((project : Project) => (
                       <div
                         key={project._id.toString()}
                         className="flex cursor-pointer gap-2 group items-center w-full justify-start  mb-2"
@@ -501,7 +502,7 @@ const Page = () => {
               </div>
             </div>
             <div className=" text-center">
-              {activeProjects.length === totalProjects ? (
+              {projectsData?.data.projects.length === projectsData?.data.total ? (
                 <button
                   onClick={() => setLimit(5)}
                   className="text-label-sm text-on-surface-variant hover:text-primary transition-colors"
@@ -519,7 +520,7 @@ const Page = () => {
             </div>
           </div>
         )}
-        {isLoading.projectDueThisMonth ? (
+        {isProjectDueThisMonthLoading ? (
           <ProjectListSkeleton />
         ) : (
           <div className="bg-surface-container-lowest border   border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
@@ -534,8 +535,8 @@ const Page = () => {
             <div className="flex flex-col gap-5 overflow-auto scrollbar-hide">
               <div>
                 <div className="flex flex-col gap-md justify-center items-start  mb-2">
-                  {projectDueThisMonth.length > 0 ? (
-                    projectDueThisMonth.map((project) => (
+                  {projectDueThisMonthData?.projects?.length > 0 ? (
+                    projectDueThisMonthData?.projects?.map((project : Project) => (
                       <div
                         key={project._id.toString()}
                         className="flex cursor-pointer gap-2 group items-center w-full justify-start  mb-2"
@@ -588,10 +589,10 @@ const Page = () => {
           </div>
         )}
 
-        {isLoading.invoiceDueThisWeek ? (
+        {isInvoiceStatsLoading? (
           <InvoiceListSkeleton />
         ) : (
-          <div className="bg-surface-container-lowest border max-h-90 scrollbar-hide overflow-auto border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+          <div className="bg-surface-container-lowest border max-h-90  border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-headline-sm text-headline-sm text-on-surface">
                 Invoices Due this Week
@@ -603,9 +604,9 @@ const Page = () => {
                 View all
               </a>
             </div>
-            <div className="flex flex-col gap-4">
-              {stats.InvoicesDueThisWeek.length > 0 ? (
-                stats.InvoicesDueThisWeek?.map((invoice) => (
+            <div className="flex scrollbar-hide overflow-auto flex-col gap-4">
+              {invoiceStatsData?.data?.InvoicesDueThisWeek?.length > 0 ? (
+                invoiceStatsData?.data?.InvoicesDueThisWeek?.map((invoice : Invoice) => (
                   <div
                     key={invoice._id.toString()}
                     className="flex justify-between items-center group cursor-pointer"
@@ -661,7 +662,7 @@ const Page = () => {
             </div>
           </div>
         )}
-        {isLoading.invoices ? (
+        {isInvoicesLoading ? (
           <InvoiceListSkeleton />
         ) : (
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
@@ -677,8 +678,8 @@ const Page = () => {
               </a>
             </div>
             <div className="flex flex-col gap-4">
-              {invoices.length > 0 ? (
-                invoices.map((invoice) => (
+              {invoicesData?.invoices?.length > 0 ? (
+                invoicesData?.invoices?.map((invoice : Invoice) => (
                   <div
                     key={invoice._id.toString()}
                     className="flex justify-between items-center group cursor-pointer"

@@ -6,9 +6,12 @@ import { isValidObjectId } from "mongoose";
 import type { PipelineStage } from "mongoose";
 import { connectToDatabase } from "@/lib/dbConfig";
 import ApiResponse from "@/types/ApiResponse";
-
 import { markOverdueInvoices } from "@/helpers/markOverdues";
 import { invoiceStatsPipeline } from "@/lib/pipelines/invoice.pipeline";
+export type MonthlyRevenue = {
+  month: string;
+  total: number;
+};
 function buildMonthlySeries(rows: { _id: string; total: number }[]) {
   const now = new Date();
   const series: { month: string; total: number }[] = [];

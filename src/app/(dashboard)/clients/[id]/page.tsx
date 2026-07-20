@@ -245,7 +245,7 @@ const Page = () => {
           </div>
           {projectLoading ? (
             <ProjectTableSkeleton />
-          ) : projectData.projects.length > 0 ? (
+          ) : projectData?.projects?.length > 0 ? (
             <>
               <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-2xl border overflow-hidden border-outline-variant shadow-sm ">
                 <div className="overflow-x-auto">
@@ -363,7 +363,7 @@ const Page = () => {
           </div>
           {invoiceLoading ? (
             <InvoiceTableSkeleton />
-          ) : invoiceData.invoices.length > 0 ? (
+          ) : invoiceData?.invoices?.length > 0 ? (
             <>
               <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
