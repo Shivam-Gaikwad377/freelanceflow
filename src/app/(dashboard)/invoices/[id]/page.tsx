@@ -2,7 +2,7 @@
 import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+
 import { usePathname, useRouter } from "next/navigation";
 import { useFieldArray, useForm } from "react-hook-form";
 import { updateInvoiceSchema } from "@/schemas/updateInvoice.schema";
@@ -19,10 +19,9 @@ import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 import {
   InvoiceDetailSkeleton
 } from "@/components/Skeletals/Invoice";
+import { InvoiceLineItem, InvoicePDFProps } from "@/components/Invoice/InvoicePDF";
 const Page = () => {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
   const router = useRouter();
   const pathname = usePathname();
   const invoiceId = pathname.split("/").pop();
@@ -37,7 +36,7 @@ const Page = () => {
     return d.toISOString().split("T")[0]; // "2026-07-08"
   }
   const lineItemsForm = useForm<z.infer<typeof updateInvoiceSchema>>({
-    resolver: zodResolver(updateInvoiceSchema) as any,
+    resolver: zodResolver(updateInvoiceSchema) as unknown as any,
     defaultValues: {
       lineItems: invoice?.lineItems || [],
       dueDate: invoice?.dueDate,
@@ -51,7 +50,6 @@ const Page = () => {
   } = useFetch(`/api/Invoices/${invoiceId}`);
   const {
     register,
-    handleSubmit,
     reset,
     trigger,
     watch,
@@ -68,7 +66,7 @@ const Page = () => {
       setInvoice(invoiceData);
       setClient(invoiceData.clientId);
       setProject(invoiceData.projectId);
-      setIsLoading(false);
+
     }
   }, [invoiceData]);
 
@@ -79,11 +77,11 @@ const Page = () => {
         paidAt: new Date(),
       });
       if (response.data.success) {
-        setInvoice((prevInvoice: any) => ({
-          ...prevInvoice,
-          status: "Paid",
-          paidAt: new Date(),
-        }));
+        setInvoice((prevInvoice: Invoice | null) =>
+          prevInvoice
+            ? ({ ...prevInvoice, status: "Paid", paidAt: new Date() } as Invoice)
+            : prevInvoice
+        );
         toast.success("Invoice marked as paid");
         router.refresh();
       }
@@ -117,7 +115,7 @@ const Page = () => {
         description: invoice.lineItems[0]?.description || "",
       });
     }
-  }, [invoice]);
+  }, [invoice, reset]);
   const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDueDate = e.target.value;
     try {
@@ -125,10 +123,11 @@ const Page = () => {
         dueDate: newDueDate,
       });
       if (response.data.success) {
-        setInvoice((prevInvoice: any) => ({
-          ...prevInvoice,
-          dueDate: newDueDate,
-        }));
+         setInvoice((prevInvoice: Invoice | null) =>
+          prevInvoice
+            ? ({ ...prevInvoice, dueDate: newDueDate } as unknown as Invoice)
+            : prevInvoice
+        );
         toast.success("Due date updated successfully");
         setEditingDueDate(false);
       }
@@ -148,9 +147,9 @@ const Page = () => {
       const blob = await pdf(
         // invoice may have optional fields, assert to any for PDF generation
         <InvoicePDF
-          invoice={invoice as any}
-          client={client}
-          project={project}
+          invoice={invoice as unknown as InvoicePDFProps["invoice"]}
+          client={client as InvoicePDFProps["client"]}
+          project={project as InvoicePDFProps["project"]}
         />
       ).toBlob();
       const url = URL.createObjectURL(blob);
@@ -166,7 +165,7 @@ const Page = () => {
 
   return (
     <>
-      {isLoading ? (
+      {loadingInvoice ? (
         <InvoiceDetailSkeleton />
       ) : (
         <div className="flex-1 px-xl mx-auto w-full">
@@ -415,7 +414,7 @@ const Page = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {fields.map((field: any, index: number) =>
+                  {fields.map((field: InvoiceLineItem, index: number) =>
                     editingIndex === index ? (
                       <tr key={index}>
                         <td className="p-2.75 text-right text-shadow-surface-bright text-[14px] w-[40%] text-on-surface">
@@ -549,7 +548,7 @@ const Page = () => {
                     <span className="text-[13px] text-on-surface">
                       {fields
                         .reduce(
-                          (total: number, field: any) =>
+                          (total: number, field: InvoiceLineItem) =>
                             total + field.price * field.quantity,
                           0
                         )

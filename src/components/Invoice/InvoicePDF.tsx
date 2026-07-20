@@ -1,13 +1,13 @@
 // components/pdf/InvoicePDF.tsx
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
-interface InvoiceLineItem {
+export interface InvoiceLineItem {
   description: string;
   quantity: number;
   price: number;
 }
 
-interface InvoicePDFProps {
+ export interface InvoicePDFProps {
   invoice: {
     invoiceNumber: string;
     issueDate: string;
