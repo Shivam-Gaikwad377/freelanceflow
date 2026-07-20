@@ -9,6 +9,7 @@ const SecondaryButton = ({ onClick, label, icon, fontSize = "medium" }: Secondar
   return (
     <button
       onClick={onClick}
+      type="button"
       className={` cursor-pointer w-auto h-auto  flex items-center justify-center gap-2 px-4  bg-surface border border-outline-variant text-on-surface-variant hover:text-primary transition-colors ${fontSize === "small" ? "text-label-sm py-1" : fontSize === "large" ? "text-label-lg py-3" : "text-label-md py-3"}  rounded-lg  transition-colors shadow-sm`
       }>
       {icon && (

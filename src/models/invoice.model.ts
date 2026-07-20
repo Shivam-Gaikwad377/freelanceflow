@@ -33,7 +33,7 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
     invoiceNumber: {
         type: Number,
         required: true,
-        unique: true,
+    
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,

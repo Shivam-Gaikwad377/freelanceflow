@@ -8,6 +8,7 @@ import { authOptions } from "../auth/[...nextauth]/options";
 import Client from "@/models/client.model";
 import Project from "@/models/project.model";
 import { markOverdueInvoices } from "@/helpers/markOverdues";
+import mongoose, { Schema } from "mongoose";
 
 export async function POST(request: Request) {
   try {
@@ -59,7 +60,9 @@ export async function POST(request: Request) {
 
     const tax = parseResult.data.taxRate; // per-invoice, not hardcoded
     const taxAmount = Math.round(subtotal * (tax / 100) * 100) / 100;
-    const total = Math.round((subtotal + taxAmount) * 100) / 100; 
+    const total = Math.round((subtotal + taxAmount) * 100) / 100;
+    
+    
 
     const count = await Invoice.countDocuments({ userId: ownerID });
     const invoiceNumber = count + 1;

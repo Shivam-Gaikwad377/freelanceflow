@@ -290,7 +290,7 @@ const Page = () => {
                       prefillProject: {
                         name: project?.title.toString(),
                         id: project?._id.toString(),
-                        clientId: project?.clientId,
+                        clientId: client?._id.toString(),
                         client: project?.client,
                       },
                     })

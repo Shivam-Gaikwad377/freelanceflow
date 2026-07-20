@@ -183,7 +183,7 @@ const AddProject = () => {
                       className="form-input-rate"
                       placeholder="0.00"
                       type="number"
-                      {...register("hourlyRate", { valueAsNumber: true })}
+                      {...register("budget", { valueAsNumber: true })}
                     />
                   </div>
                 </div>
