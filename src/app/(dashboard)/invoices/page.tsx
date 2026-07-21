@@ -100,7 +100,7 @@ const Page = () => {
       setStats(statsData);
     }
   }, [statsData]);
-
+console.log("renders")
   return (
     <div className="flex-1  min-h-screen bg-background">
       <div className="max-w-container-max mx-auto p-lg md:p-xl space-y-xl">

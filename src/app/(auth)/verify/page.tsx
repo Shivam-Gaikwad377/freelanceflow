@@ -12,7 +12,7 @@ import { useSearchParams } from "next/navigation";
 
 const Page = () => {
   const [timer, setTimer] = useState(60); // 60 seconds (1 minute)
-  const [resend, setResend] = useState(false);
+  const canResend = timer === 0;
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
   const [otp, setOtp] = useState<string[]>(Array(6).fill("")); // Initialize an array of 6 empty strings
@@ -21,16 +21,11 @@ const Page = () => {
   const router = useRouter();
 
   const handleOtpChange = (index: number, value: string) => {
-    // Only allow digits
+    const digit = value.replace(/\D/g, "").slice(-1);
     const newOtp = [...otp];
-    newOtp[index] = value.slice(-1); // Ensure only the last digit is kept
+    newOtp[index] = digit;
     setOtp(newOtp);
-
-    if (index < 5 && value) {
-      (inputRef.current as (HTMLInputElement | null)[] | null)?.[
-        index + 1
-      ]?.focus(); // Move to the next input if it exists
-    }
+    if (index < 5 && digit) inputRef.current[index + 1]?.focus();
   };
 
   const handleKeyDown = (
@@ -52,16 +47,20 @@ const Page = () => {
         email,
         verificationToken: enteredOtp,
       });
+      if (!response.data.success) {
+        const message = response.data.message ?? "Invalid verification code. Please try again.";
+        setError(message);
+        toast.error(message);
+        return;
+      }
       router.replace("/login");
     } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          "Invalid verification code. Please try again."
-      );
-      toast.error(error);
-      return;
+      const message = err.response?.data?.message || "Invalid verification code. Please try again.";
+      setError(message);
+      toast.error(message);
     }
   };
+
   const handlePaste = (e: React.ClipboardEvent) => {
     const pasted = e.clipboardData?.getData("text")?.slice(0, 6);
     if (!pasted || !/^\d+$/.test(pasted)) return;
@@ -76,34 +75,24 @@ const Page = () => {
     ]?.focus();
   };
   useEffect(() => {
-    if (timer > 0) {
-      const countdown = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-
-      return () => clearInterval(countdown);
-    } else {
-      setResend(true);
-    }
+    if (timer === 0) return;
+    const id = setInterval(() => setTimer((t) => Math.max(t - 1, 0)), 1000);
+    return () => clearInterval(id);
   }, [timer]);
   const handleResend = async () => {
     try {
-      const response = await axios.post("/api/auth/resend-verification-code", {
-        email,
-      });
+      const response = await axios.post("/api/auth/resend-verification-code", { email });
       if (response.data.success) {
         setTimer(60);
-        setResend(false);
         setError(null);
         toast.success("Verification code resent successfully.");
       }
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          "Failed to resend verification code. Please try again."
-      );
-
-      return;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to resend verification code. Please try again.");
+      } else {
+        setError("Failed to resend verification code. Please try again.")
+      }
     }
   };
 
@@ -197,7 +186,7 @@ const Page = () => {
                   className="font-label-md disabled:opacity-50 disabled:cursor-not-allowed text-label-md transition-colors text-primary hover:underline cursor-pointer"
                   id="resend-btn"
                   type="button"
-                  disabled={!resend}
+                  disabled={!canResend}
                   onClick={handleResend}
                 >
                   Resend Code

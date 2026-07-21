@@ -24,8 +24,8 @@ const TopNavbar = () => {
 
   return (
     <header className="w-full h-16 bg-surface/80 border-b-[1.5px] z-10 border-b-outline-variant backdrop-blur-md flex justify-between items-center  sticky top-0 ">
-      <div className="md:hidden flex items-center">
-        <span className="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed-dim">
+      <div className="md:hidden pl-2 flex items-center">
+        <span className="font-headline-sm text-headline-sm font-bold text-primary ">
           FreelanceFlow
         </span>
       </div>

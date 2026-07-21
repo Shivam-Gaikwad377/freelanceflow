@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   getActiveProjects,
   getTotalClients,
@@ -66,10 +66,7 @@ const Page = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([]);
   const [projectDueThisMonth, setProjectDueThisMonth] = useState<Project[]>([]);
-  const [growthResult, setGrowthResult] = useState<GrowthResult>({
-    percentage: null,
-    direction: "flat",
-  });
+  
   const [isLoading, setIsLoading] = useState({
     invoices: true,
     paidThisMonth: true,
@@ -154,6 +151,7 @@ const Page = () => {
   //   recentActivitiesData,
   //   projectDueThisMonthData,
   // ]);
+  console.log("renders")
   const getBurnRatePercentage = (
     burnRate: number | undefined,
     budget: number
@@ -177,22 +175,19 @@ const Page = () => {
     };
   };
 
-  useEffect(() => {
-    if (invoiceStatsData?.data?.paidThisMonth && invoiceStatsData?.data?.paidLastMonth) {
-      const growth = getGrowthResult(
-        invoiceStatsData?.data?.paidThisMonth?.total,
-        invoiceStatsData?.data?.paidLastMonth?.total
-      );
-      setGrowthResult(growth);
-    }
-  }, [invoiceStatsData?.data?.paidThisMonth, invoiceStatsData?.data?.paidLastMonth]);
-  const [max, setMax] = useState(0);
-  useEffect(() => {
-    if (invoiceStatsData?.data?.monthlyRevenue && invoiceStatsData?.data?.monthlyRevenue.length > 0) {
-      const maxRevenue = Math.max(...invoiceStatsData?.data?.monthlyRevenue.map((m : MonthlyRevenue) => m.total));
-      setMax(maxRevenue);
-    }
-  }, [invoiceStatsData?.data?.monthlyRevenue]);
+  // derived values — no extra render, no effect needed
+const growthResult = useMemo<GrowthResult>(() => {
+  const stats = invoiceStatsData?.data;
+  if (!stats?.paidThisMonth || !stats?.paidLastMonth) {
+    return { percentage: null, direction: "flat" };
+  }
+  return getGrowthResult(stats.paidThisMonth.total, stats.paidLastMonth.total);
+}, [invoiceStatsData?.data?.paidThisMonth, invoiceStatsData?.data?.paidLastMonth]);
+
+const max = useMemo(() => {
+  const revenue = invoiceStatsData?.data?.monthlyRevenue;
+  return revenue?.length ? Math.max(...revenue.map((m: MonthlyRevenue) => m.total)) : 0;
+}, [invoiceStatsData?.data?.monthlyRevenue]);
   
   return (
     <main className="flex-1  p-4 md:p-lg lg:p-xl max-w-container-max mx-auto w-full flex flex-col gap-lg md:gap-xl overflow-x-hidden">

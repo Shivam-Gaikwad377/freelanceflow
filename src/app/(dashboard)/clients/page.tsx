@@ -15,7 +15,7 @@ import useFetch from "@/app/hooks/useFetch";
 import { Client } from "@/types/Model.types";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useDelete } from "@/app/hooks/useDelete";
-import { da } from "@faker-js/faker";
+
 const Page = () => {
   
   const [clients, setClients] = useState<Client[]>([]);
@@ -109,7 +109,7 @@ const Page = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
-              {data.clients.length === 0 ? (
+              {data?.clients?.length === 0 ? (
                 <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
                   <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-2">
                     search_off
@@ -119,7 +119,7 @@ const Page = () => {
                   </p>
                 </div>
               ) : (
-                clients.map((client) => (
+                data?.clients?.map((client: Client) => (
                   <ClientCard
                     key={client?._id.toString()}
                     name={client?.name}
@@ -138,7 +138,7 @@ const Page = () => {
             </div>
             <div className="p-4">
               <Pagination
-                total={data.total}
+                total={data?.total}
                 limit={limit}
                 offset={clientOffset}
                 onPageChange={(newOffset) => setClientOffset(newOffset)}

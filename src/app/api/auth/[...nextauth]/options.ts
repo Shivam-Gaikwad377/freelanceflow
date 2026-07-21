@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
         try {
           const user = await User.findOne({ email: credentials.identifier });
           if (!user) {
-            throw new Error("No user found with this email.");
+            throw new Error("Invalid email or password");
           }
           //check if user is verified
           if (!user.isVerified) {
@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
           if (isPasswordValid) {
             return user;
           } else {
-            throw new Error("Invalid password. Please try again.");
+            throw new Error("Invalid email or password");
           }
         } catch (error) {
           throw error;
@@ -60,7 +60,7 @@ export const authOptions: NextAuthOptions = {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.email = user.email;
-        
+
         token.name = user.name;
       }
 
@@ -94,6 +94,8 @@ export const authOptions: NextAuthOptions = {
   //use JWT strategy for session management
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days in seconds — session expires after this
+    updateAge: 24 * 60 * 60, // 24 hours in seconds — session refreshed if used within maxAge
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

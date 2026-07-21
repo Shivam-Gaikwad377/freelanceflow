@@ -154,14 +154,14 @@ const Page = () => {
                 <div>
                   <div className="flex items-center gap-3 mb-1">
                     <h2 className="font-display text-headline-lg font-bold text-on-surface tracking-tight">
-                      {clientData?.company || "Client Name"}
+                      {client?.company || "Client Name"}
                     </h2>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider">
-                      {clientData?.status || "Status"}
+                      {client?.status || "Status"}
                     </span>
                   </div>
                   <p className="font-body-md text-body-md text-on-surface-variant mb-4">
-                    {clientData?.description || "Company Description"}
+                    {client?.description || "Company Description"}
                   </p>
                   <div className="flex flex-wrap gap-x-6 gap-y-3">
                     <div className="flex items-center gap-2 text-on-surface-variant">
@@ -169,7 +169,7 @@ const Page = () => {
                         person
                       </span>
                       <span className="font-label-md text-label-md">
-                        {clientData?.name || "Jane Doe (Director of Product)"}
+                        {client?.name || "Jane Doe (Director of Product)"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-on-surface-variant">
@@ -180,7 +180,7 @@ const Page = () => {
                         className="font-label-md text-label-md hover:text-primary transition-colors"
                         href={`mailto:${clientData?.email || "jane@acme.corp"}`}
                       >
-                        {clientData?.email || "jane@acme.corp"}
+                        {client?.email || "jane@acme.corp"}
                       </a>
                     </div>
                     <div className="flex items-center gap-2 text-on-surface-variant">
@@ -191,7 +191,7 @@ const Page = () => {
                         className="font-label-md text-label-md hover:text-primary transition-colors"
                         href={`tel:${clientData?.phone || "+15551234567"}`}
                       >
-                        {clientData?.phone || "+1 (555) 123-4567"}
+                        {client?.phone || "+1 (555) 123-4567"}
                       </a>
                     </div>
                   </div>
@@ -209,7 +209,7 @@ const Page = () => {
                     onClick={() =>
                       openModal("addProject", {
                         prefillClient: {
-                          name: clientData?.name.toString() || "",
+                          name: client?.name.toString() || "",
                           id: client?._id.toString() || "",
                         },
                       })
@@ -245,7 +245,7 @@ const Page = () => {
           </div>
           {projectLoading ? (
             <ProjectTableSkeleton />
-          ) : projectData?.projects?.length > 0 ? (
+          ) : projects?.length > 0 ? (
             <>
               <div className="bg-surface-container-lowest flex flex-col gap-2 rounded-2xl border overflow-hidden border-outline-variant shadow-sm ">
                 <div className="overflow-x-auto">
@@ -268,7 +268,7 @@ const Page = () => {
                       </tr>
                     </thead>
                     <tbody className="font-body-sm text-body-sm text-on-surface">
-                      {projectData.projects.map((project : Project) => (
+                      {projects?.map((project : Project) => (
                         <tr
                           onClick={() =>
                             router.replace(
@@ -363,7 +363,7 @@ const Page = () => {
           </div>
           {invoiceLoading ? (
             <InvoiceTableSkeleton />
-          ) : invoiceData?.invoices?.length > 0 ? (
+          ) : invoices?.length > 0 ? (
             <>
               <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
