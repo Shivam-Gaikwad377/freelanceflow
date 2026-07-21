@@ -60,7 +60,7 @@ export const authOptions: NextAuthOptions = {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.email = user.email;
-
+        token.plan = user.plan;
         token.name = user.name;
       }
 
@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
         token.name = session.name;
         token.email = session.email;
         token.businessName = session.businessName;
-
+        token.plan = session.plan;
         token.isVerified = session.isVerified;
       }
 
@@ -80,7 +80,7 @@ export const authOptions: NextAuthOptions = {
         session.user._id = token._id;
         session.user.isVerified = token.isVerified;
         session.user.email = token.email;
-
+        session.user.plan = token.plan;
         session.user.name = token.name;
         session.user.businessName = token.businessName;
       }

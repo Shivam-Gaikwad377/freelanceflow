@@ -2,7 +2,7 @@
 import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-
+import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useFieldArray, useForm } from "react-hook-form";
 import { updateInvoiceSchema } from "@/schemas/updateInvoice.schema";
@@ -21,6 +21,7 @@ import {
 } from "@/components/Skeletals/Invoice";
 import { InvoiceLineItem, InvoicePDFProps } from "@/components/Invoice/InvoicePDF";
 const Page = () => {
+  const { data: session } = useSession();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -142,6 +143,10 @@ const Page = () => {
     if (!invoice || !client || !project) return;
     setIsDownloading(true);
     try {
+      if(session?.user?.plan !== "premium") {
+        toast.error("Download feature is available for premium users only. Please upgrade your plan.");
+        return;
+      }
       const { pdf } = await import("@react-pdf/renderer");
       const { InvoicePDF } = await import("@/components/Invoice/InvoicePDF");
       const blob = await pdf(
@@ -186,6 +191,7 @@ const Page = () => {
                     label="Mark as Paid"
                     onClick={handlePaid}
                     icon="check_circle"
+                    fontSize="medium"
                   />
                 ) : (
                   <p className="text-label-lg text-on-surface-variant"></p>

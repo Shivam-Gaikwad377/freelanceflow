@@ -7,7 +7,8 @@ declare module "next-auth" {
     isVerified?: boolean;
     name?: string;
     email?: string;
-    currency?: string;
+    plan?: "free" | "premium";
+
   }
   interface Session {
     user: {

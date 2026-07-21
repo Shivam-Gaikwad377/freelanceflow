@@ -20,6 +20,18 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+    if(!session.user?.plan || session.user.plan === "free") {
+      const clientCount = await Client.countDocuments({ userId: ownerID });
+      if (clientCount === 2) {
+        return NextResponse.json<ApiResponse>(
+          {
+            success: false,
+            message: "You have reached the maximum number of clients for your plan.",
+          },
+          { status: 403 }
+        );
+      }
+    }
     await connectToDatabase();
 
     const { name, email, company, phone, status, description } =

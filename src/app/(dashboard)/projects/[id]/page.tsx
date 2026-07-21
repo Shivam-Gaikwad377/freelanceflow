@@ -54,9 +54,9 @@ const Page = () => {
 
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 relative">
+    <div className=" flex-1 overflow-y-auto w-full max-w-container-max mx-auto">
       <div
-        className={` flex-1 overflow-y-auto p-10  md:px-gutter max-w-container-max mx-auto w-full`}
+        className={`flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 md:px-gutter max-w-container-max mx-auto w-full`}
       >
         {projectLoading ? (
           <ProjectActionsSkeleton />
@@ -71,17 +71,18 @@ const Page = () => {
             />
           </div>
             {/* <!-- Breadcrumbs --> */}
-            <div className="flex justify-between items-center mb-xl">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-md mb-xl">
               <BackButton
                 onBack={() => router.push("/projects")}
                 label="Back to Projects"
               />
 
-              <div className="flex gap-md">
+              <div className="flex flex-wrap gap-md">
                 <SecondaryButton
                   label="Edit Project"
                   icon="edit"
                   onClick={() => setEdit(true)}
+                  fontSize="medium"
                 />
 
                 {!(project?.status === "completed") && (
@@ -100,17 +101,18 @@ const Page = () => {
                       });
                     }}
                     icon="check_circle"
+                    fontSize="medium"
                   />
                 )}
               </div>
             </div></>)}
         {/* <!-- 1. Client Information Header (Bento/Card Style) --> */}
-        <div className="grid grid-cols-12 gap-gutter">
-          <div className="col-span-8 space-y-gutter">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+          <div className="lg:col-span-8 space-y-gutter">
             <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col gap-lg overflow-hidden relative">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-              {projectLoading ? (<ProjectHeaderCardSkeleton />) : (<><div className="flex justify-between items-start relative z-9">
-                <div>
+              {projectLoading ? (<ProjectHeaderCardSkeleton />) : (<><div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-md relative z-9">
+                <div className="min-w-0 flex-1">
                   <StatusBadge
                     color={
                       project?.status === "completed"
@@ -122,10 +124,10 @@ const Page = () => {
                     label={project?.status}
                     fontSize="large"
                   />
-                  <h2 className="font-display text-headline-lg text-on-surface mt-2">
+                  <h2 className="font-display text-headline-lg text-on-surface mt-2 break-words">
                     {project?.title}
                   </h2>
-                  <div className="flex items-center gap-md mt-sm text-on-surface-variant">
+                  <div className="flex flex-wrap items-center gap-md mt-sm text-on-surface-variant">
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-[20px]">
                         person
@@ -143,7 +145,7 @@ const Page = () => {
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right">
                   <p className="text-label-sm text-on-surface-variant uppercase mb-1">
                     Total Budget
                   </p>
@@ -155,7 +157,7 @@ const Page = () => {
                   </h3>
                 </div>
               </div>
-                <div className="grid grid-cols-3 gap-lg border-t border-outline-variant/30 pt-lg relative z-9">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-lg border-t border-outline-variant/30 pt-lg relative z-9">
                   <div className="flex items-start flex-col gap-2">
                     <p className="text-label-sm text-on-surface-variant uppercase mb-1">
                       Start Date
@@ -236,7 +238,7 @@ const Page = () => {
             <TasksTable projectId={id || ""} />
           </div>
 
-          <div className="col-span-4 space-y-gutter">
+          <div className="lg:col-span-4 space-y-gutter">
             {projectLoading ? (<ClientContactCardSkeleton />) : (
               <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
                 <h4 className="font-label-md text-on-surface-variant uppercase mb-md">
@@ -244,42 +246,42 @@ const Page = () => {
                 </h4>
                 <div
                   onClick={() => router.replace(`/clients/${client?._id}`)}
-                  className=" cursor-pointer flex whitespace-nowrap items-center gap-md mb-lg"
+                  className="cursor-pointer flex items-center gap-md mb-lg min-w-0"
                 >
                   <ClientInitialBadge
                     name={client?.name || "Client Name"}
                     size="medium"
                   />
-                  <div>
-                    <p className="font-headline-sm text-on-surface">
+                  <div className="min-w-0">
+                    <p className="font-headline-sm text-on-surface truncate">
                       {client?.name || "Client Name"}
                     </p>
-                    <p className="text-body-sm text-on-surface-variant">
+                    <p className="text-body-sm text-on-surface-variant truncate">
                       {client?.company}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-sm">
-                  <button className="w-full flex whitespace-nowrap gap-3 p-3 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors group">
-                    <span className="material-symbols-outlined group-hover:text-primary">
+                  <button className="w-full flex items-center gap-3 p-3 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors group min-w-0">
+                    <span className="material-symbols-outlined group-hover:text-primary shrink-0">
                       mail
                     </span>
-                    <span className="font-body-sm">
+                    <span className="font-body-sm truncate">
                       {client?.email || "jane.doe@acme.com"}
                     </span>
                   </button>
-                  <button className="w-full flex whitespace-nowrap gap-3 p-3 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors group">
-                    <span className="material-symbols-outlined group-hover:text-primary">
+                  <button className="w-full flex items-center gap-3 p-3 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors group min-w-0">
+                    <span className="material-symbols-outlined group-hover:text-primary shrink-0">
                       call
                     </span>
-                    <span className="font-body-sm">
+                    <span className="font-body-sm truncate">
                       {client?.phone || "+1 (555) 012-3456"}
                     </span>
                   </button>
                 </div>
               </div>)}
             {invoicesLoading ? (<InvoicesSummaryCardSkeleton />) : (<div className="bg-surface-container-lowest rounded-lg border border-outline-variant overflow-hidden card-shadow">
-              <div className="p-md flex justify-between items-center border-b border-outline-variant/30">
+              <div className="p-md flex flex-wrap justify-between items-center gap-sm border-b border-outline-variant/30">
                 <h3 className="font-label-md text-on-surface font-semibold">
                   Invoices Summary
                 </h3>
@@ -299,62 +301,67 @@ const Page = () => {
                   fontSize="small"
                 />
               </div>
-              <table className="w-full text-left border-collapse">
-                <thead className="bg-surface-container-low text-on-surface-variant text-label-sm border-b border-outline-variant/30">
-                  <tr>
-                    <th className="p-3 font-semibold">Invoice #</th>
-                    <th className="p-3 font-semibold">Status</th>
-                    <th className="p-3 font-semibold">Due Date</th>
-                    <th className="p-3 font-semibold text-right">Amount</th>
-                  </tr>
-                </thead>
-                <tbody className="text-body-sm text-on-surface">
-                  {invoices?.map((invoice) => (
-                    <tr
-                      onClick={() =>
-                        router.replace(`/invoices/${invoice?._id}`)
-                      }
-                      key={invoice._id.toString()}
-                      className="border-b  hover:bg-surface-container/50 border-outline-variant/10  transition-colors"
-                    >
-                      <td className="p-3  font-label-md text-on-surface font-medium">
-                        {invoice?.invoiceNumber}
-                      </td>
-                      <td className="p-3  text-on-surface-variant font-body-sm">
-                        {new Date(invoice?.createdAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
-                      </td>
-                      <td className="p-3 ">
-                        <StatusBadge
-                          color={
-                            invoice.status === "Paid"
-                              ? "success"
-                              : invoice.status === "pending"
-                                ? "normal"
-                                : "error"
-                          }
-                          label={invoice.status}
-                          fontSize="small"
-                        />
-                      </td>
-                      <td className="p-3 text-right font-medium text-on-surface">
-                        {invoice?.amount.toLocaleString("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-120 text-left border-collapse">
+                  <thead className="bg-surface-container-low text-on-surface-variant text-label-sm border-b border-outline-variant/30">
+                    <tr>
+                      <th className="p-3 font-semibold">Invoice #</th>
+                      <th className="p-3 font-semibold">Status</th>
+                      <th className="p-3 font-semibold">Due Date</th>
+                      <th className="p-3 font-semibold text-right">Amount</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="text-body-sm text-on-surface">
+                    {invoices?.map((invoice) => (
+                      <tr
+                        onClick={() =>
+                          router.replace(`/invoices/${invoice?._id}`)
+                        }
+                        key={invoice._id.toString()}
+                        className="border-b  hover:bg-surface-container/50 border-outline-variant/10  transition-colors"
+                      >
+                        <td className="p-3  font-label-md text-on-surface font-medium">
+                          {invoice?.invoiceNumber}
+                        </td>
+                        <td className="p-3">
+                          <StatusBadge
+                            color={
+                              invoice.status === "Paid"
+                                ? "success"
+                                : invoice.status === "pending"
+                                  ? "normal"
+                                  : "error"
+                            }
+                            label={invoice.status}
+                            fontSize="small"
+                          />
+                        </td>
+                        <td className="p-3  text-on-surface-variant font-body-sm">
+                          {/* TODO: confirm the actual due-date field name on Invoice — using dueDate as a placeholder */}
+                          {invoice?.dueDate
+                            ? new Date(invoice.dueDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )
+                            : "—"}
+                        </td>
+                        <td className="p-3 text-right font-medium text-on-surface">
+                          {invoice?.amount.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <div className="p-md text-center">
                 {invoices.length === invoicesTotal ? (
                   <button

@@ -5,7 +5,7 @@ import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import { updateUserSchema } from "@/schemas/updateUser.schema";
 import ApiResponse from "@/types/ApiResponse";
-import CLient from "@/models/client.model";
+import Client from "@/models/client.model";
 import Project from "@/models/project.model";
 import Invoices from "@/models/invoice.model";
 
@@ -102,7 +102,7 @@ export async function DELETE(request: Request) {
     }
 
     await Project.deleteMany({ owner: session.user._id });
-    await CLient.deleteMany({ owner: session.user._id });
+    await Client.deleteMany({ owner: session.user._id });
     await Invoices.deleteMany({ owner: session.user._id });
     const deleted = await User.findOneAndDelete({ _id: session.user._id });
     if (!deleted) {

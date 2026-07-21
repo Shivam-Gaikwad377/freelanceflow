@@ -216,6 +216,7 @@ const Page = () => {
                     }
                     label=" New Project "
                     icon="add"
+                    fontSize="medium"
                   />
                 </div>
                 <div className="flex gap-6 mt-2">
@@ -439,11 +440,7 @@ const Page = () => {
                             })}
                           </td>
                           <td className="py-4 px-6 text-right flex gap-md">
-                            <button className="text-outline hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
-                              <span className="material-symbols-outlined">
-                                download
-                              </span>
-                            </button>
+                           
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();

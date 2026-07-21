@@ -10,12 +10,13 @@ export interface IUser extends Document {
     avatarFileId?: string;
   };
   bussinessName: string;
-  currency: string;
+ 
   refreshToken: string;
   isVerified: boolean;
   verificationToken?: string;
   ExpiresAt?: Date;
   pendingEmail?: string;
+  plan: "free" | "premium";
 }
 
 const userSchema = new Schema<IUser>(
@@ -74,6 +75,11 @@ const userSchema = new Schema<IUser>(
       type: Date,
       default: () => new Date(Date.now() + 10 * 60 * 1000), // Default to 10 minutes from now
     },
+    plan: {
+      type: String,
+      enum: ["free", "premium"],
+      default: "free",
+    }
   },
   { timestamps: true }
 );

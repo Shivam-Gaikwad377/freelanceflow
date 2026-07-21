@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       );
     }
     //generate OTP and expiration time
-
+   
     const existingUserUnverifiedByEmail = await User.findOne({ email });
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
