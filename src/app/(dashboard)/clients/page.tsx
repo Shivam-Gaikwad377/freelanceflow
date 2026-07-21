@@ -71,6 +71,7 @@ const Page = () => {
             label=" New Client"
             onClick={() => setAddClientOpen(true)}
             icon="person_add"
+            fontSize="medium"
           />
         </div>
         {/* Filters & Search */}

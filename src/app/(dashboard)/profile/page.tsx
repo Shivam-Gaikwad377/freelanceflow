@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 import Image from "next/image";
-
+import Toggle from "@/components/ToggleButton";
 const Page = () => {
   const { data: session, update } = useSession();
 
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
- 
+
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -93,7 +93,7 @@ const Page = () => {
       const response = await axios.patch("/api/user/Profile", {
         name,
         businessName,
-  
+
       });
       if (email && email !== profile?.email) {
         const responseEmail = await axios.put("/api/user/email/email-change", {
@@ -250,10 +250,15 @@ const Page = () => {
                   )}
                 </div>
                 <div>
-                  <p className="block font-label-md text-label-md text-on-surface mb-xs">
-                    Currency
-                  </p>
-                  
+                  <Toggle
+                    enabled={false}
+                    onChange={(enabled) => {
+                      // Handle toggle change
+                    }}
+                    label="Enable Notifications"
+                  />
+
+
                 </div>
               </div>
 
