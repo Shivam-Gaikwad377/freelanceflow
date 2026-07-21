@@ -103,54 +103,6 @@ const Page = () => {
   );
   const { data: projectDueThisMonthData, error: projectDueThisMonthError, loading: isProjectDueThisMonthLoading } =
     useFetch(`/api/projects/stats`);
-  // useEffect(() => {
-  //   if (projectsData) {
-  //     setActiveProjects(projectsData.data.projects);
-  //     setTotalProjects(projectsData.data.total);
-  //     setIsLoading((prev) => ({ ...prev, projects: false }));
-  //   }
-  //   if (clientsData) {
-  //     setTotalClients(clientsData.data.total);
-  //     setIsLoading((prev) => ({ ...prev, clients: false }));
-  //   }
-  //   if (invoiceStatsData) {
-  //     setStats(invoiceStatsData.data);
-  //     if (invoiceStatsData.data.InvoicesDueThisWeek) {
-  //       setIsLoading((prev) => ({ ...prev, invoiceDueThisWeek: false }));
-  //     }
-  //     if (invoiceStatsData.data.monthlyRevenue) {
-  //       setIsLoading((prev) => ({ ...prev, revenueChart: false }));
-  //     }
-  //     if (
-  //       invoiceStatsData.data.paidThisMonth 
-  //     ) {
-  //       setIsLoading((prev) => ({ ...prev, paidThisMonth: false }));
-  //     }
-  //     if (invoiceStatsData.data.outstanding) {
-  //       setIsLoading((prev) => ({ ...prev, outStanding: false }));
-  //     }
-      
-  //   }
-  //   if (invoicesData) {
-  //     setInvoices(invoicesData.invoices);
-  //     setIsLoading((prev) => ({ ...prev, invoices: false }));
-  //   }
-  //   if (recentActivitiesData) {
-  //     setRecentActivities(recentActivitiesData.data);
-  //     setIsLoading((prev) => ({ ...prev, recentActivities: false }));
-  //   }
-  //   if (projectDueThisMonthData) {
-  //     setProjectDueThisMonth(projectDueThisMonthData.projects);
-  //     setIsLoading((prev) => ({ ...prev, projectDueThisMonth: false }));
-  //   }
-  // }, [
-  //   projectsData,
-  //   clientsData,
-  //   invoiceStatsData,
-  //   invoicesData,
-  //   recentActivitiesData,
-  //   projectDueThisMonthData,
-  // ]);
   console.log("renders")
   const getBurnRatePercentage = (
     burnRate: number | undefined,

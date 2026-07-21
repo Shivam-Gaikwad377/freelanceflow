@@ -6,8 +6,7 @@ import ProjectCard from "@/components/Project/ProjectCard";
 import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
 import { useDelete } from "@/app/hooks/useDelete";
 import { toast } from "sonner";
-import { IProject } from "@/schemas/project.schema";
-
+import {Project} from "@/types/Model.types";
 type Status = "open" | "in progress" | "completed";
 
 const STATUS_STYLES: Record<Status, string> = {
@@ -28,7 +27,7 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const { deleteItem: deleteProject, isDeleting: isDeletingProject } = useDelete<IProject>({
+  const { deleteItem: deleteProject, isDeleting: isDeletingProject } = useDelete<Project>({
     resource: "projects",
     setItems: setProjects,
     successMessage: "Project deleted successfully",
@@ -95,7 +94,7 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
   const setSentinel = useInfiniteScroll(loadMore); // ← returns a ref setter
 
   return (
-    <div className="flex-1 flex flex-col gap-md kanban-col bg-surface-container-low/50 max-h-screen rounded-xl p-md border border-outline-variant/20">
+    <div className="flex-1 flex flex-col gap-md kanban-col min-w-[1/3] bg-surface-container-low/50 max-h-screen rounded-xl p-md border border-outline-variant/20">
       {/* Header */}
       <div className="flex items-center justify-between mb-sm">
         <h3 className="text-label-md font-label-md text-on-surface uppercase tracking-wider flex items-center gap-sm">
