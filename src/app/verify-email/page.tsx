@@ -1,31 +1,30 @@
 "use client";
 import Image from "next/image";
-import {  useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import ApiResponse from "@/types/ApiResponse";
-
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-
-const Page = () => {
+const VerifyEmail = () => {
   const [timer, setTimer] = useState(5); // 5 minutes in seconds
   const [resend, setResend] = useState(false);
   const searchParams = useSearchParams();
-const email = searchParams.get("email") || ""
+  const email = searchParams.get("email") || ""
   const [otp, setOtp] = useState<string[]>(Array(6).fill("")); // Initialize an array of 6 empty strings
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleOtpChange = (index: number, value: string) => {
-    
-      // Only allow digits
-      const newOtp = [...otp];
-      newOtp[index] = value.slice(-1); // Ensure only the last digit is kept
-      setOtp(newOtp);
-    
+
+    // Only allow digits
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1); // Ensure only the last digit is kept
+    setOtp(newOtp);
+
     if (index < 5 && value) {
       (inputRef.current as (HTMLInputElement | null)[] | null)?.[
         index + 1
@@ -96,7 +95,7 @@ const email = searchParams.get("email") || ""
       setError(
         err.response?.data?.message || "Failed to resend verification code. Please try again."
       );
-      
+
       return;
     }
   };
@@ -221,6 +220,13 @@ const email = searchParams.get("email") || ""
         </div>
       </div>
     </div>
+  );
+};
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyEmail />
+    </Suspense>
   );
 };
 
