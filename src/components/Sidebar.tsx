@@ -36,6 +36,7 @@ const Sidebar = () => {
           label=" New Project"
           onClick={() => openModal("addProject")}
           icon="add"
+          fontSize="medium"
           
         />
         <div className="flex-1 mt-8 space-y-sm">
