@@ -124,7 +124,7 @@ const Page = () => {
                     label={project?.status}
                     fontSize="large"
                   />
-                  <h2 className="font-display text-headline-lg text-on-surface mt-2 break-words">
+                  <h2 className="font-display text-headline-lg text-on-surface mt-2 wrap-break-word">
                     {project?.title}
                   </h2>
                   <div className="flex flex-wrap items-center gap-md mt-sm text-on-surface-variant">

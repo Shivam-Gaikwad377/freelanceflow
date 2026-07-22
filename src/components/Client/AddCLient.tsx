@@ -43,7 +43,12 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
   const onSubmit = async (data: CreateClientOutput) => {
     try {
       const response = await axios.post<ApiResponse>("/api/Clients", data);
-
+      if(response.data.statusCode === 403){
+        toast.error("Upgrade your plan to add more clients", {
+          position: "top-right",
+        });
+        return;
+      }
       // Only 2xx reaches here
       if (response.data.success) {
         toast.success("Client added successfully!", {
@@ -212,6 +217,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
                   label="Add Client"
                   onClick={handleSubmit(onSubmit)}
                   disabled={isSubmitting}
+                  fontSize="medium"
                 />
               
            

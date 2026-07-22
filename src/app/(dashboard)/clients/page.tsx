@@ -45,6 +45,12 @@ const Page = () => {
   const handleClick = (id: string) => {
     router.replace(`/clients/${id}`);
   };
+  useEffect(() => {
+    if (data?.clients) {
+      setClients(data.clients);
+      setTotalClients(data.total);
+    }
+  }, [data]);
 
   const [AddClientOpen, setAddClientOpen] = useState<boolean>(false);
 
@@ -110,7 +116,7 @@ const Page = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
-              {data?.clients?.length === 0 ? (
+              {clients?.length === 0 ? (
                 <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
                   <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-2">
                     search_off
@@ -120,7 +126,7 @@ const Page = () => {
                   </p>
                 </div>
               ) : (
-                data?.clients?.map((client: Client) => (
+                clients?.map((client: Client) => (
                   <ClientCard
                     key={client?._id.toString()}
                     name={client?.name}

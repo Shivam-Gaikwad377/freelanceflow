@@ -21,7 +21,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Unauthenticated user on protected pages → send to login
-  if (!token && isProtectedPage) {
+  if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
