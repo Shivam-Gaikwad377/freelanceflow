@@ -261,6 +261,7 @@ console.log("EditClientDrawer RENDERED, open:", open, "client:", client);
               label= {isSubmitting ? "Saving..." : "Save Changes"}
               onClick={handleSubmit(onSubmit)}
               disabled={isSubmitting}
+              fontSize="medium"
             />
             
           </div>
