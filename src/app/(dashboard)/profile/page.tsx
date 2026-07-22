@@ -119,6 +119,22 @@ const Page = () => {
   const handleEmailVerification = async (newEmail: string) => {
     router.push("/verify-email?newEmail=" + encodeURIComponent(newEmail));
   };
+  const handlePlanChange = async () => {
+    try {
+      const response = await axios.patch("/api/user/plan")
+      if (response.data.success) {
+        const updatedProfile = await axios.get("/api/user/Profile");
+        setProfile(updatedProfile?.data.data);
+        update({ plan: updatedProfile?.data.data.plan });
+        if (updatedProfile?.data.data.plan === "premium") {
+          toast.success("Upgraded to Premium Plan!");
+        }
+      }
+
+    } catch (error) {
+      toast.error("Error upgrading plan: " + (error as any).response?.data?.message);
+    }
+  }
   return (
     <div className="flex-1 overflow-y-auto p-margin-mobile md:p-gutter lg:p-xl">
       <div className="max-w-3xl mx-auto space-y-lg">
@@ -251,11 +267,10 @@ const Page = () => {
                 </div>
                 <div>
                   <Toggle
-                    enabled={false}
-                    onChange={(enabled) => {
-                      // Handle toggle change
-                    }}
-                    label="Enable Notifications"
+                    checked={profile?.plan === "premium"}
+                    onChange={handlePlanChange
+                    }
+                    label="Premium Plan"
                   />
 
 

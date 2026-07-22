@@ -5,6 +5,7 @@ import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import { updateUserSchema } from "@/schemas/updateUser.schema";
 import ApiResponse from "@/types/ApiResponse";
+import mongoose from "mongoose";
 
 
 export async function PATCH(request: Request) {
@@ -17,17 +18,18 @@ export async function PATCH(request: Request) {
       );
     }
 
-    if(session.user?.plan === "premium") {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "You are already on the premium plan." },
-        { status: 400 }
-      );
-    }
-
+    // if(session.user?.plan === "premium") {
+    //   return NextResponse.json<ApiResponse>(
+    //     { success: false, message: "You are already on the premium plan." },
+    //     { status: 400 }
+    //   );
+    // }
+    const newPlan = session.user?.plan === "premium" ? "free" : "premium";
+    
     await connectToDatabase();
     const updated = await User.findOneAndUpdate(
-      { email: session.user.email },
-      { $set: { plan: "premium" } },
+      { _id: new mongoose.Types.ObjectId(session?.user?._id) },
+      { $set: { plan: newPlan } },
       { new: true }
     ).select("-password");
 

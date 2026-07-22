@@ -54,8 +54,7 @@ export const authOptions: NextAuthOptions = {
   ],
   //callbacks to include user ID and verification status in JWT token and session
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      // Runs only on initial sign-in
+    async jwt({ token, user, trigger }) {
       if (user) {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
@@ -64,13 +63,14 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
       }
 
-      // Runs when update() is called from client
-      if (trigger === "update" && session) {
-        token.name = session.name;
-        token.email = session.email;
-        token.businessName = session.businessName;
-        token.plan = session.plan;
-        token.isVerified = session.isVerified;
+      // update() is a signal to re-sync from DB — never trust its payload
+      // for plan/isVerified/anything auth-relevant.
+      if (trigger === "update" && token._id) {
+        await connectToDatabase();
+        const fresh = await User.findById(token._id)
+          .select("plan isVerified name businessName email")
+          .lean();
+        if (fresh) Object.assign(token, fresh);
       }
 
       return token;
