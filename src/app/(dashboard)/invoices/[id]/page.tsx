@@ -431,9 +431,9 @@ const Page = () => {
                   </div>
                   <p
                     onClick={() =>
-                      router.replace(`/projects/${invoice?.projectId}`)
+                      router.replace(`/projects/${project?._id}`)
                     }
-                    className="cursor-pointer text-[14px] font-medium m-0 text-on-surface break-words"
+                    className="cursor-pointer text-[14px] font-medium m-0 text-on-surface wrap-break-word"
                   >
                     {project?.title}
                   </p>
@@ -577,20 +577,20 @@ const Page = () => {
                       className="border border-outline-variant/50 rounded-lg p-md flex flex-col gap-sm"
                     >
                       <div className="flex flex-col gap-1">
-                        <label className="text-[11px] uppercase tracking-[0.05em] text-on-surface-variant">
+                        <label className="text-[11px] uppercase tracking-wider text-on-surface-variant">
                           Description
                         </label>
                         {descriptionField(index, field)}
                       </div>
                       <div className="grid grid-cols-2 gap-sm">
                         <div className="flex flex-col gap-1">
-                          <label className="text-[11px] uppercase tracking-[0.05em] text-on-surface-variant">
+                          <label className="text-[11px] uppercase tracking-wider text-on-surface-variant">
                             Qty
                           </label>
                           {quantityField(index, field)}
                         </div>
                         <div className="flex flex-col gap-1">
-                          <label className="text-[11px] uppercase tracking-[0.05em] text-on-surface-variant">
+                          <label className="text-[11px] uppercase tracking-wider text-on-surface-variant">
                             Rate
                           </label>
                           {priceField(index, field)}
@@ -612,7 +612,7 @@ const Page = () => {
                       className="border border-outline-variant/30 rounded-lg p-md flex flex-col gap-2.5"
                     >
                       <div className="flex items-start justify-between gap-sm">
-                        <p className="text-[14px] font-medium text-on-surface m-0 break-words">
+                        <p className="text-[14px] font-medium text-on-surface m-0 wrap-break-word">
                           {field.description}
                         </p>
                         <SecondaryButton
@@ -624,7 +624,7 @@ const Page = () => {
                       </div>
                       <div className="grid grid-cols-3 gap-sm border-t border-outline-variant/30 pt-2.5">
                         <div>
-                          <p className="text-[11px] uppercase tracking-[0.05em] text-on-surface-variant m-0">
+                          <p className="text-[11px] uppercase tracking-wider text-on-surface-variant m-0">
                             Qty
                           </p>
                           <p className="text-[13px] font-medium text-on-surface m-0">
@@ -632,7 +632,7 @@ const Page = () => {
                           </p>
                         </div>
                         <div>
-                          <p className="text-[11px] uppercase tracking-[0.05em] text-on-surface-variant m-0">
+                          <p className="text-[11px] uppercase tracking-wider text-on-surface-variant m-0">
                             Rate
                           </p>
                           <p className="text-[13px] font-medium text-on-surface m-0">
@@ -640,7 +640,7 @@ const Page = () => {
                           </p>
                         </div>
                         <div>
-                          <p className="text-[11px] uppercase tracking-[0.05em] text-on-surface-variant m-0">
+                          <p className="text-[11px] uppercase tracking-wider text-on-surface-variant m-0">
                             Total
                           </p>
                           <p className="text-[13px] font-medium text-on-surface m-0">

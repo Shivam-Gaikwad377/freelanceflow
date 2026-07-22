@@ -34,7 +34,7 @@ export async function GET(request: Request, { params }: RouteContext) {
     const invoice = await Invoice.findOne({
       _id: id,
       userId: session.user._id,
-    }).lean().populate("clientId", "name email phone status").populate("projectId", "title deadline status");
+    }).lean().populate("clientId", "name email phone status").populate("projectId", "_id title deadline status");
 
     if (!invoice) {
       return NextResponse.json<ApiResponse>(
