@@ -303,6 +303,7 @@ const EditProjectDrawer = ({
               label={isSubmitting ? "Saving..." : "Save Changes"}
               onClick={handleSubmit(onSubmit)}
               disabled={isSubmitting}
+              fontSize="medium"
             />
           </div>
         </form>

@@ -293,6 +293,7 @@ const AddProject = () => {
                   label="Save Project"
                   onClick={handleSubmit(onSubmit)}
                   disabled={isSubmitting}
+                  fontSize="medium"
                 />
               </div>
             </Form>
