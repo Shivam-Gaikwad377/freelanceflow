@@ -9,8 +9,9 @@ import { toast } from "sonner";
 import ApiResponse from "@/types/ApiResponse";
 import Gradient from "../../../../public/Gradient.png";
 import { useSearchParams } from "next/navigation";
-
-const Page = () => {
+import { Suspense } from "react";
+const VerifyForm = () => {
+  
   const [timer, setTimer] = useState(60); // 60 seconds (1 minute)
   const canResend = timer === 0;
   const searchParams = useSearchParams();
@@ -97,6 +98,7 @@ const Page = () => {
   };
 
   return (
+    
     <div className="antialiased flex flex-col min-h-full p-0 m-0 relative pt-20 overflow-x-hidden">
       <div className="flex flex-col items-center justify-center min-h-full">
         <div
@@ -217,6 +219,14 @@ const Page = () => {
       </div>
     </div>
   );
+};
+const Page = () => {
+  
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyForm />
+    </Suspense>
+  )
 };
 
 export default Page;
