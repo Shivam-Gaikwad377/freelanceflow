@@ -2,7 +2,7 @@ import { startTimer, stopTimer, formatDuration } from "@/helpers/timerHelper";
 import { useTimerStore } from "@/store/useTimerStore";
 import { useRouter } from "next/navigation";
 import { useElapsedSeconds } from "@/app/hooks/useElapsedSeconds";
-import SecondaryButton from "./SecondaryButton";
+
 
 const GlobalTimer = () => {
   const router = useRouter();
