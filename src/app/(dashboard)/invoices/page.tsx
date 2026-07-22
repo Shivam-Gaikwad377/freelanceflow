@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {
-  InvoiceRowsSkeleton,
   InvoiceStatsSkeleton,
   InvoiceTableSkeleton,
 } from "@/components/Skeletals/Invoice";
@@ -19,6 +18,23 @@ import StatusBadge from "@/components/Invoice/StatusBadge";
 import ClientInitialBadge from "@/components/Client/ClientInitialBadge";
 import ConfirmationBox from "@/components/confirmationBox";
 import { useDelete } from "@/app/hooks/useDelete";
+
+// Pure, no closure over component state — hoisted so they aren't
+// recreated every render, and reused by both the table and card layouts.
+const formatCurrency = (amount?: number) =>
+  amount?.toLocaleString("en-US", { style: "currency", currency: "USD" });
+
+const formatDate = (date: Invoice["issueDate"]) =>
+  new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
+const getStatusColor = (
+  status: Invoice["status"]
+): "success" | "normal" | "error" =>
+  status === "Paid" ? "success" : status === "pending" ? "normal" : "error";
 
 const Page = () => {
   type InvoiceStatusFilter = "all" | "Paid" | "pending" | "overdue";
@@ -100,9 +116,9 @@ const Page = () => {
       setStats(statsData);
     }
   }, [statsData]);
-console.log("renders")
+
   return (
-    <div className="flex-1  min-h-screen bg-background">
+    <div className="flex-1 min-h-screen bg-background">
       <div className="max-w-container-max mx-auto p-lg md:p-xl space-y-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-md">
           <div>
@@ -117,6 +133,7 @@ console.log("renders")
             label=" New Invoice"
             onClick={() => openModal("addInvoice")}
             icon="add"
+            fontSize="medium"
           />
         </div>
 
@@ -124,26 +141,21 @@ console.log("renders")
           {statsLoading ? (
             <InvoiceStatsSkeleton />
           ) : (
-            <>
-              <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
-                <div className="flex items-center justify-between mb-sm">
-                  <span className="font-label-md text-label-md text-on-surface-variant">
-                    Outstanding
-                  </span>
-                  <span className="material-symbols-outlined text-outline">
-                    pending_actions
-                  </span>
-                </div>
-                <div>
-                  <span className="font-display text-display text-on-surface">
-                    {stats?.outstanding?.total?.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}
-                  </span>
-                </div>
+            <div className="glass-card rounded-xl p-lg flex flex-col justify-between">
+              <div className="flex items-center justify-between mb-sm">
+                <span className="font-label-md text-label-md text-on-surface-variant">
+                  Outstanding
+                </span>
+                <span className="material-symbols-outlined text-outline">
+                  pending_actions
+                </span>
               </div>
-            </>
+              <div>
+                <span className="font-display text-display text-on-surface">
+                  {formatCurrency(stats?.outstanding?.total)}
+                </span>
+              </div>
+            </div>
           )}
           {statsLoading ? (
             <InvoiceStatsSkeleton />
@@ -159,10 +171,7 @@ console.log("renders")
               </div>
               <div>
                 <span className="font-display text-display text-on-surface">
-                  {stats?.paidThisMonth?.total?.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  })}
+                  {formatCurrency(stats?.paidThisMonth?.total)}
                 </span>
                 <div className="w-full bg-surface-variant h-unit rounded-full mt-sm overflow-hidden">
                   <div className="bg-secondary h-full w-[65%] rounded-full"></div>
@@ -184,10 +193,7 @@ console.log("renders")
               </div>
               <div>
                 <span className="font-display text-accent text-display text-error">
-                  {stats?.overdue?.total?.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  })}
+                  {formatCurrency(stats?.overdue?.total)}
                 </span>
                 <p className="font-label-sm text-label-sm text-accent mt-xs">
                   {stats?.overdue?.count} invoices need attention
@@ -211,11 +217,11 @@ console.log("renders")
             />
           </div>
           <div className="flex flex-wrap items-center gap-sm w-full md:w-auto">
-            <div className="flex bg-surface-container-low rounded-md p-1">
+            <div className="flex bg-surface-container-low rounded-md p-1 overflow-x-auto max-w-full">
               {INVOICE_STATUS_FILTERS.map((filter) => (
                 <label
                   key={filter.value}
-                  className="px-sm py-xs rounded text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container-highest transition-colors cursor-pointer has-checked:bg-surface-container-lowest has-checked:shadow-sm has-checked:text-on-surface"
+                  className="shrink-0 px-sm py-xs rounded text-label-sm font-label-sm text-on-surface-variant hover:bg-surface-container-highest transition-colors cursor-pointer has-checked:bg-surface-container-lowest has-checked:shadow-sm has-checked:text-on-surface"
                 >
                   <input
                     type="radio"
@@ -237,9 +243,7 @@ console.log("renders")
               value={monthRange}
               onChange={(e) => setMonthRange(e.target.value)}
             >
-              <option selected={monthRange === "all"} value="all">
-                All Time
-              </option>
+              <option value="all">All Time</option>
               <option value="1">Last 1 Month</option>
               <option value="3">Last 3 Months</option>
               <option value="6">Last 6 Months</option>
@@ -253,7 +257,8 @@ console.log("renders")
             <InvoiceTableSkeleton rows={5} />
           ) : (
             <>
-              <div className="overflow-x-auto">
+              {/* Desktop / tablet: table */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-outline-variant/50">
@@ -272,7 +277,7 @@ console.log("renders")
                       <th className="py-md px-lg font-label-sm text-label-lg text-on-surface-variant font-semibold text-center">
                         Status
                       </th>
-                      <th className=" font-label-sm text-label-lg text-on-surface-variant font-semibold"></th>
+                      <th className="font-label-sm text-label-lg text-on-surface-variant font-semibold"></th>
                     </tr>
                   </thead>
                   <tbody className="font-body-sm text-body-sm">
@@ -304,7 +309,7 @@ console.log("renders")
                       ))
                     ) : debouncedSearchTerm && invoices.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-2xl px-lg text-center">
+                        <td colSpan={6} className="py-2xl px-lg text-center">
                           <div className="flex flex-col items-center gap-sm">
                             <span className="material-symbols-outlined text-4xl text-outline">
                               search_off
@@ -325,60 +330,44 @@ console.log("renders")
                           onClick={() =>
                             router.push(`/invoices/${invoice._id}`)
                           }
-                          key={invoice?._id.toString()}
-                          className="group border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors group"
+                          key={invoice._id.toString()}
+                          className="group border-b cursor-pointer border-outline-variant/30 hover:bg-surface-container-lowest/50 transition-colors"
                         >
                           <td className="py-sm px-lg font-medium text-on-surface">
-                            {invoice?.invoiceNumber}
+                            {invoice.invoiceNumber}
                           </td>
                           <td className="py-sm px-lg">
                             <div className="flex items-center gap-sm">
                               <ClientInitialBadge
-                                name={invoice?.client || "Client Name"}
+                                name={invoice.client || "Client Name"}
                                 size="small"
                               />
                               <span className="text-on-surface">
-                                {invoice?.client}
+                                {invoice.client}
                               </span>
                             </div>
                           </td>
                           <td className="py-sm px-lg text-on-surface-variant">
-                            {new Date(invoice?.issueDate).toLocaleDateString(
-                              "en-US",
-                              {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              }
-                            )}
+                            {formatDate(invoice.issueDate)}
                           </td>
                           <td className="py-sm px-lg text-right font-medium text-on-surface">
-                            {invoice?.amount?.toLocaleString("en-US", {
-                              style: "currency",
-                              currency: "USD",
-                            })}
+                            {formatCurrency(invoice.amount)}
                           </td>
                           <td className="py-sm px-lg text-center">
                             <StatusBadge
-                              color={
-                                invoice.status === "Paid"
-                                  ? "success"
-                                  : invoice.status === "pending"
-                                    ? "normal"
-                                    : "error"
-                              }
+                              color={getStatusColor(invoice.status)}
                               label={invoice.status}
                               fontSize="small"
                             />
                           </td>
-                          <td className=" pr-lg text-right">
+                          <td className="pr-lg text-right">
                             <span
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setShowConfirmBox(true);
                                 setInvoiceToDelete(invoice._id.toString());
                               }}
-                              className="group-hover:opacity-100 opacity-0 transition-all duration-200 hover:text-primary  material-symbols-outlined text-on-surface-variant group-hover:text-on-surface"
+                              className="group-hover:opacity-100 opacity-0 transition-all duration-200 hover:text-primary material-symbols-outlined text-on-surface-variant group-hover:text-on-surface"
                             >
                               delete
                             </span>
@@ -389,6 +378,93 @@ console.log("renders")
                   </tbody>
                 </table>
               </div>
+
+              {/* Mobile: card list */}
+              <div className="md:hidden divide-y divide-outline-variant/30">
+                {isSearching ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <div key={`mobile-skeleton-${i}`} className="p-md animate-pulse">
+                      <div className="flex items-center justify-between gap-sm mb-sm">
+                        <div className="flex items-center gap-sm">
+                          <div className="w-8 h-8 rounded-full bg-surface-variant" />
+                          <div className="h-4 w-28 bg-surface-variant rounded" />
+                        </div>
+                        <div className="h-4 w-14 bg-surface-variant rounded" />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="h-4 w-20 bg-surface-variant rounded" />
+                        <div className="h-4 w-16 bg-surface-variant rounded" />
+                      </div>
+                    </div>
+                  ))
+                ) : debouncedSearchTerm && invoices.length === 0 ? (
+                  <div className="py-2xl px-lg text-center">
+                    <div className="flex flex-col items-center gap-sm">
+                      <span className="material-symbols-outlined text-4xl text-outline">
+                        search_off
+                      </span>
+                      <p className="font-body-md text-body-md text-on-surface">
+                        No invoices found for &quot;{debouncedSearchTerm}
+                        &quot;
+                      </p>
+                      <p className="font-body-sm text-body-sm text-on-surface-variant">
+                        Try a different client name or invoice number.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  invoices.map((invoice) => (
+                    <div
+                      onClick={() => router.push(`/invoices/${invoice._id}`)}
+                      key={invoice._id.toString()}
+                      className="p-md active:bg-surface-container-lowest/50 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between gap-sm mb-sm">
+                        <div className="flex items-center gap-sm min-w-0">
+                          <ClientInitialBadge
+                            name={invoice.client || "Client Name"}
+                            size="small"
+                          />
+                          <div className="min-w-0">
+                            <p className="font-medium text-on-surface truncate">
+                              {invoice.client}
+                            </p>
+                            <p className="font-label-sm text-label-sm text-on-surface-variant">
+                              {invoice.invoiceNumber}
+                            </p>
+                          </div>
+                        </div>
+                        <StatusBadge
+                          color={getStatusColor(invoice.status)}
+                          label={invoice.status}
+                          fontSize="small"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between gap-sm">
+                        <span className="font-body-sm text-body-sm text-on-surface-variant">
+                          {formatDate(invoice.issueDate)}
+                        </span>
+                        <div className="flex items-center gap-md">
+                          <span className="font-medium text-on-surface">
+                            {formatCurrency(invoice.amount)}
+                          </span>
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowConfirmBox(true);
+                              setInvoiceToDelete(invoice._id.toString());
+                            }}
+                            className="material-symbols-outlined text-on-surface-variant active:text-primary"
+                          >
+                            delete
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
               <div className="p-sm flex items-center justify-between border-t border-outline-variant/30 text-label-sm text-on-surface-variant bg-surface-container-lowest/50">
                 <div className="flex gap-1">
                   <Pagination
