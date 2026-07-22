@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
@@ -9,7 +9,7 @@ import Link from "next/link";
 import ApiResponse from "@/types/ApiResponse";
 import Image from "next/image";
 import Gradient from "../../../../public/Gradient.png";
-const Page = () => {
+const ResetPassword = () => {
   const [timer, setTimer] = useState(60); // 60 seconds (1 minute)
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
@@ -286,6 +286,14 @@ const Page = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const Page = () => {
+  return(
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPassword />
+    </Suspense>
   );
 };
 
