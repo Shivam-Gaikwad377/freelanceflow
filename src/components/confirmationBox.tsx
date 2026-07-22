@@ -23,7 +23,7 @@ const ConfirmationBox = ({
         <p className="w-100 text-center text-on-surface ">{message}</p>
         {message2 && <p className="w-100 text-center text-on-surface-variant font-bold">{message2}</p>}
         <div className="flex items-center gap-4 mt-md">
-            <PrimaryButton label="Confirm" onClick={onConfirm} />
+            <PrimaryButton label="Confirm" onClick={onConfirm} fontSize="medium" />
             <SecondaryButton
               icon=""
               fontSize="medium"

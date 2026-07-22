@@ -91,6 +91,8 @@ const AddTimeLog = ({ projectId, onClose }: AddTimeLogProps) => {
           <PrimaryButton
             label="Add Time Log"
             onClick={handleSubmit(onSubmit, onInvalid)}
+
+            fontSize="medium"
           />
         </div>
       </div>
