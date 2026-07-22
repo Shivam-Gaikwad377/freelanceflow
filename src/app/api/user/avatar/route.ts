@@ -3,23 +3,39 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
 import { getToken } from "next-auth/jwt";
-import ImageKit from "imagekit"; // Fixed casing casing conventions
+import ImageKit from "imagekit";
 import ApiResponse from "@/types/ApiResponse";
 
-// Initialize ImageKit Client
-const imagekitClient = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT!,
-});
+// Helper function to lazily initialize ImageKit only when a request runs
+function getImageKitClient() {
+  const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
+  const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+  const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
+
+  if (!publicKey || !privateKey || !urlEndpoint) {
+    throw new Error(
+      "Missing ImageKit configuration. Please check environment variables."
+    );
+  }
+
+  return new ImageKit({
+    publicKey,
+    privateKey,
+    urlEndpoint,
+  });
+}
 
 export async function PATCH(req: NextRequest) {
   try {
+    // Instantiate ImageKit inside the handler (prevents build-time missing key error)
+    const imagekitClient = getImageKitClient();
+
     // 1. Authenticate user
     const jwttoken = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
     });
+
     if (!jwttoken) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Unauthorized" },
@@ -61,12 +77,13 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
-    const buffer = Buffer.from(await (file as any).arrayBuffer());
+    // 4. Convert File to Buffer
+    const buffer = Buffer.from(await (file as File).arrayBuffer());
 
     // 5. Upload to ImageKit
     const result = await imagekitClient.upload({
       file: buffer,
-      fileName: (file as any).name || "avatar",
+      fileName: (file as File).name || "avatar",
       folder: "/avatars",
       useUniqueFileName: true,
     });
@@ -96,7 +113,8 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json<ApiResponse>(
       {
         success: false,
-        message: error.message || "An error occurred while updating the avatar",
+        message:
+          error.message || "An error occurred while updating the avatar",
       },
       { status: 500 }
     );
