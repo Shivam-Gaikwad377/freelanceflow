@@ -13,7 +13,7 @@ type RouteContext = {
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteContext
 ) {
   try {
     const session = await getServerSession(authOptions);
