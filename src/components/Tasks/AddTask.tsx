@@ -151,6 +151,7 @@ const AddTask = ({ projectId, onClose }: AddTaskProps) => {
             <PrimaryButton
               label="Add Task"
               onClick={handleSubmit(onSubmit, onInvalid)}
+              fontSize="medium"
             />
             <SecondaryButton
               icon=""
