@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
       id: "credentials",
       name: "Credentials",
       credentials: {
-        email: {
+        identifier: {
           label: "Email",
           type: "email",
           placeholder: "Enter your email",
@@ -23,10 +23,13 @@ export const authOptions: NextAuthOptions = {
         },
       },
       //login function to validate user credentials
-      async authorize(credentials: any): Promise<any> {
+      async authorize(credentials: Record<"identifier" | "password", string> | undefined): Promise<any> {
         //connect to database and find user by email
         await connectToDatabase();
         try {
+          if(!credentials) {
+            throw new Error("Invalid email or password");
+          }
           const user = await User.findOne({ email: credentials.identifier });
           if (!user) {
             throw new Error("Invalid email or password");

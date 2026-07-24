@@ -2,7 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/dbConfig";
 import User from "@/models/user.model";
-import { getToken } from "next-auth/jwt";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
 import ImageKit from "imagekit";
 import ApiResponse from "@/types/ApiResponse";
 
@@ -31,18 +32,15 @@ export async function PATCH(req: NextRequest) {
     const imagekitClient = getImageKitClient();
 
     // 1. Authenticate user
-    const jwttoken = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    if (!jwttoken) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?._id) {
       return NextResponse.json<ApiResponse>(
         { success: false, message: "Unauthorized" },
         { status: 401 }
       );
     }
-    const userId = jwttoken?._id;
+    const userId = session.user._id;
+
 
     // 2. Get the file from the request
     const uploadData = await req.formData();
