@@ -27,8 +27,6 @@ const TopNavbar = () => {
       className="md:hidden bg-surface/80  backdrop-blur-md shadow-sm fixed top-0 w-full z-50 border-b border-outline-variant/30 flex justify-between items-center px-lg h-16  max-w-container-max mx-auto"
     >
       <div className="flex items-center gap-sm">
-        <span className="material-symbols-outlined text-primary text-[28px]"
-        >layers</span>
         <span
           className="text-headline-md font-headline-md font-bold text-primary "
         >FreelanceFlow</span>
@@ -61,7 +59,7 @@ const TopNavbar = () => {
         </div>
       </div>
     </header>
-      <header className=" flex w-full h-16 bg-surface/80 border-b-[1.5px] z-10 border-b-outline-variant backdrop-blur-md  justify-between items-center  sticky top-0 ">
+      <header className=" flex w-full h-16 px-2 bg-surface/80 border-b-[1.5px] z-10 border-b-outline-variant backdrop-blur-md  justify-between items-center  sticky top-0 ">
         <div className="md:hidden pl-2 flex items-center">
           <span className="font-headline-sm text-headline-sm font-bold text-primary ">
             FreelanceFlow
@@ -70,16 +68,8 @@ const TopNavbar = () => {
 
         <div className="flex items-center gap-md ml-auto">
           <GlobalTimer />
-          <button className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full cursor-pointer active:scale-95 flex items-center justify-center">
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
-          <button className="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full cursor-pointer active:scale-95 flex items-center justify-center sm:flex">
-            <span className="material-symbols-outlined">help</span>
-          </button>
-          <div className="h-8 w-px bg-outline-variant mx-2 hidden sm:block"></div>
-          <button className="text-on-surface-variant font-medium text-label-md font-label-md hidden sm:block hover:text-primary transition-colors">
-            Support
-          </button>
+         
+         
           <div className="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant cursor-pointer ml-sm flex items-center justify-center">
             {profileImage ? (
               <Image

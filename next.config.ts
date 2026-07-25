@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: 'ik.imagekit.io',
         pathname: '/Shivaam/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.gravatar.com',
+        pathname: '/avatar/**',
+      },
     ],
   },
 

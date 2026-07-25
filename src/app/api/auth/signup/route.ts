@@ -74,20 +74,20 @@ export async function POST(request: Request) {
     }
 
     // 2. Send verification email
-    const emailResponse = await sendVerificationEmail(
-      email,
-      name,
-      verificationToken
-    );
-    if (!emailResponse.success) {
-      return NextResponse.json<ApiResponse>(
-        {
-          success: false,
-          message: emailResponse.message,
-        },
-        { status: 500 }
-      );
-    }
+    // const emailResponse = await sendVerificationEmail(
+    //   email,
+    //   name,
+    //   verificationToken
+    // );
+    // if (!emailResponse.success) {
+    //   return NextResponse.json<ApiResponse>(
+    //     {
+    //       success: false,
+    //       message: emailResponse.message,
+    //     },
+    //     { status: 500 }
+    //   );
+    // }
 
     return NextResponse.json<ApiResponse>(
       {
