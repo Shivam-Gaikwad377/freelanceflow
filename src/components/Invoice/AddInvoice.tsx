@@ -220,7 +220,7 @@ const AddInvoice = () => {
             </div>
           </div>
 
-          {/* ================= STEP 1: CLIENT SELECTION ================= */}
+          {/*  STEP 1: CLIENT SELECTION  */}
           {currentStep === 1 && (
             <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg mb-lg shadow-[0_4px_16px_rgba(73,75,214,0.03)]">
               <h2 className="font-label-md text-label-md text-on-surface font-semibold mb-4">
@@ -253,7 +253,7 @@ const AddInvoice = () => {
             </div>
           )}
 
-          {/* ================= STEP 2: PROJECT & DATES ================= */}
+          {/*STEP 2: PROJECT & DATES*/}
           {currentStep === 2 && (
             <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg mb-lg shadow-[0_4px_16px_rgba(73,75,214,0.03)]">
               <h2 className="font-label-md text-label-md text-on-surface font-semibold mb-4">
@@ -323,7 +323,7 @@ const AddInvoice = () => {
             </div>
           )}
 
-          {/* ================= STEP 3: LINE ITEMS ================= */}
+          {/*STEP 3: LINE ITEMS*/}
           {currentStep === 3 && (
             <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg mb-lg shadow-[0_4px_16px_rgba(73,75,214,0.03)]">
               <h2 className="font-label-md text-label-md text-on-surface font-semibold mb-4">
@@ -481,7 +481,7 @@ const AddInvoice = () => {
             </div>
           )}
 
-          {/* ================= WIZARD FOOTER ACTIONS ================= */}
+          {/*  WIZARD FOOTER ACTIONS  */}
           <div className="flex justify-between mt-8">
             {currentStep === 1 && (
               <>

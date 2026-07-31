@@ -1,7 +1,7 @@
 // hooks/useDelete.ts
 import { useState } from "react";
 import axios from "axios";
-import {toast} from "sonner"; // adjust to your actual toast import
+import {toast} from "sonner"; 
 
 interface UseDeleteOptions<T extends { _id: any }> {
   resource: string; // e.g. "projects", "clients", "invoices"

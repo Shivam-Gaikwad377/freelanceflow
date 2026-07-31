@@ -18,12 +18,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // if(session.user?.plan === "premium") {
-    //   return NextResponse.json<ApiResponse>(
-    //     { success: false, message: "You are already on the premium plan." },
-    //     { status: 400 }
-    //   );
-    // }
+  
     const newPlan = session.user?.plan === "premium" ? "free" : "premium";
     
     await connectToDatabase();

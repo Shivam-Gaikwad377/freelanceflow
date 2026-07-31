@@ -30,7 +30,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
       phone: "",
       company: "",
       description: "",
-      status: "active", // Set the default status to "active"
+      status: "active", 
     },
   });
   const {
@@ -49,7 +49,7 @@ const AddClient = ({ open, onClose }: AddClientProps) => {
         });
         return;
       }
-      // Only 2xx reaches here
+    
       if (response.data.success) {
         toast.success("Client added successfully!", {
           position: "top-right",

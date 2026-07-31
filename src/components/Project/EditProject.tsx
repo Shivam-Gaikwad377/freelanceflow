@@ -105,7 +105,7 @@ const EditProjectDrawer = ({
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* ── Header ── */}
+        {/*  Header  */}
         <div className="flex items-center justify-between px-xl py-lg border-b border-outline-variant/30 shrink-0">
           <div>
             <p className="text-body-sm text-on-surface-variant">Editing</p>
@@ -123,7 +123,7 @@ const EditProjectDrawer = ({
           </button>
         </div>
 
-        {/* ── Scrollable form body + sticky footer ── */}
+        {/*  Scrollable form body + sticky footer  */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex-1 flex flex-col overflow-hidden"
@@ -292,7 +292,7 @@ const EditProjectDrawer = ({
             </div>
           </div>
 
-          {/* ── Footer (always visible) ── */}
+          {/*  Footer (always visible)  */}
           <div className="flex items-center justify-end gap-md px-xl py-lg border-t border-outline-variant/30 shrink-0">
             <SecondaryButton
               label="Cancel"

@@ -34,7 +34,7 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
     errorMessage: "Failed to delete project",
   });
 
-  // ── Core fetch — page 1 replaces, page 2+ appends ──────────────────────
+  //  Core fetch  page 1 replaces, page 2+ appends 
   const fetchProjects = useCallback(
     async (pageNum: number) => {
       if (pageNum === 1) setLoading(true);
@@ -85,7 +85,7 @@ const ProjectKanbanBoard = ({ status }: { status: Status }) => {
     fetchProjects(1);
   }, [fetchProjects]);
 
-  // ── Infinite scroll wiring ──────────────────────────────────────────────
+  //  Infinite scroll wiring 
   const loadMore = useCallback(() => {
     if (loadingMore || !hasMore) return;
     fetchProjects(page + 1);

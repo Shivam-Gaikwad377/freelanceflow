@@ -66,8 +66,7 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
       }
 
-      // update() is a signal to re-sync from DB — never trust its payload
-      // for plan/isVerified/anything auth-relevant.
+      // update() is a signal to re-sync from DB  
       if (trigger === "update" && token._id) {
         await connectToDatabase();
         const fresh = await User.findById(token._id)

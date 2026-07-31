@@ -168,9 +168,7 @@ const Page = () => {
     }
   };
 
-  // Shared field renderers so the desktop <table> row and the mobile <card>
-  // row register the exact same react-hook-form fields — one source of
-  // validation truth instead of two copies that can drift apart.
+  // Shared field renderers so the desktop <table> row and the mobile <card> row register the exact same react-hook-form fields — one source of validation truth instead of two copies that can drift apart.
   const descriptionField = (index: number, field: InvoiceLineItem) => (
     <input
       className="w-full bg-surface border border-outline rounded-lg px-md py-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md"
@@ -497,7 +495,7 @@ const Page = () => {
                 />
               </div>
 
-              {/* Table layout — md screens and up, where 5 columns have room to breathe */}
+              
               <div className="hidden md:block">
                 <table className="w-full table-fixed border-collapse">
                   <thead>
@@ -568,7 +566,7 @@ const Page = () => {
                 </table>
               </div>
 
-              {/* Card layout — below md, where a fixed 5-column table would squeeze */}
+            
               <div className="flex flex-col gap-sm md:hidden mt-sm">
                 {fields.map((field: InvoiceLineItem, index: number) =>
                   editingIndex === index ? (

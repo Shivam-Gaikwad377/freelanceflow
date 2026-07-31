@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       0
     );
 
-    const tax = parseResult.data.taxRate; // per-invoice, not hardcoded
+    const tax = parseResult.data.taxRate; 
     const taxAmount = Math.round(subtotal * (tax / 100) * 100) / 100;
     const total = Math.round((subtotal + taxAmount) * 100) / 100;
     

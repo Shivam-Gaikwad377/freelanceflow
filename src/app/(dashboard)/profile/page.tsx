@@ -23,11 +23,11 @@ const Page = () => {
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 1. Grab the file directly from the event target
+    
     const targetFile = e.target.files?.[0];
     if (!targetFile) return;
 
-    // Update local state for tracking if needed
+    
     setImageFile(targetFile);
     try {
       const uploadData = new FormData();
@@ -37,7 +37,7 @@ const Page = () => {
       const updatedProfile = await axios.get("/api/user/Profile");
       setProfile(updatedProfile.data.data);
       toast.success("Avatar updated successfully!");
-      // Refresh profile data to show new avatar
+      
     } catch (error) {
       toast.error("Error updating avatar.");
     } finally {
@@ -48,7 +48,7 @@ const Page = () => {
 
   useEffect(() => {
     if (!session || !session.user) {
-      // Redirect to login page if not authenticated
+    
       router.replace("/login");
     }
     try {

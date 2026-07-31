@@ -85,7 +85,7 @@ export default function VerificationEmail({
               </Section>
             </Section>
             <Text style={footer}>
-              © 2026 FreelanceFlow · All rights reserved.
+              © {new Date().getFullYear()} FreelanceFlow · All rights reserved.
             </Text>
             <Text style={footer}>
               You're receiving this because you created a FreelanceFlow account.

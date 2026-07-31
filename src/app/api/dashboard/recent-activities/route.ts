@@ -54,7 +54,7 @@ export const GET = async (request: Request) => {
     const logItems: ActivityItem[] = completedLogs.map((log) => ({
       id: log._id.toString(),
       type: "timelog",
-      timestamp: log.endTime, // Date, not Date | undefined — no assertion needed
+      timestamp: log.endTime, 
       message: `Logged time on ${log.projectId?.title ?? "Unknown project"}`,
       href: `/projects/${log.projectId?._id}`,
     }));

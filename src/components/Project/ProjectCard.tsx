@@ -3,15 +3,15 @@ import { useState, useEffect } from "react";
 import ConfirmationBox from "../confirmationBox";
 import ProjectTimer from "../TimeLogs/ProjectTImer";
 interface ProjectPageProps {
-  // Define any props you want to pass to the component here
-  projectId: string; // Unique identifier for the project
-  title: string; // Project title
-  client: string; // Client name
-  deadline: string; // Deadline date
-  budget: number; // Project budget
-  // Optional click handler
-  status: "open" | "in progress" | "completed"; // Project status
-  // Optional click handler
+ 
+  projectId: string; 
+  title: string; 
+  client: string;
+  deadline: string; 
+  budget: number; 
+  
+  status: "open" | "in progress" | "completed";
+ 
   onClick?: () => void; // Optional click handler
   burnRate?: number; // Optional burn rate for the project
   onDelete?: () => Promise<void>; // Optional delete handler

@@ -39,7 +39,7 @@ const useFetch = <T>(url: string, params: Record<string, any> = {}) => {
     fetchData();
 
     // 4. The Cleanup Function: 
-    // React runs this right BEFORE the next useEffect fires, or when the component unmounts.
+    
     return () => {
       controller.abort();
     };
