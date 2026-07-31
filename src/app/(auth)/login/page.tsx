@@ -70,7 +70,7 @@ export default function SignIn() {
           />
         </div>
         <div className="w-full max-w-110 bg-surface-container-lowest rounded-lg border border-outline-variant p-xl shadow-level-3 relative z-10 flex flex-col backdrop-blur-sm">
-          {/* <!-- Brand Header --> */}
+         
           <div className="flex flex-col items-center text-center mb-xl">
             <div className="flex items-center gap-sm mb-lg">
              
@@ -85,13 +85,13 @@ export default function SignIn() {
               Enter your credentials to access your workspace.
             </p>
           </div>
-          {/* <!-- Login Form --> */}
+         
           <Form
             control={form.control}
             onSubmit={({ data }) => onSubmit(data)}
             className="flex flex-col gap-lg"
           >
-            {/* <!-- Email Input --> */}
+           
             <div className="flex flex-col gap-xs">
               <label
                 className="font-label-md text-label-md text-on-surface"
@@ -108,13 +108,13 @@ export default function SignIn() {
                 type="identifier"
               />
             </div>
-            {/* <!-- Error Message --> */}
+          
             {error && (
               <div className="text-error font-body-sm text-body-sm">
                 {error}
               </div>
             )}
-            {/* <!-- Password Input --> */}
+         
             <div className="flex flex-col gap-xs">
               <div className="flex justify-between items-center">
                 <label
@@ -144,7 +144,7 @@ export default function SignIn() {
                 {errors.password.message}
               </div>
             )}
-            {/* <!-- Submit Button --> */}
+           
             <button
               className="w-full py-3 cursor-pointer active:scale-95 px-lg bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md rounded-lg transition-all duration-200 flex justify-center items-center mt-sm"
               type="submit"

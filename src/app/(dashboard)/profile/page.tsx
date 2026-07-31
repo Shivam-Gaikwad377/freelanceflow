@@ -95,7 +95,7 @@ const Page = () => {
         businessName,
 
       });
-      if (email && email !== profile?.email) {
+      if ((email && email !== profile?.email) || emailEdited) {
         const responseEmail = await axios.put("/api/user/email/email-change", {
           newEmail: email,
         });

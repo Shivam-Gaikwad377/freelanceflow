@@ -36,7 +36,7 @@ const Page = () => {
     try {
       const response: ApiResponse = await axios.post("/api/auth/signup", data);
 
-      // Only 2xx reaches here
+     
       if (response.data.success) {
         toast.success(
           "Signup successful! Please check your email for the OTP.",
@@ -51,7 +51,7 @@ const Page = () => {
       const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
 
       if (status === 401) {
-         // ← now actually called
+         
         toast.error(message || "Email already in use.", {
           position: "top-right",
         });
@@ -68,9 +68,9 @@ const Page = () => {
   return (
     <div className="bg-surface-container-lowest font-body-md text-on-background antialiased min-h-screen flex selection:bg-primary selection:text-on-primary">
       <div className="flex w-full min-h-screen">
-        {/* <!-- Left Section: Form --> */}
+      
         <main className="w-full lg:w-1/2 flex flex-col justify-center px-lg sm:px-xl gap-10  lg:px-xxl py-xl relative">
-          {/* <!-- Brand Anchor (Mobile/Tablet visible, Desktop optional but good for context) --> */}
+        
           <div className="absolute top-lg left-lg sm:top-xl sm:left-xl">
             <a
               className="font-display font-bold text-headline-sm text-primary flex items-center gap-sm"
@@ -99,7 +99,7 @@ const Page = () => {
               onSubmit={({ data }) => onSubmit(data)}
               className="space-y-lg"
             >
-              {/* <!-- Full Name --> */}
+         
               <div className="flex flex-col gap-xs">
                 <label
                   className="font-label-md text-on-surface"
@@ -128,7 +128,7 @@ const Page = () => {
                   </p>
                 )}
               </div>
-              {/* <!-- Email --> */}
+           
               <div className="flex flex-col gap-xs">
                 <label
                   className="font-label-md text-on-surface"
@@ -207,18 +207,14 @@ const Page = () => {
                 Log in
               </Link>
             </p>
-          </div>
           <div className="absolute bottom-lg left-lg sm:left-xl font-body-sm text-outline">
             © {new Date().getFullYear()} FreelanceFlow.
           </div>
+          </div>
         </main>
-        {/* <!-- Right Section: Visual Presentation (Hidden on Mobile) --> */}
+       
         <aside className="hidden lg:flex w-1/2 mesh-gradient relative  flex-col p-xxl  text-on-primary">
-          {/* <!-- Abstract decorative elements --> */}
-          {/* <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-primary-fixed-dim/30 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute bottom-[-10%] left-[-10%] w-80 h-80 bg-secondary-fixed/20 rounded-full blur-3xl pointer-events-none"></div> */}
-
-          {/* <!-- Product Illustration Centerpiece --> */}
+         
           <div className="relative z-10 grow  my-xl">
             <div className=" w-full h-full rounded-2xl bg-on-primary/5 border border-on-primary/10 backdrop-blur-sm p-lg shadow-2xl my-xl  group hover:bg-on-primary/10 transition-colors duration-500">
               <Image
@@ -229,7 +225,7 @@ const Page = () => {
                 className=" rounded-xl opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out"
                 src={Register}
               />
-              {/* <!-- Floating abstract UI elements to simulate the prompt's request --> */}
+            
               <div
                 className="absolute top-1/4 right-8 bg-surface-container-lowest/90 backdrop-blur border border-outline-variant/30 rounded-lg p-sm shadow-lg flex items-center gap-xs animate-bounce"
                 style={{ animationDuration: "3s" }}

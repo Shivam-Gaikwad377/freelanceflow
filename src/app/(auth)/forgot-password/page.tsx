@@ -30,7 +30,7 @@ const Page = () => {
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err.message);
-        // safe to access err.message, err.stack, err.name
+        // safe to access err.message
       } else {
         console.error("Unknown error:", err);
       }
@@ -105,15 +105,15 @@ const Page = () => {
               </button>
             </div>
             <div className="flex items-center justify-center flex-col ">
-              <a
+              <p
                 className="flex items-center gap-xs font-label-md text-label-md  text-primary hover:text-primary-container transition-colors group"
-                href="#"
+                onClick={() => router.push("/login")}
               >
                 <span className="material-symbols-outlined text-[18px] group-hover:-translate-x-1 transition-transform">
                   arrow_back
                 </span>
                 <span>Back to Login</span>
-              </a>
+              </p>
             </div>
           </div>
         </div>

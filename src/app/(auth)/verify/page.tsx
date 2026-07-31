@@ -206,15 +206,8 @@ const VerifyForm = () => {
               </button>
             </form>
           </div>
-          {/* <!-- Footer Link --> */}
-          <div className="mt-lg text-center">
-            <a
-              className="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-transparent hover:decoration-primary underline-offset-4"
-              href="#"
-            >
-              Contact Support
-            </a>
-          </div>
+         
+        
         </div>
       </div>
     </div>

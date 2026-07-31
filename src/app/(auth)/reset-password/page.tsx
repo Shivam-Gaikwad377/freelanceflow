@@ -147,9 +147,9 @@ const ResetPassword = () => {
                 password.
               </p>
             </div>
-            {/* <!-- Form Section --> */}
+           
             <form className="flex flex-col gap-lg">
-              {/* <!-- OTP Section --> */}
+          
               <div className="flex flex-col gap-sm">
                 <label className="font-label-md text-label-md text-on-surface">
                   OTP Code
@@ -196,7 +196,7 @@ const ResetPassword = () => {
                   </button>
                 </div>
               </div>
-              {/* <!-- Passwords Section --> */}
+             
               <div className="flex flex-col gap-md">
                 <div className="flex flex-col gap-sm relative">
                   <label
@@ -266,7 +266,7 @@ const ResetPassword = () => {
                   </div>
                 </div>
               </div>
-              {/* <!-- Actions --> */}
+             
               <div className="mt-sm flex flex-col gap-lg">
                 <button
                   className="w-full h-12 rounded bg-linear-to-r from-primary to-surface-tint text-on-primary font-label-md text-label-md shadow-sm hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center"

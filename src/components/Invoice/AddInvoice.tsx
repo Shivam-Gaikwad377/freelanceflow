@@ -351,7 +351,7 @@ const AddInvoice = () => {
                       return addinglineIndex === index ? (
                         <tr key={field.id} className="border-b border-outline-variant/50">
                           <td className="py-4 px-1">
-                            <input
+                            <input 
                               {...register(`lineItems.${index}.description`, {
                                 required: "Description is required",
                                 minLength: { value: 5, message: "Must be at least 5 characters" },
