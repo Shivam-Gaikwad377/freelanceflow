@@ -4,7 +4,17 @@ import ApiResponse from "@/types/ApiResponse";
 import { emailSchema } from "@/schemas/email.schema";
 import { sendPasswordResetEmail } from "@/helpers/sendPasswordResetEmail";
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 
+function generateOtp(length = 6): string {
+  const digits = "0123456789";
+  const bytes = crypto.randomBytes(length);
+  let otp = "";
+  for (let i = 0; i < length; i++) {
+    otp += digits[bytes[i] % digits.length];
+  }
+  return otp;
+}
 export async function POST(request: Request) {
   try {
     //connect to database and validate email format
@@ -30,10 +40,7 @@ export async function POST(request: Request) {
       );
     }
     //generate OTP and expiration time
-    const verificationToken = Math.random()
-      .toString(36)
-      .substring(2, 8)
-      .toUpperCase();
+    const verificationToken = generateOtp(); // Generate a 6-digit OTP
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000);
     user.verificationToken = verificationToken;
     user.ExpiresAt = expirationTime;

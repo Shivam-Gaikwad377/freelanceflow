@@ -148,7 +148,7 @@ const ResetPassword = () => {
               </p>
             </div>
            
-            <form className="flex flex-col gap-lg">
+            <form className="flex flex-col gap-lg" onSubmit={handleSubmit}>
           
               <div className="flex flex-col gap-sm">
                 <label className="font-label-md text-label-md text-on-surface">
